@@ -1,0 +1,30 @@
+{
+    "download": true,
+    "validate_download": false,
+    "download_with_common_word": false,
+    "stitch": true,
+    "only_stitch_missing": true,
+    "aggregate": false,
+    "source_folders_to_download": [
+        "symptoms",
+        "cgap",
+        "covid",
+        "common",
+        "glove"
+    ],
+    "trends": {
+        "city": [
+            "atlanta",
+            "boston",
+            "chicago",
+            "dallas",
+            "houston",
+            "los_angeles",
+            "miami",
+            "new_york",
+            "philadelphia",
+            "washington",
+            "usa"
+        ]
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "customer_id": "7981360996",
+    "run_keyword_expansion": true,
+    "only_expand_missing": true,
+    "aggregate_expansions": false,
+    "source_priority_order": [
+        "symptoms",
+        "cgap",
+        "covid"
+    ],
+    "keyword": {
+        "city": [
+            "atlanta",
+            "boston",
+            "chicago",
+            "dallas",
+            "houston",
+            "los_angeles",
+            "miami",
+            "new_york",
+            "philadelphia",
+            "washington",
+            "usa"
+        ]
+    },
+    "folder_expansion_raw": "./CGAP-data/CGAP-keywords/expansion/raw/",
+    "folder_expansion_aggregate": "./CGAP-data/CGAP-keywords/expansion/aggregate/",
+    "folder_expansion_parents": "./CGAP-data/CGAP-keywords/expansion/parents/",
+    "folder_keywords_google": "./CGAP-data/CGAP-keywords/keywords/google/",
+    "yaml": "./google-ads.yaml"
+}

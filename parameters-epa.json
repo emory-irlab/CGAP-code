@@ -1,0 +1,18 @@
+{
+    "stitch": true,
+    "aggregate": false,
+    "epa": {
+        "city": [
+            "atlanta",
+            "boston",
+            "chicago",
+            "dallas",
+            "houston",
+            "los_angeles",
+            "miami",
+            "new_york",
+            "philadelphia",
+            "washington"
+        ]
+    }
+}

@@ -1,0 +1,137 @@
+{
+    "stitch_epa": false,
+    "stitch_trends": false,
+    "run_metrics_epa": false,
+    "aggregate_metrics_epa": false,
+    "run_metrics_trends": false,
+    "aggregate_metrics_trends": false,
+    "run_correlations": true,
+    "correlate_above_threshold": true,
+    "correlate_below_threshold": true,
+    "only_correlate_missing": true,
+    "aggregate_correlations": false,
+    "aggregate_already_aggregated_cities": false,
+    "run_correlations_comparison": false,
+    "only_compare_missing": true,
+    "run_intercity": false,
+    "common_city": "usa",
+    "common_word": "pins",
+    "aggregate_intercity": false,
+    "stats": {
+        "city": [
+            "atlanta",
+            "boston",
+            "chicago",
+            "dallas",
+            "houston",
+            "los_angeles",
+            "miami",
+            "new_york",
+            "philadelphia",
+            "washington",
+            "usa"
+        ],
+        "target_statistic": [
+            "max",
+            "mean",
+            "median"
+        ],
+        "threshold_percentile": [
+            100
+        ],
+        "time_shift": [
+            -1,
+            0,
+            1,
+            2,
+            3
+        ],
+        "pollutant": {
+            "CO": {
+                "threshold": [
+                    -1,
+                    9,
+                    10000
+                ]
+            },
+            "NO2": {
+                "threshold": [
+                    -1,
+                    20,
+                    25,
+                    30,
+                    35,
+                    40,
+                    45,
+                    50,
+                    55,
+                    60,
+                    65,
+                    10000
+                ]
+            },
+            "O3": {
+                "threshold": [
+                    -1,
+                    0.045,
+                    0.05,
+                    0.055,
+                    0.06,
+                    0.065,
+                    0.07,
+                    0.075,
+                    0.08,
+                    0.085,
+                    0.09,
+                    10000
+                ]
+            },
+            "PM2.5": {
+                "threshold": [
+                    -1,
+                    6,
+                    10,
+                    14,
+                    18,
+                    22,
+                    26,
+                    30,
+                    34,
+                    38,
+                    42,
+                    10000
+                ]
+            },
+            "PM10": {
+                "threshold": [
+                    -1,
+                    150,
+                    10000
+                ]
+            },
+            "SO2": {
+                "threshold": [
+                    -1,
+                    75,
+                    10000
+                ]
+            }
+        }
+    },
+    "correlations_comparison_pivot_values": {
+        "city": "",
+        "keyword": "",
+        "pollutant": "",
+        "target_statistic": "",
+        "time_shift": null,
+        "ignore_zero": null,
+        "threshold": -1,
+        "threshold_percentile": null,
+        "threshold_side": ""
+    },
+    "target_variable_column_name_epa": "pollution_level",
+    "target_variable_column_name_trends": "keyword_frequency",
+    "folder_stats_correlations_raw": "./CGAP-data/CGAP-stats/correlations/raw/",
+    "folder_stats_correlations_aggregate": "./CGAP-data/CGAP-stats/correlations/aggregate/",
+    "folder_stats_correlations_comparison": "./CGAP-data/CGAP-stats/correlations/comparison/"
+}
