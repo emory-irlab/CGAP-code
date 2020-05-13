@@ -1,0 +1,46 @@
+{
+    "folder_covid_raw": "../CGAP-data/CGAP-covid/raw/",
+    "folder_covid_stitch": "../CGAP-data/CGAP-covid/stitch/",
+    "data": {
+        "bing": {
+            "columns_to_drop": [
+                "ID",
+                "Latitude",
+                "Longitude"
+            ],
+            "date_column": "Updated",
+            "dtype": {
+            },
+            "file_path_or_filter_name_conditions": "Bing-COVID-19-Data/data/Bing-COVID19-Data.csv",
+            "mapping": {
+                "Updated": "date",
+                "ISO2": "iso_2",
+                "ISO3": "iso_3",
+                "Country_Region": "country_name",
+                "AdminRegion1": "state_name",
+                "AdminRegion2": "county_name"
+            }
+        },
+        "google": {
+            "columns_to_drop": [
+                ""
+            ],
+            "date_column": "date",
+            "dtype": {
+                "sub_region_2": "str"
+            },
+            "file_path_or_filter_name_conditions": [
+                "global",
+                "mobility",
+                "report",
+                "csv"
+            ],
+            "mapping": {
+                "country_region_code": "iso_2",
+                "country_region": "country_name",
+                "sub_region_1": "state_name",
+                "sub_region_2": "county_name"
+            }
+        }
+    }
+}
