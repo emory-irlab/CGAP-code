@@ -457,32 +457,44 @@ def import_paths_from_folder(
     list_paths: List[str]
     if os.path.exists(folder):
         list_paths = os.listdir(folder)
-        list_filtered_paths: List[str] = filter_list_strings(
-            list_strings=list_paths,
-            list_string_filter_conditions=list_paths_filter_conditions,
-        )
-        if check_paths:
-            if include_files:
-                list_filtered_paths = [
-                    path
-                    for path in list_filtered_paths
-                    if os.path.isfile(f'{folder}{path}')
-                ]
-            if include_folders:
-                list_filtered_paths = [
-                    path
-                    for path in list_filtered_paths
-                    if os.path.isdir(f'{folder}{path}')
-                ]
-            if ignore_hidden:
-                pattern_hidden_path: Pattern[str] = re.compile(r'\.[A-Za-z]')
-                list_filtered_paths = [
-                    path
-                    for path in list_filtered_paths
-                    if not re.match(pattern_hidden_path, path)
-                ]
+        if len(list_paths_filter_conditions) > 0:
+            list_paths = list(
+                filter(
+                    lambda x: all(
+                        str(condition.lower()) in x
+                        for condition in list_paths_filter_conditions
+                    ),
+                    # generator instead of list comprehension # SPEED
+                    (
+                        path.lower()
+                        for path in list_paths
+                    )
+                )
+            )
+            list_paths.sort()
 
-        return list_filtered_paths
+            if check_paths:
+                if include_files:
+                    list_paths = [
+                        path
+                        for path in list_paths
+                        if os.path.isfile(f'{folder}{path}')
+                    ]
+                if include_folders:
+                    list_paths = [
+                        path
+                        for path in list_paths
+                        if os.path.isdir(f'{folder}{path}')
+                    ]
+                if ignore_hidden:
+                    pattern_hidden_path: Pattern[str] = re.compile(r'\.[A-Za-z]')
+                    list_paths = [
+                        path
+                        for path in list_paths
+                        if not re.match(pattern_hidden_path, path)
+                    ]
+
+            return list_paths
 
     else:
         generate_sub_paths_for_folder(
