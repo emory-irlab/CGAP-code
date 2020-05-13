@@ -159,7 +159,7 @@ def stitch_for_city(
     generate_sub_paths_for_folder(
         folder=folder_epa_stitch,
     )
-    filename: str = filter_single_filename(
+    filename: str = import_single_file(
         folder=folder_epa_raw,
         list_filename_filter_conditions=(city, CSV),
     )

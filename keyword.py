@@ -18,7 +18,7 @@ YAML: str = 'yaml'
 # DEFAULT
 DEFAULT_LANGUAGE_ID_ENGLISH: str = '1000'
 DEFAULT_SOURCE_PRIORITY_ORDER: Tuple[str, ...] = (
-    'seed',
+    'cgap',
 )
 
 # PARAMETERS

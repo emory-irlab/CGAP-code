@@ -418,7 +418,7 @@ def partition_list(
         return list_partition_candidates[start_index:end_index]
 
 
-def filter_single_filename(
+def import_single_file(
         folder: str,
         list_filename_filter_conditions: Tuple[str, ...] = DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS,
 ) -> str:

@@ -631,7 +631,7 @@ def run_correlations(
 
                                         filename_epa: str
                                         if not epa_set:
-                                            filename_epa = filter_single_filename(
+                                            filename_epa = import_single_file(
                                                 folder=folder_epa_stitch,
                                                 list_filename_filter_conditions=(city, pollutant, target_statistic, CSV)
                                             )
@@ -645,7 +645,7 @@ def run_correlations(
                                                 continue
                                         else:
                                             if df_epa.empty:
-                                                filename_epa = filter_single_filename(
+                                                filename_epa = import_single_file(
                                                     folder=folder_epa_stitch,
                                                     list_filename_filter_conditions=(
                                                         city, pollutant, target_statistic, CSV,
