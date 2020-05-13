@@ -19,7 +19,7 @@ PARAM_COLUMNS_TO_DROP: str = 'columns_to_drop'
 PARAM_DATA: str = 'data'
 PARAM_DTYPES: str = 'dtypes'
 PARAM_FOLDER_COVID_RAW: str = 'folder_covid_raw'
-PARAM_FOLDER_COVID_STITCH: str = 'folder_covid_stitch'
+PARAM_FOLDER_COVID_AGGREGATE: str = 'folder_covid_aggregate'
 PARAM_GOOGLE_DATA_FILENAME_FILTER_CONDITIONS: str = 'google_data_filename_filter_conditions'
 PARAM_GOOGLE_DTYPES: str = 'google_dtypes'
 PARAM_BING_DATA_FILEPATH: str = 'bing_data_file_path'
@@ -37,7 +37,7 @@ def main(
         with open(f'{PARAMETERS}{HYPHEN}{COVID}{JSON}') as json_file:
             json_data = json.load(json_file)
             folder_covid_raw: str = json_data[PARAM_FOLDER_COVID_RAW]
-            folder_covid_stitch: str = json_data[PARAM_FOLDER_COVID_STITCH]
+            folder_covid_stitch: str = json_data[PARAM_FOLDER_COVID_AGGREGATE]
             data_schema: dict = json_data[PARAM_DATA]
         json_file.close()
     else:

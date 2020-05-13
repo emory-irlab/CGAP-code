@@ -1,6 +1,6 @@
 {
     "folder_covid_raw": "../CGAP-data/CGAP-covid/raw/",
-    "folder_covid_stitch": "../CGAP-data/CGAP-covid/stitch/",
+    "folder_covid_aggregate": "../CGAP-data/CGAP-covid/aggregate/",
     "data": {
         "bing": {
             "columns_to_drop": [
