@@ -13,7 +13,6 @@ FILE_PATH_OR_FILTER_NAME_CONDITIONS: str = 'file_path_or_filter_name_conditions'
 FOLDER_PATH: str = 'folder_path'
 GOOGLE: str = 'google'
 MAPPING: str = 'mapping'
-MERGED: str = 'merged'
 
 # PARAMS
 PARAM_COLUMNS_TO_DROP: str = 'columns_to_drop'
@@ -44,6 +43,7 @@ def main(
     else:
         pass
 
+    set_error_task_origin(AGGREGATE)
     list_parsed_dfs: List[pd.DataFrame] = parse_data(
         data_schema=data_schema,
         folder=folder_covid_raw,
