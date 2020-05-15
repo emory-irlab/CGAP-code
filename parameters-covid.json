@@ -1,6 +1,7 @@
 {
     "folder_covid_raw": "../CGAP-data/CGAP-covid/raw/",
     "folder_covid_aggregate": "../CGAP-data/CGAP-covid/aggregate/",
+    "inner_or_outer_join": "inner",
     "data": {
         "bing": {
             "columns_to_drop": [

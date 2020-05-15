@@ -15,6 +15,7 @@ GOOGLE: str = 'google'
 MAPPING: str = 'mapping'
 
 # PARAMS
+PARAM_BING_DATA_FILEPATH: str = 'bing_data_file_path'
 PARAM_COLUMNS_TO_DROP: str = 'columns_to_drop'
 PARAM_DATA: str = 'data'
 PARAM_DTYPES: str = 'dtypes'
@@ -22,7 +23,7 @@ PARAM_FOLDER_COVID_RAW: str = 'folder_covid_raw'
 PARAM_FOLDER_COVID_AGGREGATE: str = 'folder_covid_aggregate'
 PARAM_GOOGLE_DATA_FILENAME_FILTER_CONDITIONS: str = 'google_data_filename_filter_conditions'
 PARAM_GOOGLE_DTYPES: str = 'google_dtypes'
-PARAM_BING_DATA_FILEPATH: str = 'bing_data_file_path'
+PARAM_INNER_OR_OUTER_JOIN: str = 'inner_or_outer_join'
 
 # DEFAULTS
 RE_camel_to_snake_case_pattern: Pattern = re.compile(r'(?<!^)(?=[A-Z])')
@@ -36,9 +37,10 @@ def main(
     if called_from_main:
         with open(f'{PARAMETERS}{HYPHEN}{COVID}{JSON}') as json_file:
             json_data = json.load(json_file)
+            data_schema: dict = json_data[PARAM_DATA]
             folder_covid_raw: str = json_data[PARAM_FOLDER_COVID_RAW]
             folder_covid_stitch: str = json_data[PARAM_FOLDER_COVID_AGGREGATE]
-            data_schema: dict = json_data[PARAM_DATA]
+            inner_or_outer_join: str = json_data[PARAM_INNER_OR_OUTER_JOIN]
         json_file.close()
     else:
         pass
@@ -52,7 +54,7 @@ def main(
         lambda df_1, df_2: pd.merge(
             left=df_1,
             right=df_2,
-            how='outer',
+            how=inner_or_outer_join,
         ),
         list_parsed_dfs,
     )
