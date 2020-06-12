@@ -4,7 +4,7 @@
     "only_expand_missing": true,
     "aggregate_expansions": true,
     "source_priority_order": [
-        "symptoms",
+        "common",
         "cgap",
         "covid"
     ],
