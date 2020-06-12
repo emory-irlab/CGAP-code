@@ -269,7 +269,10 @@ def run_keyword_expansion(
                 competition_value = keyword_competition_level_enum.Name(idea.keyword_idea_metrics.competition)
                 dict_keyword_ideas_result.update({COMPETITION_VALUE: competition_value})
                 list_individual_keyword_ideas_results.append(
-                    pd.DataFrame(dict_keyword_ideas_result, index=[0])
+                    pd.DataFrame(
+                        dict_keyword_ideas_result,
+                        index=[0],
+                    )
                 )
 
                 output_expansion_parent_filename: str = generate_filename(
