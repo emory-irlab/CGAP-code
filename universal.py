@@ -5,6 +5,7 @@ import re
 from collections import namedtuple
 from datetime import datetime
 from typing import Any
+from typing import Callable
 from typing import Dict
 from typing import Iterator
 from typing import List
@@ -457,16 +458,20 @@ def import_paths_from_folder(
     if os.path.exists(folder):
         list_paths: List[str] = os.listdir(folder)
         if len(list_paths_filter_conditions) > 0:
+            filter_all_conditions_function: Callable[[str], bool] = lambda x: all(
+                str(condition.lower()) in x
+                for condition in list_paths_filter_conditions
+            )
             list_paths = list(
-                filter(
-                    lambda x: all(
-                        str(condition.lower()) in x
-                        for condition in list_paths_filter_conditions
-                    ),
-                    (
-                        path.lower()
-                        for path in list_paths
-                    )  # generator instead of list comprehension # SPEED
+                itertools.compress(
+                    list_paths,
+                    map(
+                        filter_all_conditions_function,
+                        (
+                            path.lower()
+                            for path in list_paths
+                        )
+                    )
                 )
             )
         list_paths.sort()
