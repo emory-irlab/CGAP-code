@@ -59,7 +59,7 @@ def main(
     set_error_folder(FOLDER_ERROR)
     set_partition_group(partition_group)
     set_partition_total(partition_total)
-    with open(f'{PARAMETERS}{HYPHEN}{KEYWORD}{JSON}') as json_file:
+    with open(f'{KEYWORD}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
         json_data: dict = json.load(json_file)
         bool_run_keyword_expansion: bool
         bool_only_expand_missing: bool

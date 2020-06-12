@@ -35,7 +35,7 @@ def main(
     set_error_file_origin(COVID)
     set_error_folder(FOLDER_ERROR)
     if called_from_main:
-        with open(f'{PARAMETERS}{HYPHEN}{COVID}{JSON}') as json_file:
+        with open(f'{COVID}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
             json_data = json.load(json_file)
             data_schema: dict = json_data[PARAM_DATA]
             folder_covid_raw: str = json_data[PARAM_FOLDER_COVID_RAW]

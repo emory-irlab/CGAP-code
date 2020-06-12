@@ -27,7 +27,7 @@ def main(
     set_error_folder(FOLDER_ERROR)
     set_partition_group(partition_group)
     set_partition_total(partition_total)
-    with open(f'{PARAMETERS}{HYPHEN}{EPA}{JSON}') as json_file:
+    with open(f'{EPA}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
         json_data = json.load(json_file)
         stitch: bool
         aggregate: bool

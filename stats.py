@@ -92,7 +92,7 @@ def main(
     if not called_from_main:
         assert False, f'stats was called from another module. This functionality is not yet supported.'
     else:
-        with open(f'{PARAMETERS}{HYPHEN}{STATS}{JSON}') as json_file:
+        with open(f'{STATS}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
             json_data = json.load(json_file)
             bool_stitch_epa: bool = json_data[PARAM_STITCH_EPA]
             bool_stitch_trends: bool = json_data[PARAM_STITCH_TRENDS]

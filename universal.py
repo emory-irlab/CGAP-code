@@ -699,7 +699,7 @@ if __name__ == '__main__':
     print(f'universal.py is not meant to be run as a script. Aborting.')
     exit(1)
 
-with open(f'{PARAMETERS}{HYPHEN}{UNIVERSAL}{JSON}') as universal_json_file:
+with open(f'{UNIVERSAL}{HYPHEN}{PARAMETERS}{JSON}') as universal_json_file:
     universal_parameters = json.load(universal_json_file)
     COMMON_WORD_UNIVERSAL: str = universal_parameters[COMMON_WORD]
     MAX_SEARCH_VOLUME: float = universal_parameters[PARAM_MAX_SEARCH_FREQUENCY]

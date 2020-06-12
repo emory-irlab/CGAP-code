@@ -64,7 +64,7 @@ def main(
     set_error_folder(FOLDER_ERROR)
     set_partition_group(partition_group)
     set_partition_total(partition_total)
-    with open(f'{PARAMETERS}{HYPHEN}{TRENDS}{JSON}') as json_file:
+    with open(f'{TRENDS}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
         json_data = json.load(json_file)
         aggregate: bool
         download: bool
