@@ -2,7 +2,7 @@
     "customer_id": "7981360996",
     "run_keyword_expansion": true,
     "only_expand_missing": true,
-    "aggregate_expansions": false,
+    "aggregate_expansions": true,
     "source_priority_order": [
         "symptoms",
         "cgap",
@@ -10,16 +10,6 @@
     ],
     "keyword": {
         "city": [
-            "atlanta",
-            "boston",
-            "chicago",
-            "dallas",
-            "houston",
-            "los_angeles",
-            "miami",
-            "new_york",
-            "philadelphia",
-            "washington",
             "usa"
         ]
     },
