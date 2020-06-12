@@ -193,8 +193,9 @@ def generate_keywords_to_download_dict(
     source: str
     list_all_keywords: List[str] = []
     for source in list_source_folders_to_download:
-        if dict_keywords.get(source, EMPTY_STRING):
-            list_all_keywords.extend(dict_keywords[source].keys())
+        source_keywords: {} = dict_keywords.get(source, {})
+        if source_keywords:
+            list_all_keywords.extend(source_keywords.keys())
 
     list_all_keywords = list(set(list_all_keywords))
     list_already_downloaded_filenames: List[str] = import_paths_from_folder(
