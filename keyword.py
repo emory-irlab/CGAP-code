@@ -13,7 +13,6 @@ COMPETITION_VALUE: str = 'competition_value'
 CUSTOMER_ID: str = 'customer_id'
 EXPANSION: str = 'expansion'
 EXPANDED_FROM: str = 'expanded_from'
-YAML: str = 'yaml'
 
 # DEFAULT
 DEFAULT_LANGUAGE_ID_ENGLISH: str = '1000'
@@ -65,7 +64,7 @@ def main(
         bool_only_expand_missing: bool
         bool_aggregate_expansion: bool
         customer_id: str
-        filename_yaml: str
+        credentials: str
         folder_expansion_raw: str
         folder_expansion_aggregate: str
         folder_expansion_parents: str
@@ -76,8 +75,8 @@ def main(
             bool_run_keyword_expansion = json_data[PARAM_KEYWORD_EXPANSION]
             bool_only_expand_missing = json_data[PARAM_ONLY_EXPAND_MISSING]
             bool_aggregate_expansion = json_data[PARAM_AGGREGATE_EXPANSION]
+            credentials = json_data[CREDENTIALS]
             customer_id = json_data[CUSTOMER_ID]
-            filename_yaml = json_data[YAML]
             folder_expansion_raw = json_data[PARAM_FOLDER_EXPANSION_RAW]
             folder_expansion_aggregate = json_data[PARAM_FOLDER_EXPANSION_AGGREGATE]
             folder_expansion_parents = json_data[PARAM_FOLDER_EXPANSION_PARENTS]
@@ -99,7 +98,7 @@ def main(
             bool_run_keyword_expansion = False
             bool_aggregate_expansion = False
             customer_id = EMPTY_STRING
-            filename_yaml = EMPTY_STRING
+            credentials = EMPTY_STRING
             list_source_priority_order = []
             folder_expansion_raw = EMPTY_STRING
             folder_expansion_aggregate = EMPTY_STRING
@@ -107,7 +106,7 @@ def main(
             folder_keywords_google = EMPTY_STRING
     json_file.close()
 
-    google_ads_client: GoogleAdsClient = GoogleAdsClient.load_from_storage(filename_yaml)
+    google_ads_client: GoogleAdsClient = GoogleAdsClient.load_from_storage(credentials)
 
     if bool_run_keyword_expansion:
         set_error_task_origin(task_origin=PARAM_KEYWORD_EXPANSION)

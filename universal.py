@@ -16,12 +16,14 @@ from typing import Tuple
 import pandas as pd
 
 # STATIC VARIABLES
-CITY_AB: str = 'abbreviation'
 AGGREGATE: str = 'aggregate'
+API: str = 'api'
 CITY: str = 'city'
+CITY_AB: str = 'abbreviation'
 COMMON_WORD: str = 'common_word'
 COMMON_WORD_FREQUENCY: str = 'common_word_frequency'
 COMMON_WORD_FREQUENCY_RELATIVE: str = 'common_word_frequency_relative'
+CREDENTIALS: str = 'credentials'
 CSV: str = '.csv'
 DATE: str = 'date'
 DATE_FORMAT: str = '%Y-%m-%d'

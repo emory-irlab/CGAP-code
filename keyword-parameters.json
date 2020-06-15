@@ -17,5 +17,5 @@
     "folder_expansion_aggregate": "../CGAP-data/CGAP-keywords/expansion/aggregate/",
     "folder_expansion_parents": "../CGAP-data/CGAP-keywords/expansion/parents/",
     "folder_keywords_google": "../CGAP-data/CGAP-keywords/keywords/google/",
-    "yaml": "./google-ads.yaml"
+    "credentials": "./credentials-google.yaml"
 }
