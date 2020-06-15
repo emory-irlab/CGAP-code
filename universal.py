@@ -421,6 +421,14 @@ def partition_list(
         return list_partition_candidates[start_index:end_index]
 
 
+def parse_api_credentials(
+        filename: str,
+) -> dict:
+    with open(f'{filename}') as json_file:
+        json_data = json.load(json_file)
+        return json_data
+
+
 def import_single_file(
         folder: str,
         list_filename_filter_conditions: Tuple[str, ...] = DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS,
