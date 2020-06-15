@@ -127,7 +127,10 @@ def main(
                     bool_download_with_common_word=bool_download_with_common_word,
                     folder_trends_raw=FOLDER_TRENDS_RAW,
                 )
-            write_errors_to_disk(overwrite=False)
+            write_errors_to_disk(
+                clear_task_origin=False,
+                overwrite=False,
+            )
         print(f'Finished downloading keywords for partition group: {get_partition_group()} of {get_partition_total()}.')
 
     if stitch:
