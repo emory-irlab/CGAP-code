@@ -99,8 +99,6 @@ def main(
         bool_download_with_common_word: bool = json_data[PARAM_DOWNLOAD_WITH_COMMON_WORD]
     json_file.close()
 
-    list_date_pairs: List[Tuple[str, str]] = list(zip(START_DATES, END_DATES))
-
     if download:
         set_error_task_origin(task_origin=DOWNLOAD)
         city: str
@@ -108,7 +106,7 @@ def main(
             log_error(f'{DOWNLOAD} : {city}', log=True)
             dict_keyword_sets: Dict[str, List[Tuple[str, str]]] = generate_keywords_to_download_dict(
                 city=city,
-                list_date_pairs=list_date_pairs,
+                list_date_pairs=LIST_DATE_PAIRS,
                 list_source_folders_to_download=tuple(list_source_folders_to_download),
                 folder_keywords=FOLDER_KEYWORDS,
                 folder_trends_raw=FOLDER_TRENDS_RAW,
@@ -131,15 +129,12 @@ def main(
 
     if stitch:
         set_error_task_origin(task_origin=STITCH)
-        start_date: str
-        end_date: str
-        start_date, end_date = generate_date_pair_for_full_series(list_date_pairs)
         for city in list_partitioned_cities:
             stitch_trends_raw_for_city(
                 city=city,
-                start_date=start_date,
-                end_date=end_date,
-                list_date_pairs=list_date_pairs,
+                start_date=FULL_START_DATE,
+                end_date=FULL_END_DATE,
+                list_date_pairs=LIST_DATE_PAIRS,
                 common_word=COMMON_WORD_UNIVERSAL,
                 folder_trends_raw=FOLDER_TRENDS_RAW,
                 folder_trends_stitch=FOLDER_TRENDS_STITCH,
@@ -157,8 +152,8 @@ def main(
         )
         if partitioning_is_valid_for_aggregation:
             df_aggregate_keywords: pd.DataFrame = aggregate_trends_stitched(
-                start_date=start_date,
-                end_date=end_date,
+                start_date=FULL_START_DATE,
+                end_date=FULL_END_DATE,
                 list_cities=tuple(list_input_cities),
                 list_source_folders_to_download=tuple(list_source_folders_to_download),
                 folder_keywords=FOLDER_KEYWORDS,

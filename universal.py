@@ -18,6 +18,7 @@ import pandas as pd
 # STATIC VARIABLES
 AGGREGATE: str = 'aggregate'
 API: str = 'api'
+CBSA: str = 'CBSA'
 CITY: str = 'city'
 CITY_AB: str = 'abbreviation'
 COMMON_WORD: str = 'common_word'
@@ -424,9 +425,13 @@ def partition_list(
 def parse_api_credentials(
         filename: str,
 ) -> dict:
-    with open(f'{filename}') as json_file:
-        json_data = json.load(json_file)
-        return json_data
+    try:
+        with open(f'{filename}') as json_file:
+            json_data = json.load(json_file)
+            return json_data
+    # todo - fix this
+    except:
+        return {}
 
 
 def import_single_file(
@@ -735,3 +740,9 @@ with open(f'{UNIVERSAL}{HYPHEN}{PARAMETERS}{JSON}') as universal_json_file:
     FOLDER_TRENDS_METRICS_RAW: str = universal_parameters[PARAM_FOLDER_TRENDS_METRICS_RAW]
     FOLDER_TRENDS_METRICS_AGGREGATE: str = universal_parameters[PARAM_FOLDER_TRENDS_METRICS_AGGREGATE]
 universal_json_file.close()
+
+FULL_START_DATE: str
+FULL_END_DATE: str
+LIST_DATE_PAIRS: List[Tuple[str, str]] = list(zip(START_DATES, END_DATES))
+FULL_START_DATE, FULL_END_DATE = generate_date_pair_for_full_series(LIST_DATE_PAIRS)
+
