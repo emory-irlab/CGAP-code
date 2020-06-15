@@ -248,7 +248,7 @@ PARTITION_GROUP: int = 1
 PARTITION_TOTAL: int = 1
 
 
-def generate_date_pairs(
+def generate_date_pair_for_full_series(
         list_date_pairs: List[Tuple[str, str]],
 ) -> tuple:
     first_end_date: str

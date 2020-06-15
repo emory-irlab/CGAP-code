@@ -74,11 +74,11 @@ def main(
         list_partitioned_cities: Tuple[str, ...]
         list_source_folders_to_download: List[str] = json_data[PARAM_SOURCE_FOLDERS_TO_DOWNLOAD]
         if called_from_main:
+            aggregate = json_data[AGGREGATE]
             download = json_data[DOWNLOAD]
             validate_download = json_data[PARAM_VALIDATE_DOWNLOAD]
             stitch = json_data[STITCH]
             only_stitch_missing = json_data[PARAM_ONLY_STITCH_MISSING]
-            aggregate = json_data[AGGREGATE]
             parameters: dict = json_data[TRENDS]
             list_input_cities: List[str] = parameters[CITY]
             list_input_cities.sort()
@@ -90,19 +90,16 @@ def main(
                 )
             )
         else:
+            aggregate = False
             download = False
             validate_download = False
             stitch = True
             only_stitch_missing = True
-            aggregate = False
             list_partitioned_cities = list_cities
         bool_download_with_common_word: bool = json_data[PARAM_DOWNLOAD_WITH_COMMON_WORD]
     json_file.close()
 
     list_date_pairs: List[Tuple[str, str]] = list(zip(START_DATES, END_DATES))
-    start_date: str
-    end_date: str
-    start_date, end_date = generate_date_pairs(list_date_pairs)
 
     if download:
         set_error_task_origin(task_origin=DOWNLOAD)
@@ -131,10 +128,12 @@ def main(
                 clear_task_origin=False,
                 overwrite=False,
             )
-        print(f'Finished downloading keywords for partition group: {get_partition_group()} of {get_partition_total()}.')
 
     if stitch:
         set_error_task_origin(task_origin=STITCH)
+        start_date: str
+        end_date: str
+        start_date, end_date = generate_date_pair_for_full_series(list_date_pairs)
         for city in list_partitioned_cities:
             stitch_trends_raw_for_city(
                 city=city,
