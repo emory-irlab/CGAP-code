@@ -4,8 +4,8 @@ import time
 from datetime import timedelta
 
 import numpy as np
-from pytrends.exceptions import ResponseError
-from pytrends.request import TrendReq
+import pytrends.exceptions
+import pytrends.request
 
 from universal import *
 
@@ -337,7 +337,7 @@ def submit_dma_based_query(
     generate_sub_paths_for_folder(
         folder=folder_trends_raw,
     )
-    pytrend = TrendReq()
+    pytrend = pytrends.request.TrendReq()
     geo_code: str
     if city == USA:
         geo_code = US
@@ -394,7 +394,7 @@ def submit_dma_based_query(
                     geo=geo_code,
                     timeframe=tm,
                 )
-            except ResponseError:
+            except pytrends.exceptions.ResponseError:
                 log_error(error=f'{ERROR_RESPONSE}{HYPHEN}{output_nt_trends_raw_filename}')
                 return
 
