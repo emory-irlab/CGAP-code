@@ -145,11 +145,7 @@ def main(
 					optional_filename_label=source,
 					bool_suppress_print=True,
 				)
-				write_errors_to_disk(
-					clear_task_origin=False,
-					bool_suppress_print=True,
-					overwrite=False,
-				)
+				write_errors_to_disk(clear_task_origin=False, bool_suppress_print=True, overwrite=False)
 
 			log_error(f"{AGGREGATE} : {EXPANSION}", log=True)
 			aggregate_data_in_folder(
@@ -247,10 +243,7 @@ def run_keyword_expansion(
 			except GoogleAdsException as ex:
 				log_error(error=f"{city}{HYPHEN}{seed_keyword}{HYPHEN}exception")
 				log_exception(exception=ex)
-				write_errors_to_disk(
-					clear_task_origin=False,
-					overwrite=False,
-				)
+				write_errors_to_disk(clear_task_origin=False, overwrite=False)
 				continue
 
 			list_expanded_keywords: List[str] = []

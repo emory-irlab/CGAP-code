@@ -388,11 +388,7 @@ def aggregate_data_in_folder(
 			list_data_dfs_for_all_cities.append(concatenated_data_per_city)
 		else:
 			log_error(error=f"{city}{HYPHEN}{ERROR_EMPTY}")
-		write_errors_to_disk(
-			clear_task_origin=False,
-			bool_suppress_print=bool_suppress_print,
-			overwrite=False,
-		)
+		write_errors_to_disk(clear_task_origin=False, bool_suppress_print=bool_suppress_print, overwrite=False)
 
 	df_aggregate: pd.DataFrame = pd.concat(
 		list_data_dfs_for_all_cities,
