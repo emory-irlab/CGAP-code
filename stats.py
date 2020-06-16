@@ -863,7 +863,7 @@ def run_intercity(
             filename=common_city_filename,
             delimiter=HYPHEN,
             extension=CSV,
-            named_tuple=trends.NT_filename_trends_stitch(),
+            named_tuple=trends.NT_filename_trends_stitch,
         )
 
         if nt_parsed_trends_stitch_filename.city != common_city:
