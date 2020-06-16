@@ -213,17 +213,17 @@ def run_keyword_expansion(
 
 		seed_keyword: str
 		for seed_keyword in list_source_keywords:
-			nt_expansion_raw_filename: tuple = NT_filename_expansion_raw(
+			nt_filename_expansion_raw: tuple = NT_filename_expansion_raw(
 				city=city,
 				keyword=seed_keyword,
 			)
-			output_expansion_raw_filename: str = generate_filename(
-				filename_nt=nt_expansion_raw_filename,
+			filename_expansion_raw: str = generate_filename(
+				nt_filename=nt_filename_expansion_raw,
 				delimiter=HYPHEN,
 				extension=CSV,
 			)
 
-			if only_expand_missing and output_expansion_raw_filename in list_already_expanded_filenames_in_raw_source:
+			if only_expand_missing and filename_expansion_raw in list_already_expanded_filenames_in_raw_source:
 				continue
 
 			print(f"expansion : {city} : {seed_keyword}")
@@ -274,20 +274,20 @@ def run_keyword_expansion(
 					)
 				)
 
-				output_expansion_parent_filename: str = generate_filename(
-					filename_nt=NT_filename_expansion_parents(
+				filename_expansion_parent: str = generate_filename(
+					nt_filename=NT_filename_expansion_parents(
 						expanded_keyword=expanded_keyword,
 					),
 					extension=TXT,
 				)
 				write_list_to_file(
-					filename=f"{output_expansion_parent_filename}",
+					filename=f"{filename_expansion_parent}",
 					folder=folder_expansion_parents,
 					list_strings=[f"{city}{HYPHEN}{seed_keyword}"],
 				)
 
 			output_keywords_google_filename: str = generate_filename(
-				filename_nt=NT_filename_keywords_google(
+				nt_filename=NT_filename_keywords_google(
 					seed_keyword=seed_keyword,
 				),
 				extension=TXT,
@@ -310,7 +310,7 @@ def run_keyword_expansion(
 				df_keyword_ideas_for_city = pd.DataFrame()
 				log_error(error=f"{city}{HYPHEN}{seed_keyword}{HYPHEN}{ERROR_EMPTY}")
 			df_keyword_ideas_for_city.to_csv(
-				f"{folder_expansion_raw_source}{output_expansion_raw_filename}",
+				f"{folder_expansion_raw_source}{filename_expansion_raw}",
 				index=False,
 			)
 

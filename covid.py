@@ -62,15 +62,15 @@ def main(
 	generate_sub_paths_for_folder(
 		folder=folder_covid_stitch,
 	)
-	nt_aggregate_filename = NT_filename_aggregate(
+	nt_filename_aggregate = NT_filename_aggregate(
 		aggregate=AGGREGATE,
 	)
-	output_covid_aggregate_filename: str = generate_filename(
-		filename_nt=nt_aggregate_filename,
+	filename_covid_stitch: str = generate_filename(
+		nt_filename=nt_filename_aggregate,
 		extension=CSV,
 	)
 	df_merged.to_csv(
-		f"{folder_covid_stitch}{output_covid_aggregate_filename}",
+		f"{folder_covid_stitch}{filename_covid_stitch}",
 		index=False,
 	)
 	write_errors_to_disk()

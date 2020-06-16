@@ -142,7 +142,7 @@ def main(
 				folder_epa_aggregate=FOLDER_EPA_AGGREGATE,
 			)
 			output_epa_aggregate_filename: str = generate_filename(
-				filename_nt=NT_filename_aggregate,
+				nt_filename=NT_filename_aggregate,
 				extension=CSV,
 			)
 			df_aggregate_epa.to_csv(
@@ -259,7 +259,7 @@ def aggregate_epa(
 			)
 			list_city_dfs.append(df_parsed_city)
 			output_aggregate_for_city_filename: str = generate_filename(
-				filename_nt=NT_filename_city_aggregate(
+				nt_filename=NT_filename_city_aggregate(
 					city=city,
 				),
 				extension=CSV,
@@ -309,17 +309,17 @@ def stitch_epa(
 			if parsed_city != city:
 				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{parsed_city}")
 			df_single_column: pd.DataFrame = df_city[column_name].to_frame(name=epa_column_name)
-			nt_epa_stitch_filename: tuple = NT_filename_epa_stitch(
+			nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
 				city=city,
 				pollutant=pollutant,
 				target_statistic=target_statistic,
 			)
-			output_epa_stitch_filename: str = generate_filename(
-				filename_nt=nt_epa_stitch_filename,
+			filename_epa_stitch: str = generate_filename(
+				nt_filename=nt_filename_epa_stitch,
 				extension=CSV,
 				delimiter=HYPHEN,
 			)
-			df_single_column.to_csv(f"{folder_epa_stitch}{output_epa_stitch_filename}")
+			df_single_column.to_csv(f"{folder_epa_stitch}{filename_epa_stitch}")
 	else:
 		log_error(error=f"city_not_found{HYPHEN}{city}")
 

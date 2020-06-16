@@ -160,7 +160,7 @@ def main(
 				folder_trends_aggregate=FOLDER_TRENDS_AGGREGATE,
 			)
 			output_trends_aggregate_filename: str = generate_filename(
-				filename_nt=NT_filename_aggregate(
+				nt_filename=NT_filename_aggregate(
 					aggregate=AGGREGATE,
 				),
 				extension=CSV,
@@ -230,7 +230,7 @@ def generate_keywords_to_download_dict(
 				),
 			)
 			filename_trends_raw: str = generate_filename(
-				filename_nt=nt_filename_trends_raw,
+				nt_filename=nt_filename_trends_raw,
 				delimiter=HYPHEN,
 				extension=CSV,
 			)
@@ -361,7 +361,7 @@ def submit_dma_based_query(
 			start_date, end_date = pair_of_dates
 			start_date = start_date.replace(UNDERSCORE, HYPHEN)
 			end_date = end_date.replace(UNDERSCORE, HYPHEN)
-			nt_trends_raw_filename: tuple = NT_filename_trends_raw(
+			nt_filename_trends_raw: tuple = NT_filename_trends_raw(
 				city=city,
 				keyword=keyword,
 				common_word=generate_common_word_filename_output(
@@ -376,8 +376,8 @@ def submit_dma_based_query(
 					date=end_date,
 				),
 			)
-			output_nt_trends_raw_filename: str = generate_filename(
-				filename_nt=nt_trends_raw_filename,
+			filename_trends_raw: str = generate_filename(
+				nt_filename=nt_filename_trends_raw,
 				delimiter=HYPHEN,
 				extension=CSV,
 			)
@@ -391,15 +391,15 @@ def submit_dma_based_query(
 					timeframe=tm,
 				)
 			except pytrends.exceptions.ResponseError:
-				log_error(error=f"{ERROR_RESPONSE}{HYPHEN}{output_nt_trends_raw_filename}")
+				log_error(error=f"{ERROR_RESPONSE}{HYPHEN}{filename_trends_raw}")
 				return
 
 			df_trend_interest: pd.DataFrame = pytrend.interest_over_time()
 			if df_trend_interest.empty:
-				pd.DataFrame().to_csv(f"{folder_trends_raw}{output_nt_trends_raw_filename}")
-				log_error(error=f"{ERROR_EMPTY}{HYPHEN}{output_nt_trends_raw_filename}")
+				pd.DataFrame().to_csv(f"{folder_trends_raw}{filename_trends_raw}")
+				log_error(error=f"{ERROR_EMPTY}{HYPHEN}{filename_trends_raw}")
 			else:
-				df_trend_interest.to_csv(f"{folder_trends_raw}{output_nt_trends_raw_filename}")
+				df_trend_interest.to_csv(f"{folder_trends_raw}{filename_trends_raw}")
 
 
 def stitch_trends_raw_for_city(
@@ -454,7 +454,7 @@ def stitch_trends_raw_for_city(
 	keyword: str
 	for keyword, dict_file_paths_for_keyword in dict_keywords_file_paths.items():
 		parsed_common_word: str
-		nt_trends_stitch_filename = NT_filename_trends_stitch(
+		nt_filename_trends_stitch = NT_filename_trends_stitch(
 			city=city,
 			keyword=keyword,
 			common_word=common_word,
@@ -465,13 +465,13 @@ def stitch_trends_raw_for_city(
 				date=end_date,
 			),
 		)
-		output_trends_stitch_filename: str = generate_filename(
-			filename_nt=nt_trends_stitch_filename,
+		filename_trends_stitch: str = generate_filename(
+			nt_filename=nt_filename_trends_stitch,
 			delimiter=HYPHEN,
 			extension=CSV,
 		)
 
-		if not only_stitch_missing or output_trends_stitch_filename not in list_already_stitched_trends_filenames:
+		if not only_stitch_missing or filename_trends_stitch not in list_already_stitched_trends_filenames:
 			print(f"{STITCH} : {city} : {keyword}")
 
 			error_keyword: str
@@ -528,7 +528,7 @@ def stitch_trends_raw_for_city(
 			)
 
 			df.to_csv(
-				f"{folder_trends_stitch}{output_trends_stitch_filename}",
+				f"{folder_trends_stitch}{filename_trends_stitch}",
 				index=True,
 				index_label=DATE,
 				date_format=DATE_FORMAT,
@@ -551,7 +551,7 @@ def generate_trends_raw_file_paths_dict(
 			folder=folder_trends_raw,
 			list_paths_filter_conditions=(CSV, city),
 	):
-		nt_parsed_trends_raw_filename = parse_filename(
+		nt_filename_trends_raw_parsed = parse_filename(
 			filename=filename,
 			delimiter=HYPHEN,
 			named_tuple=NT_filename_trends_raw,
@@ -560,26 +560,26 @@ def generate_trends_raw_file_paths_dict(
 
 		try:
 			# noinspection PyStatementEffect
-			nt_parsed_trends_raw_filename.error
+			nt_filename_trends_raw_parsed.error
 		except AttributeError:
 			pass
 		else:
 			log_error(error=f"critical_error{HYPHEN}parse_trends_raw_filename{HYPHEN}{filename}")
 			continue
 
-		if nt_parsed_trends_raw_filename.city != city:
-			log_error(error=f"city_mismatch{HYPHEN}{nt_parsed_trends_raw_filename.city}")
+		if nt_filename_trends_raw_parsed.city != city:
+			log_error(error=f"city_mismatch{HYPHEN}{nt_filename_trends_raw_parsed.city}")
 			continue
 
-		keyword_dict: Dict[str, List[str]] = dict_filenames.get(nt_parsed_trends_raw_filename.keyword, {})
+		keyword_dict: Dict[str, List[str]] = dict_filenames.get(nt_filename_trends_raw_parsed.keyword, {})
 		if not keyword_dict:
-			dict_filenames.update({nt_parsed_trends_raw_filename.keyword: {}})
+			dict_filenames.update({nt_filename_trends_raw_parsed.keyword: {}})
 
-		list_file_paths: List[str] = keyword_dict.get(nt_parsed_trends_raw_filename.common_word, [])
+		list_file_paths: List[str] = keyword_dict.get(nt_filename_trends_raw_parsed.common_word, [])
 		if not list_file_paths:
-			dict_filenames[nt_parsed_trends_raw_filename.keyword].update(
-				{nt_parsed_trends_raw_filename.common_word: []})
-		dict_filenames[nt_parsed_trends_raw_filename.keyword][nt_parsed_trends_raw_filename.common_word].append(
+			dict_filenames[nt_filename_trends_raw_parsed.keyword].update(
+				{nt_filename_trends_raw_parsed.common_word: []})
+		dict_filenames[nt_filename_trends_raw_parsed.keyword][nt_filename_trends_raw_parsed.common_word].append(
 			filename)
 
 	return dict_filenames
@@ -603,17 +603,17 @@ def generate_df_from_trends_raw_file_paths(
 	list_parsed_date_pairs: List[Tuple[str, str]] = []
 
 	for common_word_filename in list_common_word_filenames:
-		nt_parsed_common_word_filename = parse_filename(
+		nt_filename_common_word_parsed = parse_filename(
 			filename=common_word_filename,
 			delimiter=HYPHEN,
 			extension=CSV,
 			named_tuple=NT_filename_trends_raw,
 		)
-		start_date: str = parse_filename_date(nt_parsed_common_word_filename.start_date)
-		end_date: str = parse_filename_date(nt_parsed_common_word_filename.end_date)
-		if nt_parsed_common_word_filename.city != city:
+		start_date: str = parse_filename_date(nt_filename_common_word_parsed.start_date)
+		end_date: str = parse_filename_date(nt_filename_common_word_parsed.end_date)
+		if nt_filename_common_word_parsed.city != city:
 			log_error(error=f"city_mismatch{HYPHEN}{common_word_filename}")
-		if keyword != nt_parsed_common_word_filename.keyword:
+		if keyword != nt_filename_common_word_parsed.keyword:
 			log_error(error=f"keyword_mismatch{HYPHEN}{common_word_filename}")
 
 		df: pd.DataFrame = pd.read_csv(f"{folder_trends_raw}{common_word_filename}")
@@ -853,19 +853,19 @@ def aggregate_trends_stitched(
 				folder=folder_trends_stitch,
 				list_paths_filter_conditions=(CSV, city),
 		):
-			nt_parsed_trends_stitch_filename = parse_filename(
+			nt_filename_trends_stitch_parsed = parse_filename(
 				filename=stitched_keyword_filename,
 				delimiter=HYPHEN,
 				named_tuple=NT_filename_trends_stitch,
 				extension=CSV,
 			)
 
-			if nt_parsed_trends_stitch_filename.city != city:
-				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_trends_stitch_filename.city}{HYPHEN}{stitched_keyword_filename}")
+			if nt_filename_trends_stitch_parsed.city != city:
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_filename_trends_stitch_parsed.city}{HYPHEN}{stitched_keyword_filename}")
 				continue
-			if nt_parsed_trends_stitch_filename.start_date != generate_date_for_filename_output(start_date):
+			if nt_filename_trends_stitch_parsed.start_date != generate_date_for_filename_output(start_date):
 				log_error(error=f"start_date_mismatch{HYPHEN}{start_date}{HYPHEN}{stitched_keyword_filename}")
-			if nt_parsed_trends_stitch_filename.end_date != generate_date_for_filename_output(end_date):
+			if nt_filename_trends_stitch_parsed.end_date != generate_date_for_filename_output(end_date):
 				log_error(error=f"end_date_mismatch{HYPHEN}{end_date}{HYPHEN}{stitched_keyword_filename}")
 			df_stitched_keyword: pd.DataFrame = pd.read_csv(
 				f"{folder_trends_stitch}{stitched_keyword_filename}",
@@ -874,11 +874,11 @@ def aggregate_trends_stitched(
 				index_col=DATE,
 			)
 			df_stitched_keyword.insert(0, CITY, city)
-			df_stitched_keyword.insert(1, COMMON_WORD, nt_parsed_trends_stitch_filename.common_word)
-			df_stitched_keyword.insert(2, KEYWORD, nt_parsed_trends_stitch_filename.keyword)
-			source: str = source_dict.get(nt_parsed_trends_stitch_filename.keyword, source_error)
+			df_stitched_keyword.insert(1, COMMON_WORD, nt_filename_trends_stitch_parsed.common_word)
+			df_stitched_keyword.insert(2, KEYWORD, nt_filename_trends_stitch_parsed.keyword)
+			source: str = source_dict.get(nt_filename_trends_stitch_parsed.keyword, source_error)
 			if source == source_error:
-				log_error(error=f"{city}{HYPHEN}{UNKNOWN}{HYPHEN}{SOURCE}{HYPHEN}{nt_parsed_trends_stitch_filename.keyword}")
+				log_error(error=f"{city}{HYPHEN}{UNKNOWN}{HYPHEN}{SOURCE}{HYPHEN}{nt_filename_trends_stitch_parsed.keyword}")
 			df_stitched_keyword.insert(3, SOURCE, source)
 			list_stitched_keywords_for_city_dfs.append(df_stitched_keyword)
 
@@ -887,7 +887,7 @@ def aggregate_trends_stitched(
 			sort=True,
 		)
 		output_aggregate_for_city_filename: str = generate_filename(
-			filename_nt=NT_filename_city_aggregate(
+			nt_filename=NT_filename_city_aggregate(
 				city=city,
 			),
 			extension=CSV,

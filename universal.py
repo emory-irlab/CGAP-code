@@ -310,12 +310,12 @@ def parse_filename_numeric(
 
 
 def generate_filename(
-		filename_nt: tuple,
+		nt_filename: tuple,
 		delimiter: str = "",
 		folder: str = "",
 		extension: str = "",
 ) -> str:
-	output: str = delimiter.join(filename_nt)
+	output: str = delimiter.join(nt_filename)
 	if folder:
 		output = folder + output
 	if extension:
@@ -693,7 +693,7 @@ def write_errors_to_disk(
 		print(f"No task origin was specified for the error log.")
 
 	output_filename: str = generate_filename(
-		filename_nt=NT_filename_errors(
+		nt_filename=NT_filename_errors(
 			error_file_origin=error_file_origin,
 			error_task_origin=error_task_origin,
 		),

@@ -891,7 +891,7 @@ def run_intercity(
 				),
 			)
 			filename_trends_stitch: str = generate_filename(
-				filename_nt=nt_filename_trends_stitch,
+				nt_filename=nt_filename_trends_stitch,
 				delimiter=HYPHEN,
 				extension=CSV,
 			)
