@@ -7,6 +7,7 @@ from universal import *
 DATE_EPA: str = "Date"
 OZONE_DONGHAI: str = "Ozone"
 EPA_API_CBSA: str = "cbsa"
+EPA_API_DATA: str = 'Data'
 EPA_API_DATE_FORMAT: str = "%Y%m%d"
 EPA_API_START_DATE: str = "bdate"
 EPA_API_END_DATE: str = "edate"
@@ -104,7 +105,7 @@ def main(
 						folder_epa_raw=FOLDER_EPA_RAW,
 					)
 		else:
-			log_error(error=)  # todo missing api link
+			log_error(error=f"api_url_missing{HYPHEN}{download_data_type}")
 		write_errors_to_disk(
 			clear_task_origin=False,
 			overwrite=False,
@@ -180,10 +181,10 @@ def download_epa(
 		if param:
 			api_params.update({EPA_API_POLLUTANT_PARAM: param})
 		else:
-			log_error()
+			log_error(error=f"pollutant_param_not_found{HYPHEN}{param}")
 			return
 	else:
-		log_error()
+		log_error(error=f"pollutant_not_found{HYPHEN}{pollutant}")
 		return
 
 	if download_data_type == CBSA:
@@ -193,12 +194,16 @@ def download_epa(
 			if cbsa:
 				api_params.update({EPA_API_CBSA: cbsa})
 			else:
-				log_error()
+				log_error(error=f"{CBSA}_not_found{HYPHEN}{cbsa}")
 				return
 		else:
-			log_error()
+			log_error(error=f"city_not_found{HYPHEN}{city}")
 			return
 
+		list_already_downloaded_files: List[str] = import_paths_from_folder(
+			folder=folder_epa_raw,
+			list_paths_filter_conditions=(city, pollutant,),
+		)
 		start_date_str: str
 		end_date_str: str
 		for start_date_str, end_date_str in list_date_pairs:
@@ -206,17 +211,36 @@ def download_epa(
 			end_date_dt: datetime = datetime.strptime(end_date_str, DATE_FORMAT)
 			api_params.update({EPA_API_START_DATE: start_date_dt.strftime(EPA_API_DATE_FORMAT)})
 			api_params.update({EPA_API_END_DATE: end_date_dt.strftime(EPA_API_DATE_FORMAT)})
-			response: requests.Response = requests.get(
-				url=api_url,
-				params=api_params,
+			nt_filename_epa_raw: tuple = NT_filename_epa_raw(
+				city=city,
+				pollutant=pollutant,
+				start_date=start_date_str,
+				end_date=end_date_str,
 			)
-			print(response)
-			print(response.content)
-			exit()
+			filename_epa_raw: str = generate_filename(
+				nt_filename=nt_filename_epa_raw,
+				delimiter=HYPHEN,
+				extension=CSV,
+			)
+			if not only_download_missing or filename_epa_raw not in list_already_downloaded_files:
+				response: requests.Response = requests.get(
+					url=api_url,
+					params=api_params,
+				)
+				if response.status_code != 200:
+					log_error(error=f"{filename_epa_raw}{HYPHEN}{response.status_code}")
+					log_error(error=f"{filename_epa_raw}{HYPHEN}{response.headers.get(ERROR, UNKNOWN)}")
+					continue
 
-	# todo
-	# setup file naming convention for epa raw
-	# set up stitching for epa
+				response_dict: dict = json.loads(response.text)
+				data_dict: dict = response_dict.get(EPA_API_DATA, {})
+				if data_dict:
+					df: pd.DataFrame = pd.DataFrame.from_dict(
+						data_dict,
+					)
+					df.to_csv(f"{folder_epa_raw}{filename_epa_raw}")
+				else:
+					log_error(error=f"{filename_epa_raw}{HYPHEN}missing_data")
 
 
 def aggregate_epa(
