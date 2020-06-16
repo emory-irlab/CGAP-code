@@ -211,8 +211,8 @@ def download_epa(
 			nt_filename_epa_raw: tuple = NT_filename_epa_raw(
 				city=city,
 				pollutant=pollutant,
-				start_date=start_date_str,
-				end_date=end_date_str,
+				start_date=generate_date_for_filename_output(start_date_str),
+				end_date=generate_date_for_filename_output(end_date_str),
 			)
 			filename_epa_raw: str = generate_filename(
 				nt_filename=nt_filename_epa_raw,
