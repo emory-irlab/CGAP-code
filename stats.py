@@ -371,7 +371,7 @@ def run_metrics(
 				filename=filename,
 				delimiter=HYPHEN,
 				extension=CSV,
-				named_tuple=epa.NT_epa_stitch_filename,
+				named_tuple=epa.NT_filename_epa_stitch,
 			)
 			if nt_parsed_epa_or_trends_filename.city != city:
 				log_error(error=f'city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}')
@@ -506,8 +506,7 @@ def run_correlation_comparison(
 						pivot_table_set = True
 					else:
 						if df_pivot_table.empty:
-							log_error(error=f'df_empty_despite_being_set{HYPHEN}{CORRELATIONS_COMPARISON}{HYPHEN}'
-							                f'{filename_correlation}')
+							log_error(error=f'df_empty_despite_being_set{HYPHEN}{CORRELATIONS_COMPARISON}{HYPHEN}{filename_correlation}')
 							continue
 
 						df_comparison_table: pd.DataFrame = pd.read_csv(
@@ -624,7 +623,8 @@ def run_correlations(
 											trends_set = True
 										else:
 											if df_trends.empty:
-												log_error(error=f'df_empty_despite_being_set{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}')
+												log_error(
+													error=f'df_empty_despite_being_set{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}')
 												continue
 
 										filename_epa: str
@@ -649,7 +649,8 @@ def run_correlations(
 														city, pollutant, target_statistic, CSV,
 													)
 												)
-												log_error(error=f'df_empty_despite_being_set{HYPHEN}{EPA}{HYPHEN}{filename_epa}')
+												log_error(
+													error=f'df_empty_despite_being_set{HYPHEN}{EPA}{HYPHEN}{filename_epa}')
 												continue
 
 										dict_cor_row: dict = compute_correlations_for_keyword(
@@ -697,15 +698,15 @@ def generate_stats_correlations_filename(
 		time_shift: int,
 ) -> str:
 	filename: str = f'{city}{HYPHEN}' \
-	                f'{keyword}{HYPHEN}' \
-	                f'{pollutant}{HYPHEN}' \
-	                f'{target_statistic}{HYPHEN}' \
-	                f'{bool_ignore_zero}{HYPHEN}' \
-	                f'{generate_numeric_for_filename_output(threshold)}{HYPHEN}' \
-	                f'{threshold_percentile}{HYPHEN}' \
-	                f'{above_or_below_threshold}{HYPHEN}' \
-	                f'{generate_numeric_for_filename_output(time_shift)}' \
-	                f'{CSV}'
+					f'{keyword}{HYPHEN}' \
+					f'{pollutant}{HYPHEN}' \
+					f'{target_statistic}{HYPHEN}' \
+					f'{bool_ignore_zero}{HYPHEN}' \
+					f'{generate_numeric_for_filename_output(threshold)}{HYPHEN}' \
+					f'{threshold_percentile}{HYPHEN}' \
+					f'{above_or_below_threshold}{HYPHEN}' \
+					f'{generate_numeric_for_filename_output(time_shift)}' \
+					f'{CSV}'
 
 	return filename
 
@@ -909,15 +910,9 @@ def run_intercity(
 
 				df_intercity: pd.DataFrame = pd.DataFrame(index=df_common_city_keyword.index)
 
-				# @formatter:off
-                df_common_word_cross_city_scalar: pd.DataFrame = df_common_city_keyword[COMMON_WORD_FREQUENCY] / \
-                                                                 df_city_to_be_scaled[COMMON_WORD_FREQUENCY]
-                df_keyword_frequency_scaled_within_city: pd.DataFrame = df_city_to_be_scaled[COMMON_WORD_FREQUENCY] / \
-                                                                        df_city_to_be_scaled[
-                                                                            COMMON_WORD_FREQUENCY_RELATIVE] * \
-                                                                        df_city_to_be_scaled[KEYWORD_FREQUENCY_RELATIVE]
-                df_keyword_frequency_scaled_cross_city: pd.DataFrame = df_common_word_cross_city_scalar * df_keyword_frequency_scaled_within_city
-                # @formatter:on
+				df_common_word_cross_city_scalar: pd.DataFrame = df_common_city_keyword[COMMON_WORD_FREQUENCY] / df_city_to_be_scaled[COMMON_WORD_FREQUENCY]
+				df_keyword_frequency_scaled_within_city: pd.DataFrame = df_city_to_be_scaled[COMMON_WORD_FREQUENCY] / df_city_to_be_scaled[COMMON_WORD_FREQUENCY_RELATIVE] * df_city_to_be_scaled[KEYWORD_FREQUENCY_RELATIVE]
+				df_keyword_frequency_scaled_cross_city: pd.DataFrame = df_common_word_cross_city_scalar * df_keyword_frequency_scaled_within_city
 
 				df_intercity[KEYWORD_FREQUENCY_RELATIVE] = df_keyword_frequency_scaled_cross_city
 				df_intercity.insert(0, COMMON_WORD_FREQUENCY, df_common_city_keyword[COMMON_WORD_FREQUENCY])

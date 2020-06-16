@@ -62,7 +62,7 @@ def main(
 	generate_sub_paths_for_folder(
 		folder=folder_covid_stitch,
 	)
-	nt_aggregate_filename = NT_aggregate_filename(
+	nt_aggregate_filename = NT_filename_aggregate(
 		aggregate=AGGREGATE,
 	)
 	output_covid_aggregate_filename: str = generate_filename(

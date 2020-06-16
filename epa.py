@@ -1,18 +1,39 @@
 import sys
+import requests
 
 from universal import *
 
 # STATIC VARIABLES
 DATE_EPA: str = 'Date'
 OZONE_DONGHAI: str = 'Ozone'
+EPA_API_CBSA: str = 'cbsa'
+EPA_API_DATE_FORMAT: str = '%Y%m%d'
+EPA_API_START_DATE: str = 'bdate'
+EPA_API_END_DATE: str = 'edate'
+
+# PARAMS
+PARAM_DOWNLOAD_DATA_TYPE: str = "download_data_type"
+PARAM_ONLY_DOWNLOAD_MISSING: str = "only_download_missing"
 
 # NAMED TUPLES
-NT_epa_stitch_filename = namedtuple(
+# NAMED TUPLES
+NT_filename_epa_raw = namedtuple(
+	'NT_filename_epa_raw',
+	[
+		CITY,
+		POLLUTANT,
+		START_DATE,
+		END_DATE,
+	]
+)
+NT_filename_epa_stitch = namedtuple(
 	'NT_filename_epa_stitch',
 	[
 		CITY,
 		POLLUTANT,
 		TARGET_STATISTIC,
+		START_DATE,
+		END_DATE,
 	]
 )
 
@@ -29,14 +50,23 @@ def main(
 	set_partition_total(partition_total)
 	with open(f'{EPA}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
 		json_data = json.load(json_file)
-		stitch: bool
 		aggregate: bool
+		download: bool
+		download_data_type: str
+		only_download_missing: bool
+		stitch: bool
 		only_stitch_missing: bool
 		list_partitioned_cities: Tuple[str, ...]
+		list_pollutants: Tuple[str, ...]
 		if called_from_main:
-			stitch = json_data[STITCH]
 			aggregate = json_data[AGGREGATE]
+			download = json_data[DOWNLOAD]
+			download_data_type = json_data[PARAM_DOWNLOAD_DATA_TYPE]
+			only_download_missing = json_data[PARAM_ONLY_DOWNLOAD_MISSING]
+			stitch = json_data[STITCH]
+			credentials: str = json_data[CREDENTIALS]
 			parameters: dict = json_data[EPA]
+			api: dict = json_data[API]
 			list_input_cities: List[str] = parameters[CITY]
 			list_input_cities.sort()
 			list_partitioned_cities = tuple(
@@ -46,24 +76,55 @@ def main(
 					partition_total=get_partition_total(),
 				)
 			)
+			list_pollutants = parameters[POLLUTANT]
 		else:
-			list_partitioned_cities = list_cities
-			stitch = True
 			aggregate = False
+			download = False
+			download_data_type = ""
+			only_download_missing = True
+			stitch = True
+			list_partitioned_cities = list_cities
 	json_file.close()
+
+	if download:
+		set_error_task_origin(task_origin=DOWNLOAD)
+		api_url: str = api.get(download_data_type, "")
+		if api_url:
+			api_starter_params: dict = parse_api_credentials(filename=credentials)
+			city: str
+			for city in list_partitioned_cities:
+				for pollutant in list_pollutants:
+					download_epa(
+						city=city,
+						pollutant=pollutant,
+						list_date_pairs=LIST_DATE_PAIRS,
+						api_url=api_url,
+						api_starter_params=api_starter_params,
+						download_data_type=download_data_type,
+						only_download_missing=only_download_missing,
+						folder_epa_raw=FOLDER_EPA_RAW,
+					)
+		else:
+			log_error()  # todo missing api link
+		write_errors_to_disk(
+			clear_task_origin=False,
+			overwrite=False,
+		)
 
 	if stitch:
 		set_error_task_origin(task_origin=STITCH)
 		city: str
 		for city in list_partitioned_cities:
 			# todo - only stitch missing
-			stitch_for_city(
+			# todo - include pollutant as param
+			# start_date, end_date = generate_date_pair_for_full_series(list_date_pairs)
+			stitch_epa(
 				city=city,
 				folder_epa_raw=FOLDER_EPA_RAW,
 				folder_epa_stitch=FOLDER_EPA_STITCH,
 			)
 		# todo - overwrite based on only stitch missing
-		write_errors_to_disk()
+		write_errors_to_disk(overwrite=(not only_stitch_missing))
 
 	if aggregate:
 		set_error_task_origin(task_origin=AGGREGATE)
@@ -82,7 +143,7 @@ def main(
 				folder_epa_aggregate=FOLDER_EPA_AGGREGATE,
 			)
 			output_epa_aggregate_filename: str = generate_filename(
-				filename_nt=NT_aggregate_filename,
+				filename_nt=NT_filename_aggregate,
 				extension=CSV,
 			)
 			df_aggregate_epa.to_csv(
@@ -90,6 +151,73 @@ def main(
 				index=False,
 			)
 		write_errors_to_disk()
+
+
+def generate_api_parameters(
+		api_call_type: str,
+) -> {}:
+	if api_call_type == CBSA:
+
+		return {}
+	else:
+		return {}
+
+
+def download_epa(
+		city: str,
+		pollutant: str,
+		list_date_pairs: List[Tuple[str, str]],
+		api_url: str,
+		api_starter_params: dict,
+		download_data_type: str,
+		only_download_missing: bool = True,
+		folder_epa_raw: str = FOLDER_EPA_RAW,
+) -> None:
+	api_params: dict = api_starter_params.copy()
+
+	pollutant_dict: dict = DEFAULT_POLLUTANTS.get(pollutant, "")
+	if pollutant_dict:
+		param: str = pollutant_dict.get(EPA_API_POLLUTANT_PARAM, "")
+		if param:
+			api_params.update({EPA_API_POLLUTANT_PARAM: param})
+		else:
+			log_error()
+			return
+	else:
+		log_error()
+		return
+
+	if download_data_type == CBSA:
+		city_dict: dict = DEFAULT_CITIES.get(city, {})
+		if city_dict:
+			cbsa: int = city_dict.get(CBSA, 0)
+			if cbsa:
+				api_params.update({EPA_API_CBSA: cbsa})
+			else:
+				log_error()
+				return
+		else:
+			log_error()
+			return
+
+		start_date_str: str
+		end_date_str: str
+		for start_date_str, end_date_str in list_date_pairs:
+			start_date_dt: datetime = datetime.strptime(start_date_str, DATE_FORMAT)
+			end_date_dt: datetime = datetime.strptime(end_date_str, DATE_FORMAT)
+			api_params.update({EPA_API_START_DATE: start_date_dt.strftime(EPA_API_DATE_FORMAT)})
+			api_params.update({EPA_API_END_DATE: end_date_dt.strftime(EPA_API_DATE_FORMAT)})
+			response: requests.Response = requests.get(
+				url=api_url,
+				params=api_params,
+			)
+			print(response)
+			print(response.content)
+			exit()
+
+	# todo
+	# setup file naming convention for epa raw
+	# set up stitching for epa
 
 
 def aggregate_epa(
@@ -132,7 +260,7 @@ def aggregate_epa(
 			)
 			list_city_dfs.append(df_parsed_city)
 			output_aggregate_for_city_filename: str = generate_filename(
-				filename_nt=NT_city_aggregate_filename(
+				filename_nt=NT_filename_city_aggregate(
 					city=city,
 				),
 				extension=CSV,
@@ -148,7 +276,7 @@ def aggregate_epa(
 	)
 
 
-def stitch_for_city(
+def stitch_epa(
 		city: str,
 		epa_column_name: str = POLLUTION_LEVEL,
 		folder_epa_raw: str = FOLDER_EPA_RAW,
@@ -182,7 +310,7 @@ def stitch_for_city(
 			if parsed_city != city:
 				log_error(error=f'city_mismatch{HYPHEN}{city}{HYPHEN}{parsed_city}')
 			df_single_column: pd.DataFrame = df_city[column_name].to_frame(name=epa_column_name)
-			nt_epa_stitch_filename: tuple = NT_epa_stitch_filename(
+			nt_epa_stitch_filename: tuple = NT_filename_epa_stitch(
 				city=city,
 				pollutant=pollutant,
 				target_statistic=target_statistic,

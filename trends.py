@@ -1,7 +1,6 @@
 import random
 import sys
 import time
-from datetime import timedelta
 
 import numpy as np
 import pytrends.exceptions
@@ -161,7 +160,7 @@ def main(
 				folder_trends_aggregate=FOLDER_TRENDS_AGGREGATE,
 			)
 			output_trends_aggregate_filename: str = generate_filename(
-				filename_nt=NT_aggregate_filename(
+				filename_nt=NT_filename_aggregate(
 					aggregate=AGGREGATE,
 				),
 				extension=CSV,
@@ -784,12 +783,8 @@ def stitch_keyword_df(
 			if is_last_month:
 				break
 
-			past_average: pd.DataFrame = df_keyword.iloc[
-			                             duplicate_first_day_in_month_list[0]: duplicate_last_day_in_month_list[0] + 1
-			                             ].replace(0, pd.np.NaN).mean(axis=0)
-			future_average: pd.DataFrame = df_keyword.iloc[
-			                               duplicate_first_day_in_month_list[1]: duplicate_last_day_in_month_list[1] + 1
-			                               ].replace(0, pd.np.NaN).mean(axis=0)
+			past_average: pd.DataFrame = df_keyword.iloc[duplicate_first_day_in_month_list[0]: duplicate_last_day_in_month_list[0] + 1].replace(0, pd.np.NaN).mean(axis=0)
+			future_average: pd.DataFrame = df_keyword.iloc[duplicate_first_day_in_month_list[1]: duplicate_last_day_in_month_list[1] + 1].replace(0, pd.np.NaN).mean(axis=0)
 			past: float = max(1.0, past_average.iloc[0])
 			future: float = max(1.0, future_average.iloc[0])
 			scale = 1.0  # future_avg / past_avg
@@ -817,9 +812,9 @@ def generate_empty_time_series_df(
 ) -> pd.DataFrame:
 	s_dt: datetime = datetime.strptime(start_date, date_format)
 	e_dt: datetime = datetime.strptime(end_date, date_format)
-	delta: timedelta = e_dt - s_dt
+	delta: datetime.timedelta = e_dt - s_dt
 	dates_list: List[str] = [
-		(s_dt + timedelta(days=x)).strftime(date_format)
+		(s_dt + datetime.timedelta(days=x)).strftime(date_format)
 		for x in range(delta.days + 1)
 	]
 
@@ -893,7 +888,7 @@ def aggregate_trends_stitched(
 			sort=True,
 		)
 		output_aggregate_for_city_filename: str = generate_filename(
-			filename_nt=NT_city_aggregate_filename(
+			filename_nt=NT_filename_city_aggregate(
 				city=city,
 			),
 			extension=CSV,

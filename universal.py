@@ -1,3 +1,4 @@
+import datetime
 import itertools
 import json
 import os
@@ -73,6 +74,9 @@ ERROR_PARTITION: str = 'not available with multi-partitioning. Running on partit
 ERROR_EMPTY: str = 'empty_data_frame'
 
 # JSON PARAMETERS
+EPA_API_POLLUTANT_PARAM: str = 'param'
+PARAM_BDATE: str = 'bdate'
+PARAM_EDATE: str = 'edate'
 PARAM_DATE_START: str = 'start_dates'
 PARAM_DATE_END: str = 'end_dates'
 PARAM_FOLDER_EPA_RAW: str = 'folder_epa_raw'
@@ -127,61 +131,70 @@ DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS: Tuple[str, str] = (
 
 DEFAULT_CITIES: Dict[str, dict] = {
 	ATLANTA:      {
+		CBSA:            12060,
 		CITY_AB:         'ATL',
 		DMA:             524,
 		STATE_NAME:      'GA',
 		GOOGLE_GEO_CODE: '1015254',
 	},
 	BOSTON:       {
+		CBSA:            14460,
 		CITY_AB:         'BOS',
 		DMA:             506,
 		STATE_NAME:      'MA',
 		GOOGLE_GEO_CODE: '1018127'
 	},
 	CHICAGO:      {
+		CBSA:            16980,
 		CITY_AB:         'ORD',
 		DMA:             602,
 		STATE_NAME:      'IL',
 		GOOGLE_GEO_CODE: '1016367',
 	},
 	DALLAS:       {
+		CBSA:            19100,
 		CITY_AB:         'DFW',
 		DMA:             623,
 		STATE_NAME:      'TX',
 		GOOGLE_GEO_CODE: '1026339',
 	},
 	HOUSTON:      {
+		CBSA:            26420,
 		CITY_AB:         'IAH',
 		DMA:             618,
 		STATE_NAME:      'TX',
 		GOOGLE_GEO_CODE: '1026481',
 	},
 	LOS_ANGELES:  {
+		CBSA:            31080,
 		CITY_AB:         'LAX',
 		DMA:             803,
 		STATE_NAME:      'CA',
 		GOOGLE_GEO_CODE: '1013962',
 	},
 	MIAMI:        {
+		CBSA:            33100,
 		CITY_AB:         'MIA',
 		DMA:             528,
 		STATE_NAME:      'FL',
 		GOOGLE_GEO_CODE: '1015116',
-
 	},
 	NEW_YORK:     {
+		CBSA:            35620,
 		CITY_AB:         'NYC',
 		DMA:             501,
 		STATE_NAME:      'NY',
 		GOOGLE_GEO_CODE: '1023191',
 	},
 	PHILADELPHIA: {
+		CBSA:            37980,
 		CITY_AB:         'PHL',
 		DMA:             504,
 		STATE_NAME:      'PA',
 		GOOGLE_GEO_CODE: '1025197',
 	},
 	WASHINGTON:   {  # DC
+		CBSA:            47900,
 		CITY_AB:         'IAD',
 		DMA:             511,
 		STATE_NAME:      'DC',
@@ -195,27 +208,33 @@ DEFAULT_CITIES: Dict[str, dict] = {
 
 DEFAULT_POLLUTANTS: Dict[str, dict] = {
 	CO:   {
+		EPA_API_POLLUTANT_PARAM: 42101,
 	},
 	NO2:  {
+		EPA_API_POLLUTANT_PARAM: 42602,
 	},
 	O3:   {
+		EPA_API_POLLUTANT_PARAM: 44201,
 	},
 	PM25: {
+		EPA_API_POLLUTANT_PARAM: 88101,
 	},
 	PM10: {
+		EPA_API_POLLUTANT_PARAM: 81102,
 	},
 	SO2:  {
+		EPA_API_POLLUTANT_PARAM: 42401,
 	},
 }
 
 # GLOBAL NAMED TUPLES
-NT_aggregate_filename = namedtuple(
-	'NT_aggregate',
+NT_filename_aggregate = namedtuple(
+	'NT_filename_aggregate',
 	[
 		AGGREGATE,
 	]
 )
-NT_city_aggregate_filename = namedtuple(
+NT_filename_city_aggregate = namedtuple(
 	'NT_filename_city_aggregate',
 	[
 		CITY,
@@ -228,8 +247,8 @@ NT_date_pair = namedtuple(
 		END_DATE,
 	]
 )
-NT_errors_filename = namedtuple(
-	'NT_errors',
+NT_filename_errors = namedtuple(
+	'NT_filename_errors',
 	[
 		'error_file_origin',
 		'error_task_origin',
@@ -581,11 +600,7 @@ def check_partition_valid_for_aggregation(
 ) -> bool:
 	if get_partition_group() > 1 or get_partition_total() > 1:
 		log_error(error=f'{ERROR_PARTITION}{HYPHEN}{error_label}')
-		print_statement: str = f'Can only aggregate {error_label} when run as a SINGLE partition group ' \
-		                       f'AND with ONE total partition due to race conditions. ' \
-		                       f'Not guaranteed that the other partitions have finished running; please check and rerun. ' \
-		                       f'Current partition group: {partition_group}. ' \
-		                       f'Current partition total: {partition_total}.'
+		print_statement: str = f'Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE ''total partition due to race conditions. ' f'Not guaranteed that the other partitions have finished running; please check and rerun. Current partition group: {partition_group}. Current partition total: {partition_total}.'
 		print(print_statement)
 		return False
 	else:
@@ -680,7 +695,7 @@ def write_errors_to_disk(
 		print(f'No task origin was specified for the error log.')
 
 	output_filename: str = generate_filename(
-		filename_nt=NT_errors_filename(
+		filename_nt=NT_filename_errors(
 			error_file_origin=error_file_origin,
 			error_task_origin=error_task_origin,
 		),

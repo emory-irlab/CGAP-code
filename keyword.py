@@ -275,7 +275,7 @@ def run_keyword_expansion(
 				)
 
 				output_expansion_parent_filename: str = generate_filename(
-					filename_nt=NT_expansion_parents_filename(
+					filename_nt=NT_filename_expansion_parents(
 						expanded_keyword=expanded_keyword,
 					),
 					extension=TXT,
@@ -287,7 +287,7 @@ def run_keyword_expansion(
 				)
 
 			output_keywords_google_filename: str = generate_filename(
-				filename_nt=NT_keywords_google_filename(
+				filename_nt=NT_filename_keywords_google(
 					seed_keyword=seed_keyword,
 				),
 				extension=TXT,
