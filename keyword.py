@@ -27,21 +27,21 @@ PARAM_ONLY_EXPAND_MISSING: str = 'only_expand_missing'
 PARAM_SOURCE_PRIORITY_ORDER: str = 'source_priority_order'
 
 # NAMED TUPLES
-NT_expansion_raw_filename = namedtuple(
-    'NT_expansion_filename',
+NT_filename_expansion_raw = namedtuple(
+    'NT_filename_expansion_raw',
     [
         CITY,
         KEYWORD,
     ]
 )
-NT_expansion_parents_filename = namedtuple(
-    'NT_expansion_parents_filename',
+NT_filename_expansion_parents = namedtuple(
+    'NT_filename_expansion_parents',
     [
         'expanded_keyword',
     ]
 )
-NT_keywords_google_filename = namedtuple(
-    'NT_keywords_google_filename',
+NT_filename_keywords_google = namedtuple(
+    'NT_filename_keywords_google',
     [
         'seed_keyword',
     ]
@@ -213,7 +213,7 @@ def run_keyword_expansion(
 
         seed_keyword: str
         for seed_keyword in list_source_keywords:
-            nt_expansion_raw_filename: tuple = NT_expansion_raw_filename(
+            nt_expansion_raw_filename: tuple = NT_filename_expansion_raw(
                 city=city,
                 keyword=seed_keyword,
             )
