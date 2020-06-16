@@ -386,7 +386,7 @@ def run_metrics(
                 filename=filename,
                 delimiter=HYPHEN,
                 extension=CSV,
-                named_tuple=trends.NT_trends_stitch_filename,
+                named_tuple=trends.NT_filename_trends_stitch,
             )
             if nt_parsed_epa_or_trends_filename.city != city:
                 log_error(error=f'city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}')
@@ -584,7 +584,7 @@ def run_correlations(
                     filename=filename_trends,
                     delimiter=HYPHEN,
                     extension=CSV,
-                    named_tuple=trends.NT_trends_stitch_filename,
+                    named_tuple=trends.NT_filename_trends_stitch,
                 )
 
                 if nt_parsed_trends_stitch_filename.city != city:
@@ -863,7 +863,7 @@ def run_intercity(
             filename=common_city_filename,
             delimiter=HYPHEN,
             extension=CSV,
-            named_tuple=trends.NT_trends_stitch_filename(),
+            named_tuple=trends.NT_filename_trends_stitch(),
         )
 
         if nt_parsed_trends_stitch_filename.city != common_city:
@@ -883,7 +883,7 @@ def run_intercity(
         )
 
         for city in list_cities:
-            nt_generate_trends_stitch_filename = trends.NT_trends_stitch_filename(
+            nt_generate_trends_stitch_filename = trends.NT_filename_trends_stitch(
                 city=city,
                 keyword=nt_parsed_trends_stitch_filename.keyword,
                 common_word=common_word,

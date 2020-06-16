@@ -32,7 +32,7 @@ PARAM_ONLY_STITCH_MISSING: str = 'only_stitch_missing'
 PARAM_SOURCE_FOLDERS_TO_DOWNLOAD: str = 'source_folders_to_download'
 
 # NAMED TUPLES
-NT_trends_raw_filename = namedtuple(
+NT_filename_trends_raw = namedtuple(
     'NT_filename_trends_raw',
     [
         CITY,
@@ -42,7 +42,7 @@ NT_trends_raw_filename = namedtuple(
         END_DATE,
     ]
 )
-NT_trends_stitch_filename = namedtuple(
+NT_filename_trends_stitch = namedtuple(
     'NT_filename_trends_stitch',
     [
         CITY,
@@ -215,7 +215,7 @@ def generate_keywords_to_download_dict(
     end_date: str
     for keyword in list_all_keywords:
         for start_date, end_date in list_date_pairs:
-            nt_expected_trends_raw_filename: tuple = NT_trends_raw_filename(
+            nt_expected_trends_raw_filename: tuple = NT_filename_trends_raw(
                 city=city,
                 keyword=keyword,
                 common_word=generate_common_word_filename_output(
@@ -362,7 +362,7 @@ def submit_dma_based_query(
             start_date, end_date = pair_of_dates
             start_date = start_date.replace(UNDERSCORE, HYPHEN)
             end_date = end_date.replace(UNDERSCORE, HYPHEN)
-            nt_trends_raw_filename: tuple = NT_trends_raw_filename(
+            nt_trends_raw_filename: tuple = NT_filename_trends_raw(
                 city=city,
                 keyword=keyword,
                 common_word=generate_common_word_filename_output(
@@ -455,7 +455,7 @@ def stitch_trends_raw_for_city(
     keyword: str
     for keyword, dict_file_paths_for_keyword in dict_keywords_file_paths.items():
         parsed_common_word: str
-        nt_trends_stitch_filename = NT_trends_stitch_filename(
+        nt_trends_stitch_filename = NT_filename_trends_stitch(
             city=city,
             keyword=keyword,
             common_word=common_word,
@@ -555,7 +555,7 @@ def generate_trends_raw_file_paths_dict(
         nt_parsed_trends_raw_filename = parse_filename(
             filename=filename,
             delimiter=HYPHEN,
-            named_tuple=NT_trends_raw_filename,
+            named_tuple=NT_filename_trends_raw,
             extension=CSV,
         )
 
@@ -608,7 +608,7 @@ def generate_df_from_trends_raw_file_paths(
             filename=common_word_filename,
             delimiter=HYPHEN,
             extension=CSV,
-            named_tuple=NT_trends_raw_filename,
+            named_tuple=NT_filename_trends_raw,
         )
         start_date: str = parse_filename_date(nt_parsed_common_word_filename.start_date)
         end_date: str = parse_filename_date(nt_parsed_common_word_filename.end_date)
@@ -861,7 +861,7 @@ def aggregate_trends_stitched(
             nt_parsed_trends_stitch_filename = parse_filename(
                 filename=stitched_keyword_filename,
                 delimiter=HYPHEN,
-                named_tuple=NT_trends_stitch_filename,
+                named_tuple=NT_filename_trends_stitch,
                 extension=CSV,
             )
 
