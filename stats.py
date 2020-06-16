@@ -5,45 +5,45 @@ import trends
 from universal import *
 
 # STATIC VARIABLES
-COMMON_CITY: str = 'common_city'
-CORRELATIONS: str = 'correlations'
-CORRELATIONS_COMPARISON: str = 'correlations_comparison'
-CORRELATE_ABOVE_THRESHOLD: str = 'above_threshold'
-CORRELATE_BELOW_THRESHOLD: str = 'below_threshold'
-INTERCITY: str = 'intercity'
-KW_NONZERO_COUNT: str = 'kw_nonzero_count'
-KW_NONZERO_PROPORTION: str = 'kw_nonzero_proportion'
-KW_NONZERO_FOR_NON_POLLUTED_DAYS_COUNT: str = 'kw_nonzero_for_non_polluted_days_count'
-KW_NON_POLLUTED_DAYS_PROPORTION: str = 'kw_nonzero_for_non_polluted_days_proportion'
-METRICS: str = 'metrics'
-PEARSON_CORRELATION: str = 'pearson_correlation'
-NON_POLLUTED_DAYS_COUNT: str = 'non_polluted_days_count'
-NON_POLLUTED_DAYS_PROPORTION: str = 'non_polluted_days_proportion'
-SPARSITY: str = 'sparsity'
-SPEARMAN_CORRELATION: str = 'spearman_correlation'
-STATS: str = 'stats'
-TARGET_VARIABLE_COLUMN_NAME: str = 'target_variable_column_name'
+COMMON_CITY: str = "common_city"
+CORRELATIONS: str = "correlations"
+CORRELATIONS_COMPARISON: str = "correlations_comparison"
+CORRELATE_ABOVE_THRESHOLD: str = "above_threshold"
+CORRELATE_BELOW_THRESHOLD: str = "below_threshold"
+INTERCITY: str = "intercity"
+KW_NONZERO_COUNT: str = "kw_nonzero_count"
+KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
+KW_NONZERO_FOR_NON_POLLUTED_DAYS_COUNT: str = "kw_nonzero_for_non_polluted_days_count"
+KW_NON_POLLUTED_DAYS_PROPORTION: str = "kw_nonzero_for_non_polluted_days_proportion"
+METRICS: str = "metrics"
+PEARSON_CORRELATION: str = "pearson_correlation"
+NON_POLLUTED_DAYS_COUNT: str = "non_polluted_days_count"
+NON_POLLUTED_DAYS_PROPORTION: str = "non_polluted_days_proportion"
+SPARSITY: str = "sparsity"
+SPEARMAN_CORRELATION: str = "spearman_correlation"
+STATS: str = "stats"
+TARGET_VARIABLE_COLUMN_NAME: str = "target_variable_column_name"
 
 # PARAMETERS
-PARAM_AGGREGATE_CORRELATIONS: str = 'aggregate_correlations'
-PARAM_AGGREGATE_INTERCITY: str = 'aggregate_intercity'
-PARAM_AGGREGATE_METRICS: str = 'aggregate_metrics'
-PARAM_AGGREGATE_METRICS_EPA: str = f'{PARAM_AGGREGATE_METRICS}{UNDERSCORE}{EPA}'
-PARAM_AGGREGATE_METRICS_TRENDS = f'{PARAM_AGGREGATE_METRICS}{UNDERSCORE}{TRENDS}'
-PARAM_AGGREGATE_ALREADY_AGGREGATED_CITIES: str = 'aggregate_already_aggregated_cities'
-PARAM_CORRELATIONS: str = 'run_correlations'
-PARAM_CORRELATE_ABOVE_THRESHOLD: str = 'correlate_above_threshold'
-PARAM_CORRELATE_BELOW_THRESHOLD: str = 'correlate_below_threshold'
-PARAM_CORRELATIONS_COMPARISON: str = 'run_correlations_comparison'
-PARAM_CORRELATIONS_COMPARISON_PIVOT_VALUES: str = 'correlations_comparison_pivot_values'
-PARAM_INTERCITY: str = 'run_intercity'
-PARAM_ONLY_CORRELATE_MISSING: str = 'only_correlate_missing'
-PARAM_ONLY_COMPARE_MISSING: str = 'only_compare_missing'
-PARAM_METRICS: str = 'run_metrics'
-PARAM_METRICS_EPA: str = f'{PARAM_METRICS}{UNDERSCORE}{EPA}'
-PARAM_METRICS_TRENDS: str = f'{PARAM_METRICS}{UNDERSCORE}{TRENDS}'
-PARAM_STITCH_EPA: str = f'{STITCH}{UNDERSCORE}{EPA}'
-PARAM_STITCH_TRENDS: str = f'{STITCH}{UNDERSCORE}{TRENDS}'
+PARAM_AGGREGATE_CORRELATIONS: str = "aggregate_correlations"
+PARAM_AGGREGATE_INTERCITY: str = "aggregate_intercity"
+PARAM_AGGREGATE_METRICS: str = "aggregate_metrics"
+PARAM_AGGREGATE_METRICS_EPA: str = f"{PARAM_AGGREGATE_METRICS}{UNDERSCORE}{EPA}"
+PARAM_AGGREGATE_METRICS_TRENDS = f"{PARAM_AGGREGATE_METRICS}{UNDERSCORE}{TRENDS}"
+PARAM_AGGREGATE_ALREADY_AGGREGATED_CITIES: str = "aggregate_already_aggregated_cities"
+PARAM_CORRELATIONS: str = "run_correlations"
+PARAM_CORRELATE_ABOVE_THRESHOLD: str = "correlate_above_threshold"
+PARAM_CORRELATE_BELOW_THRESHOLD: str = "correlate_below_threshold"
+PARAM_CORRELATIONS_COMPARISON: str = "run_correlations_comparison"
+PARAM_CORRELATIONS_COMPARISON_PIVOT_VALUES: str = "correlations_comparison_pivot_values"
+PARAM_INTERCITY: str = "run_intercity"
+PARAM_ONLY_CORRELATE_MISSING: str = "only_correlate_missing"
+PARAM_ONLY_COMPARE_MISSING: str = "only_compare_missing"
+PARAM_METRICS: str = "run_metrics"
+PARAM_METRICS_EPA: str = f"{PARAM_METRICS}{UNDERSCORE}{EPA}"
+PARAM_METRICS_TRENDS: str = f"{PARAM_METRICS}{UNDERSCORE}{TRENDS}"
+PARAM_STITCH_EPA: str = f"{STITCH}{UNDERSCORE}{EPA}"
+PARAM_STITCH_TRENDS: str = f"{STITCH}{UNDERSCORE}{TRENDS}"
 
 # DEFAULT
 DEFAULT_COMMON_CITY: str = USA
@@ -90,9 +90,9 @@ def main(
 	set_partition_group(partition_group)
 	set_partition_total(partition_total)
 	if not called_from_main:
-		assert False, f'stats was called from another module. This functionality is not yet supported.'
+		assert False, f"stats was called from another module. This functionality is not yet supported."
 	else:
-		with open(f'{STATS}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
+		with open(f"{STATS}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 			json_data = json.load(json_file)
 			bool_stitch_epa: bool = json_data[PARAM_STITCH_EPA]
 			bool_stitch_trends: bool = json_data[PARAM_STITCH_TRENDS]
@@ -113,8 +113,8 @@ def main(
 
 			common_city: str = json_data[COMMON_CITY]
 			common_word: str = json_data[COMMON_WORD]
-			target_variable_column_name_epa: str = json_data[f'{TARGET_VARIABLE_COLUMN_NAME}{UNDERSCORE}{EPA}']
-			target_variable_column_name_trends: str = json_data[f'{TARGET_VARIABLE_COLUMN_NAME}{UNDERSCORE}{TRENDS}']
+			target_variable_column_name_epa: str = json_data[f"{TARGET_VARIABLE_COLUMN_NAME}{UNDERSCORE}{EPA}"]
+			target_variable_column_name_trends: str = json_data[f"{TARGET_VARIABLE_COLUMN_NAME}{UNDERSCORE}{TRENDS}"]
 
 			parameters: dict = json_data[STATS]
 			list_input_cities: List[str] = parameters[CITY]
@@ -156,7 +156,7 @@ def main(
 	)
 
 	if bool_stitch_epa:
-		print('Calling stitch epa from stats.')
+		print("Calling stitch epa from stats.")
 		epa.main(
 			called_from_main=False,
 			list_cities=list_partitioned_cities,
@@ -165,7 +165,7 @@ def main(
 		)
 
 	if bool_stitch_trends:
-		print('Calling stitch trends from stats.')
+		print("Calling stitch trends from stats.")
 		trends.main(
 			called_from_main=False,
 			list_cities=list_partitioned_cities,
@@ -310,7 +310,7 @@ def main(
 	if bool_run_correlations_comparison:
 		for city in list_partitioned_cities:
 			set_error_task_origin(task_origin=PARAM_CORRELATIONS_COMPARISON)
-			log_error(f'{CORRELATIONS_COMPARISON} : {city}', log=True)
+			log_error(f"{CORRELATIONS_COMPARISON} : {city}", log=True)
 			run_correlation_comparison(
 				city=city,
 				dict_pivot_values=dict_correlations_comparison_pivot_values,
@@ -335,7 +335,7 @@ def run_metrics(
 		folder_metrics_input: str,
 		folder_metrics_output: str,
 ) -> None:
-	log_error(f'{METRICS} : {epa_or_trends} : {city} : {IGNORE_ZERO}-{ignore_zero}', log=True)
+	log_error(f"{METRICS} : {epa_or_trends} : {city} : {IGNORE_ZERO}-{ignore_zero}", log=True)
 	generate_sub_paths_for_folder(
 		folder=folder_metrics_output,
 	)
@@ -346,7 +346,7 @@ def run_metrics(
 			list_paths_filter_conditions=(city, CSV),
 	):
 		df: pd.DataFrame = pd.read_csv(
-			f'{folder_metrics_input}{filename}',
+			f"{folder_metrics_input}{filename}",
 			parse_dates=[DATE],
 		)
 		if ignore_zero:
@@ -374,12 +374,12 @@ def run_metrics(
 				named_tuple=epa.NT_filename_epa_stitch,
 			)
 			if nt_parsed_epa_or_trends_filename.city != city:
-				log_error(error=f'city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}')
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}")
 			df_description.insert(0, CITY, city)
 			df_description.insert(1, POLLUTANT, nt_parsed_epa_or_trends_filename.pollutant)
 			df_description.insert(2, TARGET_STATISTIC, nt_parsed_epa_or_trends_filename.target_statistic)
 			df_description.insert(3, IGNORE_ZERO, ignore_zero)
-			output_filename = f'{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.pollutant}{HYPHEN}{nt_parsed_epa_or_trends_filename.target_statistic}{HYPHEN}{ignore_zero}{CSV}'
+			output_filename = f"{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.pollutant}{HYPHEN}{nt_parsed_epa_or_trends_filename.target_statistic}{HYPHEN}{ignore_zero}{CSV}"
 		elif epa_or_trends == TRENDS:
 			# noinspection PyTypeChecker
 			nt_parsed_epa_or_trends_filename: NamedTuple = parse_filename(
@@ -389,19 +389,19 @@ def run_metrics(
 				named_tuple=trends.NT_filename_trends_stitch,
 			)
 			if nt_parsed_epa_or_trends_filename.city != city:
-				log_error(error=f'city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}')
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}")
 			df_description.insert(0, CITY, city)
 			df_description.insert(1, KEYWORD, nt_parsed_epa_or_trends_filename.keyword)
 			df_description.insert(2, COMMON_WORD, nt_parsed_epa_or_trends_filename.common_word)
 			df_description.insert(3, IGNORE_ZERO, ignore_zero)
-			output_filename = f'{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.common_word}{HYPHEN}{nt_parsed_epa_or_trends_filename.keyword}{HYPHEN}{ignore_zero}{CSV}'
+			output_filename = f"{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.common_word}{HYPHEN}{nt_parsed_epa_or_trends_filename.keyword}{HYPHEN}{ignore_zero}{CSV}"
 		else:
-			log_error(error=f'epa_or_trends{HYPHEN}{MISSING}')
+			log_error(error=f"epa_or_trends{HYPHEN}{MISSING}")
 
 			return
 
 		df_description.to_csv(
-			f'{folder_metrics_output}{output_filename}',
+			f"{folder_metrics_output}{output_filename}",
 			index=False,
 		)
 
@@ -474,7 +474,7 @@ def run_correlation_comparison(
 
 			list_pivot_table_filename_filter_conditions: Tuple[str, ...] = tuple(
 				[
-					str(dict_pivot_table_info.get(null_pivot_key, ''))
+					str(dict_pivot_table_info.get(null_pivot_key, ""))
 					for null_pivot_key in list_null_pivot_keys
 				]
 			)
@@ -501,21 +501,21 @@ def run_correlation_comparison(
 
 					if not pivot_table_set:
 						df_pivot_table = pd.read_csv(
-							f'{folder_stats_correlations}{filename_correlation}',
+							f"{folder_stats_correlations}{filename_correlation}",
 						)
 						pivot_table_set = True
 					else:
 						if df_pivot_table.empty:
-							log_error(error=f'df_empty_despite_being_set{HYPHEN}{CORRELATIONS_COMPARISON}{HYPHEN}{filename_correlation}')
+							log_error(error=f"df_empty_despite_being_set{HYPHEN}{CORRELATIONS_COMPARISON}{HYPHEN}{filename_correlation}")
 							continue
 
 						df_comparison_table: pd.DataFrame = pd.read_csv(
-							f'{folder_stats_correlations}{filename_comparison_table}',
+							f"{folder_stats_correlations}{filename_comparison_table}",
 						)
 
 						df_correlation_comparison: pd.DataFrame = df_pivot_table - df_comparison_table
 						df_correlation_comparison.to_csv(
-							f'{folder_comparison_tables}{filename_comparison_table}'
+							f"{folder_comparison_tables}{filename_comparison_table}"
 						)
 
 
@@ -533,7 +533,7 @@ def generate_correlations_comparison_folder_name(
 	]
 	subfolder: str = HYPHEN.join(list_correlations_comparison_folder_name_components)
 
-	return f'{folder_correlations_comparison}{subfolder}/'
+	return f"{folder_correlations_comparison}{subfolder}/"
 
 
 def run_correlations(
@@ -569,7 +569,7 @@ def run_correlations(
 		target_statistic: str
 		for target_statistic in list_target_statistics:
 			set_error_task_origin(task_origin=PARAM_CORRELATIONS)
-			log_error(f'{CORRELATIONS} : {city} : {pollutant} : {target_statistic}', log=True)
+			log_error(f"{CORRELATIONS} : {city} : {pollutant} : {target_statistic}", log=True)
 
 			filename_trends: str
 			for filename_trends in list_filenames_trends:
@@ -617,14 +617,14 @@ def run_correlations(
 									else:
 										if not trends_set:
 											df_trends = pd.read_csv(
-												f'{folder_trends_stitch}{filename_trends}',
+												f"{folder_trends_stitch}{filename_trends}",
 												parse_dates=[DATE],
 											)
 											trends_set = True
 										else:
 											if df_trends.empty:
 												log_error(
-													error=f'df_empty_despite_being_set{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}')
+													error=f"df_empty_despite_being_set{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
 												continue
 
 										filename_epa: str
@@ -635,7 +635,7 @@ def run_correlations(
 											)
 											if filename_epa:
 												df_epa = pd.read_csv(
-													f'{folder_epa_stitch}{filename_epa}',
+													f"{folder_epa_stitch}{filename_epa}",
 													parse_dates=[DATE],
 												)
 												epa_set = True
@@ -650,7 +650,7 @@ def run_correlations(
 													)
 												)
 												log_error(
-													error=f'df_empty_despite_being_set{HYPHEN}{EPA}{HYPHEN}{filename_epa}')
+													error=f"df_empty_despite_being_set{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
 												continue
 
 										dict_cor_row: dict = compute_correlations_for_keyword(
@@ -680,7 +680,7 @@ def run_correlations(
 											dict_cor_row,
 											index=[0],
 										).to_csv(
-											f'{folder_stats_correlations}{filename_correlation}',
+											f"{folder_stats_correlations}{filename_correlation}",
 											index=False,
 										)
 			write_errors_to_disk(overwrite=False)
@@ -697,16 +697,16 @@ def generate_stats_correlations_filename(
 		above_or_below_threshold: str,
 		time_shift: int,
 ) -> str:
-	filename: str = f'{city}{HYPHEN}' \
-					f'{keyword}{HYPHEN}' \
-					f'{pollutant}{HYPHEN}' \
-					f'{target_statistic}{HYPHEN}' \
-					f'{bool_ignore_zero}{HYPHEN}' \
-					f'{generate_numeric_for_filename_output(threshold)}{HYPHEN}' \
-					f'{threshold_percentile}{HYPHEN}' \
-					f'{above_or_below_threshold}{HYPHEN}' \
-					f'{generate_numeric_for_filename_output(time_shift)}' \
-					f'{CSV}'
+	filename: str = f"{city}{HYPHEN}" \
+					f"{keyword}{HYPHEN}" \
+					f"{pollutant}{HYPHEN}" \
+					f"{target_statistic}{HYPHEN}" \
+					f"{bool_ignore_zero}{HYPHEN}" \
+					f"{generate_numeric_for_filename_output(threshold)}{HYPHEN}" \
+					f"{threshold_percentile}{HYPHEN}" \
+					f"{above_or_below_threshold}{HYPHEN}" \
+					f"{generate_numeric_for_filename_output(time_shift)}" \
+					f"{CSV}"
 
 	return filename
 
@@ -717,7 +717,7 @@ def parse_stats_correlations_filename(
 	split_filename: List[str] = filename.replace(CSV, EMPTY_STRING).split(HYPHEN)
 	split_filename_length = len(split_filename)
 	if split_filename_length != DEFAULT_SPLIT_STATS_CORRELATION_FILENAME_LENGTH:
-		log_error(error=f'file_incorrectly_formatted{HYPHEN}{filename}')
+		log_error(error=f"file_incorrectly_formatted{HYPHEN}{filename}")
 
 	dict_parsed_filename: dict = {
 		CITY:                 split_filename[0],
@@ -749,12 +749,12 @@ def compute_correlations_for_keyword(
 		right=df_epa,
 		left_on=DATE,
 		right_on=DATE,
-		how='left',
+		how="left",
 	)
 	del df_epa
 	del df_trends
 
-	trends_column_name_ignore_zero: str = f'{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}'
+	trends_column_name_ignore_zero: str = f"{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}"
 	df_merged[trends_column_name_ignore_zero] = df_merged[target_variable_column_name_trends].replace(
 		to_replace=0,
 		value=pd.np.NaN,
@@ -811,7 +811,7 @@ def compute_correlations_for_keyword(
 	# noinspection PyTypeChecker
 	pearson_correlation: float = df_trends_with_time_shift.corr(
 		df_epa_target_variable_above_or_below_threshold,
-		method='pearson',
+		method="pearson",
 	)
 	dict_cor_row.update({PEARSON_CORRELATION: pearson_correlation})
 
@@ -819,7 +819,7 @@ def compute_correlations_for_keyword(
 	# noinspection PyTypeChecker
 	spearman_correlation: float = df_trends_with_time_shift.corr(
 		df_epa_target_variable_above_or_below_threshold,
-		method='spearman',
+		method="spearman",
 	)
 	dict_cor_row.update({SPEARMAN_CORRELATION: spearman_correlation})
 
@@ -833,7 +833,7 @@ def run_intercity(
 		folder_trends_stitch: str = FOLDER_TRENDS_STITCH,
 		folder_stats_intercity: str = FOLDER_STATS_INTERCITY_RAW,
 ) -> None:
-	log_error(f'{INTERCITY}', log=True)
+	log_error(f"{INTERCITY}", log=True)
 	generate_sub_paths_for_folder(
 		folder=folder_stats_intercity,
 	)
@@ -865,16 +865,16 @@ def run_intercity(
 		)
 
 		if nt_parsed_trends_stitch_filename.city != common_city:
-			log_error(error=f'city_mismatch{HYPHEN}{common_city}{HYPHEN}{nt_parsed_trends_stitch_filename.city}')
+			log_error(error=f"city_mismatch{HYPHEN}{common_city}{HYPHEN}{nt_parsed_trends_stitch_filename.city}")
 			continue
 		if nt_parsed_trends_stitch_filename.common_word != common_word:
-			log_error(error=f'word_mismatch{HYPHEN}{common_word}{HYPHEN}{nt_parsed_trends_stitch_filename.common_word}')
+			log_error(error=f"word_mismatch{HYPHEN}{common_word}{HYPHEN}{nt_parsed_trends_stitch_filename.common_word}")
 			continue
 
-		print(f'{INTERCITY} : {nt_parsed_trends_stitch_filename.keyword}')
+		print(f"{INTERCITY} : {nt_parsed_trends_stitch_filename.keyword}")
 
 		df_common_city_keyword: pd.DataFrame = pd.read_csv(
-			f'{folder_trends_stitch}{common_city_filename}',
+			f"{folder_trends_stitch}{common_city_filename}",
 			index_col=DATE,
 			parse_dates=True,
 			infer_datetime_format=True,
@@ -902,7 +902,7 @@ def run_intercity(
 					list_paths_filter_conditions=(city, common_word, CSV),
 			):
 				df_city_to_be_scaled: pd.DataFrame = pd.read_csv(
-					f'{folder_trends_stitch}{expected_filename}',
+					f"{folder_trends_stitch}{expected_filename}",
 					index_col=DATE,
 					parse_dates=True,
 					infer_datetime_format=True,
@@ -927,14 +927,14 @@ def run_intercity(
 				df_intercity.insert(3, CITY, city)
 
 				df_intercity.to_csv(
-					f'{folder_stats_intercity}{common_city}{HYPHEN}{common_word}{HYPHEN}{nt_parsed_trends_stitch_filename.keyword}{HYPHEN}{city}{CSV}',
+					f"{folder_stats_intercity}{common_city}{HYPHEN}{common_word}{HYPHEN}{nt_parsed_trends_stitch_filename.keyword}{HYPHEN}{city}{CSV}",
 					index=True,
 				)
 			else:
-				log_error(error=f'missing_common_word_file{HYPHEN}{expected_filename}')
+				log_error(error=f"missing_common_word_file{HYPHEN}{expected_filename}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	called_from_main = True
 	if len(sys.argv) == 3:
 		partition_group: int = int(sys.argv[1])

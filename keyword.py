@@ -8,42 +8,42 @@ import trends
 from universal import *
 
 # STATIC VARIABLES
-AVG_MONTHLY_SEARCH: str = 'avg_monthly_search'
-COMPETITION_VALUE: str = 'competition_value'
-CUSTOMER_ID: str = 'customer_id'
-EXPANSION: str = 'expansion'
-EXPANDED_FROM: str = 'expanded_from'
+AVG_MONTHLY_SEARCH: str = "avg_monthly_search"
+COMPETITION_VALUE: str = "competition_value"
+CUSTOMER_ID: str = "customer_id"
+EXPANSION: str = "expansion"
+EXPANDED_FROM: str = "expanded_from"
 
 # DEFAULT
-DEFAULT_LANGUAGE_ID_ENGLISH: str = '1000'
+DEFAULT_LANGUAGE_ID_ENGLISH: str = "1000"
 DEFAULT_SOURCE_PRIORITY_ORDER: Tuple[str, ...] = (
-	'cgap',
+	"cgap",
 )
 
 # PARAMETERS
-PARAM_AGGREGATE_EXPANSION: str = 'aggregate_expansions'
-PARAM_KEYWORD_EXPANSION: str = 'run_keyword_expansion'
-PARAM_ONLY_EXPAND_MISSING: str = 'only_expand_missing'
-PARAM_SOURCE_PRIORITY_ORDER: str = 'source_priority_order'
+PARAM_AGGREGATE_EXPANSION: str = "aggregate_expansions"
+PARAM_KEYWORD_EXPANSION: str = "run_keyword_expansion"
+PARAM_ONLY_EXPAND_MISSING: str = "only_expand_missing"
+PARAM_SOURCE_PRIORITY_ORDER: str = "source_priority_order"
 
 # NAMED TUPLES
 NT_filename_expansion_raw = namedtuple(
-	'NT_filename_expansion_raw',
+	"NT_filename_expansion_raw",
 	[
 		CITY,
 		KEYWORD,
 	]
 )
 NT_filename_expansion_parents = namedtuple(
-	'NT_filename_expansion_parents',
+	"NT_filename_expansion_parents",
 	[
-		'expanded_keyword',
+		"expanded_keyword",
 	]
 )
 NT_filename_keywords_google = namedtuple(
-	'NT_filename_keywords_google',
+	"NT_filename_keywords_google",
 	[
-		'seed_keyword',
+		"seed_keyword",
 	]
 )
 
@@ -58,7 +58,7 @@ def main(
 	set_error_folder(FOLDER_ERROR)
 	set_partition_group(partition_group)
 	set_partition_total(partition_total)
-	with open(f'{KEYWORD}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
+	with open(f"{KEYWORD}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 		json_data: dict = json.load(json_file)
 		bool_run_keyword_expansion: bool
 		bool_only_expand_missing: bool
@@ -97,13 +97,13 @@ def main(
 			bool_only_expand_missing = True
 			bool_run_keyword_expansion = False
 			bool_aggregate_expansion = False
-			customer_id = EMPTY_STRING
-			credentials = EMPTY_STRING
+			customer_id = ""
+			credentials = ""
 			list_source_priority_order = []
-			folder_expansion_raw = EMPTY_STRING
-			folder_expansion_aggregate = EMPTY_STRING
-			folder_expansion_parents = EMPTY_STRING
-			folder_keywords_google = EMPTY_STRING
+			folder_expansion_raw = ""
+			folder_expansion_aggregate = ""
+			folder_expansion_parents = ""
+			folder_keywords_google = ""
 	json_file.close()
 
 	google_ads_client: GoogleAdsClient = GoogleAdsClient.load_from_storage(credentials)
@@ -134,7 +134,7 @@ def main(
 		if is_valid_for_aggregation:
 			source: str
 			for source in list_source_priority_order:
-				log_error(f'{AGGREGATE} : {SOURCE} : {source}', log=True)
+				log_error(f"{AGGREGATE} : {SOURCE} : {source}", log=True)
 				aggregate_data_in_folder(
 					folder_input=generate_source_folder(
 						source=source,
@@ -151,7 +151,7 @@ def main(
 					overwrite=False,
 				)
 
-			log_error(f'{AGGREGATE} : {EXPANSION}', log=True)
+			log_error(f"{AGGREGATE} : {EXPANSION}", log=True)
 			aggregate_data_in_folder(
 				folder_input=folder_expansion_aggregate,
 				folder_output_aggregate=folder_expansion_aggregate,
@@ -173,15 +173,15 @@ def run_keyword_expansion(
 		folder_keywords: str = FOLDER_KEYWORDS,
 		language_id: str = DEFAULT_LANGUAGE_ID_ENGLISH,
 ) -> None:
-	location_id: str = DEFAULT_CITIES.get(city, {}).get(GOOGLE_GEO_CODE, '')
+	location_id: str = DEFAULT_CITIES.get(city, {}).get(GOOGLE_GEO_CODE, "")
 	list_location_ids: List[str] = [location_id]
 
-	keyword_plan_idea_service = client.get_service('KeywordPlanIdeaService', version='v3')
+	keyword_plan_idea_service = client.get_service("KeywordPlanIdeaService", version="v3")
 	keyword_competition_level_enum = (
-		client.get_type('KeywordPlanCompetitionLevelEnum', version='v3').KeywordPlanCompetitionLevel
+		client.get_type("KeywordPlanCompetitionLevelEnum", version="v3").KeywordPlanCompetitionLevel
 	)
 	keyword_plan_network = client.get_type(
-		'KeywordPlanNetworkEnum', version='v3'
+		"KeywordPlanNetworkEnum", version="v3"
 	).GOOGLE_SEARCH
 	locations = map_locations_to_string_values(
 		client=client,
@@ -226,8 +226,8 @@ def run_keyword_expansion(
 			if only_expand_missing and output_expansion_raw_filename in list_already_expanded_filenames_in_raw_source:
 				continue
 
-			print(f'expansion : {city} : {seed_keyword}')
-			keyword_seed = client.get_type('KeywordSeed', version='v3')
+			print(f"expansion : {city} : {seed_keyword}")
+			keyword_seed = client.get_type("KeywordSeed", version="v3")
 			keyword_protos = map_keywords_to_string_values(
 				client=client,
 				keywords=[seed_keyword],
@@ -245,7 +245,7 @@ def run_keyword_expansion(
 					keyword_and_url_seed=keyword_url_seed,
 				)
 			except GoogleAdsException as ex:
-				log_error(error=f'{city}{HYPHEN}{seed_keyword}{HYPHEN}exception')
+				log_error(error=f"{city}{HYPHEN}{seed_keyword}{HYPHEN}exception")
 				log_exception(exception=ex)
 				write_errors_to_disk(
 					clear_task_origin=False,
@@ -261,7 +261,7 @@ def run_keyword_expansion(
 				expanded_keyword = idea.text.value
 				dict_keyword_ideas_result.update({KEYWORD: expanded_keyword})
 				dict_keyword_ideas_result.update({SOURCE: source})
-				list_expanded_keywords.append(f'{city}{HYPHEN}{expanded_keyword}')
+				list_expanded_keywords.append(f"{city}{HYPHEN}{expanded_keyword}")
 				dict_keyword_ideas_result.update(
 					{AVG_MONTHLY_SEARCH: idea.keyword_idea_metrics.avg_monthly_searches.value}
 				)
@@ -281,9 +281,9 @@ def run_keyword_expansion(
 					extension=TXT,
 				)
 				write_list_to_file(
-					filename=f'{output_expansion_parent_filename}',
+					filename=f"{output_expansion_parent_filename}",
 					folder=folder_expansion_parents,
-					list_strings=[f'{city}{HYPHEN}{seed_keyword}'],
+					list_strings=[f"{city}{HYPHEN}{seed_keyword}"],
 				)
 
 			output_keywords_google_filename: str = generate_filename(
@@ -293,7 +293,7 @@ def run_keyword_expansion(
 				extension=TXT,
 			)
 			write_list_to_file(
-				filename=f'{output_keywords_google_filename}',
+				filename=f"{output_keywords_google_filename}",
 				folder=generate_source_folder(
 					source=source,
 					folder=folder_keywords_google,
@@ -308,9 +308,9 @@ def run_keyword_expansion(
 				)
 			else:
 				df_keyword_ideas_for_city = pd.DataFrame()
-				log_error(error=f'{city}{HYPHEN}{seed_keyword}{HYPHEN}{ERROR_EMPTY}')
+				log_error(error=f"{city}{HYPHEN}{seed_keyword}{HYPHEN}{ERROR_EMPTY}")
 			df_keyword_ideas_for_city.to_csv(
-				f'{folder_expansion_raw_source}{output_expansion_raw_filename}',
+				f"{folder_expansion_raw_source}{output_expansion_raw_filename}",
 				index=False,
 			)
 
@@ -322,7 +322,7 @@ def generate_source_folder(
 	generate_sub_paths_for_folder(
 		folder=folder,
 	)
-	return f'{folder}{source}{FORWARD_SLASH}'
+	return f"{folder}{source}{FORWARD_SLASH}"
 
 
 def map_keywords_to_string_values(
@@ -333,7 +333,7 @@ def map_keywords_to_string_values(
 	keyword: str
 	for keyword in keywords:
 		# google.protobuf.StringValue
-		string_val = client.get_type('StringValue')
+		string_val = client.get_type("StringValue")
 		string_val.value = keyword
 		keyword_protos.append(string_val)
 	return keyword_protos
@@ -343,12 +343,12 @@ def map_locations_to_string_values(
 		client: GoogleAdsClient,
 		location_ids: List[str],
 ) -> List:
-	gtc_service = client.get_service('GeoTargetConstantService', version='v3')
+	gtc_service = client.get_service("GeoTargetConstantService", version="v3")
 	locations = []
 	location_id: str
 	for location_id in location_ids:
 		# google.protobuf.StringValue
-		location = client.get_type('StringValue')
+		location = client.get_type("StringValue")
 		location.value = gtc_service.geo_target_constant_path(location_id)
 		locations.append(location)
 	return locations
@@ -359,23 +359,23 @@ def map_language_to_string_value(
 		language_id: str,
 ) -> Any:
 	# google.protobuf.StringValue
-	language = client.get_type('StringValue')
-	language.value = client.get_service('LanguageConstantService', version='v3').language_constant_path(language_id)
+	language = client.get_type("StringValue")
+	language.value = client.get_service("LanguageConstantService", version="v3").language_constant_path(language_id)
 	return language
 
 
 def log_exception(
 		exception: GoogleAdsException,
 ) -> None:
-	log_error(error=f'Request with ID {exception.request_id} failed with status {exception.error.code().name} and includes the following errors:')
+	log_error(error=f"Request with ID {exception.request_id} failed with status {exception.error.code().name} and includes the following errors:")
 	for error in exception.failure.errors:
-		log_error(error=f'Error with message {error.message}.')
+		log_error(error=f"Error with message {error.message}.")
 		if error.location:
 			for field_path_element in error.location.field_path_elements:
-				log_error(error=f'On field: {field_path_element.field_name}')
+				log_error(error=f"On field: {field_path_element.field_name}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	called_from_main = True
 	if len(sys.argv) == 3:
 		partition_group: int = int(sys.argv[1])

@@ -4,29 +4,29 @@ import sys
 from universal import *
 
 # STATIC VARIABLES
-BING: str = 'bing'
-COLUMNS_TO_DROP: str = 'columns_to_drop'
-COVID: str = 'covid'
-DATE_COLUMN: str = 'date_column'
-DTYPE: str = 'dtype'
-FILE_PATH_OR_FILTER_NAME_CONDITIONS: str = 'file_path_or_filter_name_conditions'
-FOLDER_PATH: str = 'folder_path'
-GOOGLE: str = 'google'
-MAPPING: str = 'mapping'
+BING: str = "bing"
+COLUMNS_TO_DROP: str = "columns_to_drop"
+COVID: str = "covid"
+DATE_COLUMN: str = "date_column"
+DTYPE: str = "dtype"
+FILE_PATH_OR_FILTER_NAME_CONDITIONS: str = "file_path_or_filter_name_conditions"
+FOLDER_PATH: str = "folder_path"
+GOOGLE: str = "google"
+MAPPING: str = "mapping"
 
 # PARAMS
-PARAM_BING_DATA_FILEPATH: str = 'bing_data_file_path'
-PARAM_COLUMNS_TO_DROP: str = 'columns_to_drop'
-PARAM_DATA: str = 'data'
-PARAM_DTYPES: str = 'dtypes'
-PARAM_FOLDER_COVID_RAW: str = 'folder_covid_raw'
-PARAM_FOLDER_COVID_AGGREGATE: str = 'folder_covid_aggregate'
-PARAM_GOOGLE_DATA_FILENAME_FILTER_CONDITIONS: str = 'google_data_filename_filter_conditions'
-PARAM_GOOGLE_DTYPES: str = 'google_dtypes'
-PARAM_INNER_OR_OUTER_JOIN: str = 'inner_or_outer_join'
+PARAM_BING_DATA_FILEPATH: str = "bing_data_file_path"
+PARAM_COLUMNS_TO_DROP: str = "columns_to_drop"
+PARAM_DATA: str = "data"
+PARAM_DTYPES: str = "dtypes"
+PARAM_FOLDER_COVID_RAW: str = "folder_covid_raw"
+PARAM_FOLDER_COVID_AGGREGATE: str = "folder_covid_aggregate"
+PARAM_GOOGLE_DATA_FILENAME_FILTER_CONDITIONS: str = "google_data_filename_filter_conditions"
+PARAM_GOOGLE_DTYPES: str = "google_dtypes"
+PARAM_INNER_OR_OUTER_JOIN: str = "inner_or_outer_join"
 
 # DEFAULTS
-RE_camel_to_snake_case_pattern: Pattern = re.compile(r'(?<!^)(?=[A-Z])')
+RE_camel_to_snake_case_pattern: Pattern = re.compile(r"(?<!^)(?=[A-Z])")
 
 
 def main(
@@ -35,7 +35,7 @@ def main(
 	set_error_file_origin(COVID)
 	set_error_folder(FOLDER_ERROR)
 	if called_from_main:
-		with open(f'{COVID}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
+		with open(f"{COVID}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 			json_data = json.load(json_file)
 			data_schema: dict = json_data[PARAM_DATA]
 			folder_covid_raw: str = json_data[PARAM_FOLDER_COVID_RAW]
@@ -70,7 +70,7 @@ def main(
 		extension=CSV,
 	)
 	df_merged.to_csv(
-		f'{folder_covid_stitch}{output_covid_aggregate_filename}',
+		f"{folder_covid_stitch}{output_covid_aggregate_filename}",
 		index=False,
 	)
 	write_errors_to_disk()
@@ -94,25 +94,25 @@ def parse_data(
 				list_filename_filter_conditions=tuple(filepath),
 			)
 		else:
-			log_error(error=f'{source}{HYPHEN}{FILE_PATH_OR_FILTER_NAME_CONDITIONS}{HYPHEN}neither_a_list_or_string')
+			log_error(error=f"{source}{HYPHEN}{FILE_PATH_OR_FILTER_NAME_CONDITIONS}{HYPHEN}neither_a_list_or_string")
 			continue
 
 		df: pd.DataFrame
-		date_column: str = data_scheme.get(DATE_COLUMN, '')
+		date_column: str = data_scheme.get(DATE_COLUMN, "")
 		if not date_column:
-			log_error(error=f'{source}{HYPHEN}{DATE_COLUMN}{HYPHEN}{MISSING}')
+			log_error(error=f"{source}{HYPHEN}{DATE_COLUMN}{HYPHEN}{MISSING}")
 			continue
 		dtype: dict = data_scheme.get(DTYPE, {})
 		if dtype:
 			df = pd.read_csv(
-				f'{folder}{filepath}',
+				f"{folder}{filepath}",
 				dtype=dtype,
 				parse_dates=[date_column],
 				infer_datetime_format=True,
 			)
 		else:
 			df = pd.read_csv(
-				f'{folder}{filepath}',
+				f"{folder}{filepath}",
 				parse_dates=[date_column],
 				infer_datetime_format=True,
 			)
@@ -132,7 +132,7 @@ def parse_data(
 			)
 
 		columns_to_snake_case_mapping: dict = {
-			column_name: RE_camel_to_snake_case_pattern.sub('_', column_name).lower()
+			column_name: RE_camel_to_snake_case_pattern.sub("_", column_name).lower()
 			for column_name in df.columns
 		}
 		df.rename(
@@ -144,10 +144,10 @@ def parse_data(
 	return list_df
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	called_from_main = True
 	if len(sys.argv) > 1:
-		print(f'Not sure what to do with these input arguments: {sys.argv[1:]}')
+		print(f"Not sure what to do with these input arguments: {sys.argv[1:]}")
 		main(called_from_main=called_from_main)
 	else:
 		main(called_from_main=called_from_main)

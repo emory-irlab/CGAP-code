@@ -17,113 +17,113 @@ from typing import Tuple
 import pandas as pd
 
 # STATIC VARIABLES
-AGGREGATE: str = 'aggregate'
-API: str = 'api'
-CBSA: str = 'CBSA'
-CITY: str = 'city'
-CITY_AB: str = 'abbreviation'
-COMMON_WORD: str = 'common_word'
-COMMON_WORD_FREQUENCY: str = 'common_word_frequency'
-COMMON_WORD_FREQUENCY_RELATIVE: str = 'common_word_frequency_relative'
-CREDENTIALS: str = 'credentials'
-CSV: str = '.csv'
-DATE: str = 'date'
-DATE_FORMAT: str = '%Y-%m-%d'
-DMA: str = 'DMA'
-DOWNLOAD: str = 'download'
-EMPTY_STRING: str = ''
-END_DATE: str = 'end_date'
-EPA: str = 'epa'
-FORWARD_SLASH: str = '/'
-GOOGLE_GEO_CODE: str = 'google_geo_code'
-HYPHEN: str = '-'
-IGNORE_ZERO: str = 'ignore_zero'
-JSON: str = '.json'
-KEYWORD: str = 'keyword'
-KEYWORD_FREQUENCY: str = 'keyword_frequency'
-KEYWORD_FREQUENCY_RELATIVE = 'keyword_frequency_relative'
-LOG: str = 'log'
-MAX: str = 'max'
-MEAN: str = 'mean'
-MEDIAN: str = 'median'
-MISSING: str = 'missing'
-PARAMETERS: str = 'parameters'
-POLLUTANT: str = 'pollutant'
-POLLUTION_LEVEL: str = 'pollution_level'
-SINGLE_SPACE: str = ' '
-START_DATE: str = 'start_date'
-STATE_AB: str = 'state_ab'
-STATE_NAME: str = 'state_name'
-STITCH: str = 'stitch'
-THRESHOLD: str = 'threshold'
-THRESHOLD_PERCENTILE: str = 'threshold_percentile'
-THRESHOLD_SIDE: str = 'threshold_side'
-TIME_SHIFT: str = 'time_shift'
-TRENDS: str = 'trends'
-UNDERSCORE: str = '_'
-UNIVERSAL: str = 'universal'
-UNKNOWN: str = 'unknown'
-UNNAMED: str = 'Unnamed: 0'
-SOURCE: str = 'source'
-TARGET_STATISTIC: str = 'target_statistic'
-TIME_SHIFT_NEGATIVE_SYMBOL: str = '~'
-TXT: str = '.txt'
+AGGREGATE: str = "aggregate"
+API: str = "api"
+CBSA: str = "CBSA"
+CITY: str = "city"
+CITY_AB: str = "abbreviation"
+COMMON_WORD: str = "common_word"
+COMMON_WORD_FREQUENCY: str = "common_word_frequency"
+COMMON_WORD_FREQUENCY_RELATIVE: str = "common_word_frequency_relative"
+CREDENTIALS: str = "credentials"
+CSV: str = ".csv"
+DATE: str = "date"
+DATE_FORMAT: str = "%Y-%m-%d"
+DMA: str = "DMA"
+DOWNLOAD: str = "download"
+EMPTY_STRING: str = ""
+END_DATE: str = "end_date"
+EPA: str = "epa"
+FORWARD_SLASH: str = "/"
+GOOGLE_GEO_CODE: str = "google_geo_code"
+HYPHEN: str = "-"
+IGNORE_ZERO: str = "ignore_zero"
+JSON: str = ".json"
+KEYWORD: str = "keyword"
+KEYWORD_FREQUENCY: str = "keyword_frequency"
+KEYWORD_FREQUENCY_RELATIVE = "keyword_frequency_relative"
+LOG: str = "log"
+MAX: str = "max"
+MEAN: str = "mean"
+MEDIAN: str = "median"
+MISSING: str = "missing"
+PARAMETERS: str = "parameters"
+POLLUTANT: str = "pollutant"
+POLLUTION_LEVEL: str = "pollution_level"
+SINGLE_SPACE: str = " "
+START_DATE: str = "start_date"
+STATE_AB: str = "state_ab"
+STATE_NAME: str = "state_name"
+STITCH: str = "stitch"
+THRESHOLD: str = "threshold"
+THRESHOLD_PERCENTILE: str = "threshold_percentile"
+THRESHOLD_SIDE: str = "threshold_side"
+TIME_SHIFT: str = "time_shift"
+TRENDS: str = "trends"
+UNDERSCORE: str = "_"
+UNIVERSAL: str = "universal"
+UNKNOWN: str = "unknown"
+UNNAMED: str = "Unnamed: 0"
+SOURCE: str = "source"
+TARGET_STATISTIC: str = "target_statistic"
+TIME_SHIFT_NEGATIVE_SYMBOL: str = "~"
+TXT: str = ".txt"
 
 # ERROR STATEMENTS
-ERROR_PARTITION: str = 'not available with multi-partitioning. Running on partition 1.'
-ERROR_EMPTY: str = 'empty_data_frame'
+ERROR_PARTITION: str = "Not available with multi-partitioning. Running on partition 1."
+ERROR_EMPTY: str = "empty_data_frame"
 
 # JSON PARAMETERS
-EPA_API_POLLUTANT_PARAM: str = 'param'
-PARAM_BDATE: str = 'bdate'
-PARAM_EDATE: str = 'edate'
-PARAM_DATE_START: str = 'start_dates'
-PARAM_DATE_END: str = 'end_dates'
-PARAM_FOLDER_EPA_RAW: str = 'folder_epa_raw'
-PARAM_FOLDER_EPA_STITCH: str = 'folder_epa_stitch'
-PARAM_FOLDER_EPA_AGGREGATE: str = 'folder_epa_aggregate'
-PARAM_FOLDER_ERROR: str = 'folder_error'
-PARAM_FOLDER_KEYWORDS: str = 'folder_keywords'
-PARAM_FOLDER_KEYWORDS_GOOGLE: str = 'folder_keywords_google'
-PARAM_FOLDER_EXPANSION_RAW: str = 'folder_expansion_raw'
-PARAM_FOLDER_EXPANSION_AGGREGATE: str = 'folder_expansion_aggregate'
-PARAM_FOLDER_EXPANSION_PARENTS: str = 'folder_expansion_parents'
-PARAM_FOLDER_STATS_CORRELATIONS_RAW: str = 'folder_stats_correlations_raw'
-PARAM_FOLDER_STATS_CORRELATIONS_AGGREGATE: str = 'folder_stats_correlations_aggregate'
-PARAM_FOLDER_STATS_CORRELATIONS_COMPARISON: str = 'folder_stats_correlations_comparison'
-PARAM_FOLDER_STATS_INTERCITY_RAW: str = 'folder_stats_intercity_raw'
-PARAM_FOLDER_STATS_INTERCITY_AGGREGATE: str = 'folder_stats_intercity_aggregate'
-PARAM_FOLDER_TRENDS_METRICS_RAW: str = 'folder_trends_metrics_raw'
-PARAM_FOLDER_TRENDS_METRICS_AGGREGATE: str = 'folder_trends_metrics_aggregate'
-PARAM_FOLDER_EPA_METRICS_RAW: str = 'folder_epa_metrics_raw'
-PARAM_FOLDER_EPA_METRICS_AGGREGATE: str = 'folder_epa_metrics_aggregate'
-PARAM_FOLDER_TRENDS_RAW: str = 'folder_trends_raw'
-PARAM_FOLDER_TRENDS_STITCH: str = 'folder_trends_stitch'
-PARAM_FOLDER_TRENDS_AGGREGATE: str = 'folder_trends_aggregate'
-PARAM_MAX_SEARCH_FREQUENCY: str = 'max_search_frequency'
+EPA_API_POLLUTANT_PARAM: str = "param"
+PARAM_BDATE: str = "bdate"
+PARAM_EDATE: str = "edate"
+PARAM_DATE_START: str = "start_dates"
+PARAM_DATE_END: str = "end_dates"
+PARAM_FOLDER_EPA_RAW: str = "folder_epa_raw"
+PARAM_FOLDER_EPA_STITCH: str = "folder_epa_stitch"
+PARAM_FOLDER_EPA_AGGREGATE: str = "folder_epa_aggregate"
+PARAM_FOLDER_ERROR: str = "folder_error"
+PARAM_FOLDER_KEYWORDS: str = "folder_keywords"
+PARAM_FOLDER_KEYWORDS_GOOGLE: str = "folder_keywords_google"
+PARAM_FOLDER_EXPANSION_RAW: str = "folder_expansion_raw"
+PARAM_FOLDER_EXPANSION_AGGREGATE: str = "folder_expansion_aggregate"
+PARAM_FOLDER_EXPANSION_PARENTS: str = "folder_expansion_parents"
+PARAM_FOLDER_STATS_CORRELATIONS_RAW: str = "folder_stats_correlations_raw"
+PARAM_FOLDER_STATS_CORRELATIONS_AGGREGATE: str = "folder_stats_correlations_aggregate"
+PARAM_FOLDER_STATS_CORRELATIONS_COMPARISON: str = "folder_stats_correlations_comparison"
+PARAM_FOLDER_STATS_INTERCITY_RAW: str = "folder_stats_intercity_raw"
+PARAM_FOLDER_STATS_INTERCITY_AGGREGATE: str = "folder_stats_intercity_aggregate"
+PARAM_FOLDER_TRENDS_METRICS_RAW: str = "folder_trends_metrics_raw"
+PARAM_FOLDER_TRENDS_METRICS_AGGREGATE: str = "folder_trends_metrics_aggregate"
+PARAM_FOLDER_EPA_METRICS_RAW: str = "folder_epa_metrics_raw"
+PARAM_FOLDER_EPA_METRICS_AGGREGATE: str = "folder_epa_metrics_aggregate"
+PARAM_FOLDER_TRENDS_RAW: str = "folder_trends_raw"
+PARAM_FOLDER_TRENDS_STITCH: str = "folder_trends_stitch"
+PARAM_FOLDER_TRENDS_AGGREGATE: str = "folder_trends_aggregate"
+PARAM_MAX_SEARCH_FREQUENCY: str = "max_search_frequency"
 
 # USER SET
-ATLANTA: str = 'atlanta'
-BOSTON: str = 'boston'
-CHICAGO: str = 'chicago'
-DALLAS: str = 'dallas'
-HOUSTON: str = 'houston'
-LOS_ANGELES: str = 'los_angeles'
-MIAMI: str = 'miami'
-NEW_YORK: str = 'new_york'
-PHILADELPHIA: str = 'philadelphia'
-WASHINGTON: str = 'washington'
-USA: str = 'usa'
+ATLANTA: str = "atlanta"
+BOSTON: str = "boston"
+CHICAGO: str = "chicago"
+DALLAS: str = "dallas"
+HOUSTON: str = "houston"
+LOS_ANGELES: str = "los_angeles"
+MIAMI: str = "miami"
+NEW_YORK: str = "new_york"
+PHILADELPHIA: str = "philadelphia"
+WASHINGTON: str = "washington"
+USA: str = "usa"
 
-CO: str = 'CO'
-NO2: str = 'NO2'
-O3: str = 'O3'
-PM25: str = 'PM2.5'
-PM10: str = 'PM10'
-SO2: str = 'SO2'
+CO: str = "CO"
+NO2: str = "NO2"
+O3: str = "O3"
+PM25: str = "PM2.5"
+PM10: str = "PM10"
+SO2: str = "SO2"
 
 # DEFAULT VARIABLES
-DEFAULT_COMMON_WORD: str = 'pins'
+DEFAULT_COMMON_WORD: str = "pins"
 DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS: Tuple[str, str] = (
 	AGGREGATE,
 	CSV,
@@ -132,77 +132,77 @@ DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS: Tuple[str, str] = (
 DEFAULT_CITIES: Dict[str, dict] = {
 	ATLANTA:      {
 		CBSA:            12060,
-		CITY_AB:         'ATL',
+		CITY_AB:         "ATL",
 		DMA:             524,
-		STATE_NAME:      'GA',
-		GOOGLE_GEO_CODE: '1015254',
+		STATE_NAME:      "GA",
+		GOOGLE_GEO_CODE: "1015254",
 	},
 	BOSTON:       {
 		CBSA:            14460,
-		CITY_AB:         'BOS',
+		CITY_AB:         "BOS",
 		DMA:             506,
-		STATE_NAME:      'MA',
-		GOOGLE_GEO_CODE: '1018127'
+		STATE_NAME:      "MA",
+		GOOGLE_GEO_CODE: "1018127"
 	},
 	CHICAGO:      {
 		CBSA:            16980,
-		CITY_AB:         'ORD',
+		CITY_AB:         "ORD",
 		DMA:             602,
-		STATE_NAME:      'IL',
-		GOOGLE_GEO_CODE: '1016367',
+		STATE_NAME:      "IL",
+		GOOGLE_GEO_CODE: "1016367",
 	},
 	DALLAS:       {
 		CBSA:            19100,
-		CITY_AB:         'DFW',
+		CITY_AB:         "DFW",
 		DMA:             623,
-		STATE_NAME:      'TX',
-		GOOGLE_GEO_CODE: '1026339',
+		STATE_NAME:      "TX",
+		GOOGLE_GEO_CODE: "1026339",
 	},
 	HOUSTON:      {
 		CBSA:            26420,
-		CITY_AB:         'IAH',
+		CITY_AB:         "IAH",
 		DMA:             618,
-		STATE_NAME:      'TX',
-		GOOGLE_GEO_CODE: '1026481',
+		STATE_NAME:      "TX",
+		GOOGLE_GEO_CODE: "1026481",
 	},
 	LOS_ANGELES:  {
 		CBSA:            31080,
-		CITY_AB:         'LAX',
+		CITY_AB:         "LAX",
 		DMA:             803,
-		STATE_NAME:      'CA',
-		GOOGLE_GEO_CODE: '1013962',
+		STATE_NAME:      "CA",
+		GOOGLE_GEO_CODE: "1013962",
 	},
 	MIAMI:        {
 		CBSA:            33100,
-		CITY_AB:         'MIA',
+		CITY_AB:         "MIA",
 		DMA:             528,
-		STATE_NAME:      'FL',
-		GOOGLE_GEO_CODE: '1015116',
+		STATE_NAME:      "FL",
+		GOOGLE_GEO_CODE: "1015116",
 	},
 	NEW_YORK:     {
 		CBSA:            35620,
-		CITY_AB:         'NYC',
+		CITY_AB:         "NYC",
 		DMA:             501,
-		STATE_NAME:      'NY',
-		GOOGLE_GEO_CODE: '1023191',
+		STATE_NAME:      "NY",
+		GOOGLE_GEO_CODE: "1023191",
 	},
 	PHILADELPHIA: {
 		CBSA:            37980,
-		CITY_AB:         'PHL',
+		CITY_AB:         "PHL",
 		DMA:             504,
-		STATE_NAME:      'PA',
-		GOOGLE_GEO_CODE: '1025197',
+		STATE_NAME:      "PA",
+		GOOGLE_GEO_CODE: "1025197",
 	},
 	WASHINGTON:   {  # DC
 		CBSA:            47900,
-		CITY_AB:         'IAD',
+		CITY_AB:         "IAD",
 		DMA:             511,
-		STATE_NAME:      'DC',
-		GOOGLE_GEO_CODE: '1014895'
+		STATE_NAME:      "DC",
+		GOOGLE_GEO_CODE: "1014895"
 
 	},
 	USA:          {
-		GOOGLE_GEO_CODE: '2840'
+		GOOGLE_GEO_CODE: "2840"
 	},
 }
 
@@ -229,43 +229,43 @@ DEFAULT_POLLUTANTS: Dict[str, dict] = {
 
 # GLOBAL NAMED TUPLES
 NT_filename_aggregate = namedtuple(
-	'NT_filename_aggregate',
+	"NT_filename_aggregate",
 	[
 		AGGREGATE,
 	]
 )
 NT_filename_city_aggregate = namedtuple(
-	'NT_filename_city_aggregate',
+	"NT_filename_city_aggregate",
 	[
 		CITY,
 	]
 )
 NT_date_pair = namedtuple(
-	'NT_date_pair',
+	"NT_date_pair",
 	[
 		START_DATE,
 		END_DATE,
 	]
 )
 NT_filename_errors = namedtuple(
-	'NT_filename_errors',
+	"NT_filename_errors",
 	[
-		'error_file_origin',
-		'error_task_origin',
+		"error_file_origin",
+		"error_task_origin",
 	]
 )
 NT_error = namedtuple(
-	'error',
+	"error",
 	[
-		'error',
+		"error",
 	]
 )
 
 # GLOBAL VARIABLES
-ERROR_FOLDER: str = EMPTY_STRING
+ERROR_FOLDER: str = ""
 ERROR_LIST: List[str] = []
-ERROR_FILE_ORIGIN: str = EMPTY_STRING
-ERROR_TASK_ORIGIN: str = EMPTY_STRING
+ERROR_FILE_ORIGIN: str = ""
+ERROR_TASK_ORIGIN: str = ""
 PARTITION_GROUP: int = 1
 PARTITION_TOTAL: int = 1
 
@@ -310,9 +310,9 @@ def parse_filename_numeric(
 
 def generate_filename(
 		filename_nt: tuple,
-		delimiter: str = EMPTY_STRING,
-		folder: str = EMPTY_STRING,
-		extension: str = EMPTY_STRING,
+		delimiter: str = "",
+		folder: str = "",
+		extension: str = "",
 ) -> str:
 	output: str = delimiter.join(filename_nt)
 	if folder:
@@ -326,16 +326,16 @@ def parse_filename(
 		filename: str,
 		delimiter: str,
 		named_tuple,  # NamedTuple annotation doesn't work when using it as a callable
-		extension: str = EMPTY_STRING,
+		extension: str = "",
 ) -> tuple:
 	if extension:
-		filename = filename.replace(extension, EMPTY_STRING)
+		filename = filename.replace(extension, "")
 	split_filename: List[str] = filename.split(delimiter)
 	parsed_filename: NamedTuple
 	try:
 		parsed_filename = named_tuple(*split_filename)
 	except TypeError:
-		error: str = f'parse_filename{HYPHEN}named_tuple_size_mismatch{HYPHEN}filename'
+		error: str = f"parse_filename{HYPHEN}named_tuple_size_mismatch{HYPHEN}filename"
 		parsed_filename = NT_error(error)
 		log_error(error=error)
 
@@ -345,7 +345,7 @@ def parse_filename(
 def aggregate_data_in_folder(
 		folder_input: str,
 		folder_output_aggregate: str,
-		optional_filename_label: str = EMPTY_STRING,
+		optional_filename_label: str = "",
 		list_cities: Tuple[str, ...] = tuple(DEFAULT_CITIES),
 		bool_suppress_print: bool = True,
 ) -> None:
@@ -353,9 +353,9 @@ def aggregate_data_in_folder(
 		folder=folder_output_aggregate,
 	)
 	if optional_filename_label:
-		filename_label: str = f'{HYPHEN}{optional_filename_label}'
+		filename_label: str = f"{HYPHEN}{optional_filename_label}"
 	else:
-		filename_label = EMPTY_STRING
+		filename_label = ""
 	list_data_dfs_for_all_cities: List[pd.DataFrame] = []
 	city: str
 	for city in list_cities:
@@ -369,27 +369,27 @@ def aggregate_data_in_folder(
 			# noinspection PyUnresolvedReferences
 			try:
 				df: pd.DataFrame = pd.read_csv(
-					f'{folder_input}{filename}',
+					f"{folder_input}{filename}",
 				)
 				list_parsed_dfs_per_city.append(df)
 			except pd.io.common.EmptyDataError:
 				log_error(
-					error=f'{city}{HYPHEN}{AGGREGATE}{HYPHEN}{filename}{HYPHEN}{ERROR_EMPTY}',
+					error=f"{city}{HYPHEN}{AGGREGATE}{HYPHEN}{filename}{HYPHEN}{ERROR_EMPTY}",
 					bool_suppress_print=bool_suppress_print,
 				)
 		if len(list_parsed_dfs_per_city) > 0:
-			log_error(error=f'{AGGREGATE} : {city}', log=True)
+			log_error(error=f"{AGGREGATE} : {city}", log=True)
 			concatenated_data_per_city: pd.DataFrame = pd.concat(
 				list_parsed_dfs_per_city,
 				sort=True,
 			)
 			concatenated_data_per_city.to_csv(
-				f'{folder_output_aggregate}{city}{HYPHEN}{filename_label}{CSV}',
+				f"{folder_output_aggregate}{city}{HYPHEN}{filename_label}{CSV}",
 				index=False,
 			)
 			list_data_dfs_for_all_cities.append(concatenated_data_per_city)
 		else:
-			log_error(error=f'{city}{HYPHEN}{ERROR_EMPTY}')
+			log_error(error=f"{city}{HYPHEN}{ERROR_EMPTY}")
 		write_errors_to_disk(
 			clear_task_origin=False,
 			bool_suppress_print=bool_suppress_print,
@@ -401,7 +401,7 @@ def aggregate_data_in_folder(
 		sort=True,
 	)
 	df_aggregate.to_csv(
-		f'{folder_output_aggregate}{AGGREGATE}{filename_label}{CSV}',
+		f"{folder_output_aggregate}{AGGREGATE}{filename_label}{CSV}",
 		index=False,
 	)
 
@@ -424,8 +424,8 @@ def partition_list(
 		partition_group: int,
 		partition_total: int,
 ) -> List[Any]:
-	assert (partition_group > 0), f'The partition group must equal 1 or more'
-	assert partition_group <= partition_total, f'Partition group: {partition_group} exceeds partition total {partition_total}.'
+	assert (partition_group > 0), f"The partition group must equal 1 or more"
+	assert partition_group <= partition_total, f"Partition group: {partition_group} exceeds partition total {partition_total}."
 	if partition_total == 1:
 
 		return list_partition_candidates
@@ -445,7 +445,7 @@ def parse_api_credentials(
 		filename: str,
 ) -> dict:
 	try:
-		with open(f'{filename}') as json_file:
+		with open(f"{filename}") as json_file:
 			json_data = json.load(json_file)
 			return json_data
 	# todo - fix this
@@ -467,18 +467,18 @@ def import_single_file(
 		filename, *list_rest = list_filenames
 		if len(list_rest) != 0:
 			print(
-				f'Multiple filename candidates; using the first candidate: {filename}. These are the rest: {list_rest}.'
+				f"Multiple filename candidates; using the first candidate: {filename}. These are the rest: {list_rest}."
 			)
 			filename_extra_candidate: str
 			for filename_extra_candidate in list_rest:
-				log_error(error=f'parse_filename{HYPHEN}extra_candidate{HYPHEN}{filename_extra_candidate}')
+				log_error(error=f"parse_filename{HYPHEN}extra_candidate{HYPHEN}{filename_extra_candidate}")
 
 		return filename
 
 	else:
-		log_error(error=f'parse_filename{HYPHEN}no_candidate')
+		log_error(error=f"parse_filename{HYPHEN}no_candidate")
 
-		return EMPTY_STRING
+		return ""
 
 
 def import_paths_from_folder(
@@ -515,16 +515,16 @@ def import_paths_from_folder(
 				list_paths = [
 					path
 					for path in list_paths
-					if os.path.isfile(f'{folder}{path}')
+					if os.path.isfile(f"{folder}{path}")
 				]
 			if include_folders:
 				list_paths = [
 					path
 					for path in list_paths
-					if os.path.isdir(f'{folder}{path}')
+					if os.path.isdir(f"{folder}{path}")
 				]
 			if ignore_hidden:
-				pattern_hidden_path: Pattern[str] = re.compile(r'\.[A-Za-z]')
+				pattern_hidden_path: Pattern[str] = re.compile(r"\.[A-Za-z]")
 				list_paths = [
 					path
 					for path in list_paths
@@ -543,8 +543,8 @@ def import_paths_from_folder(
 def generate_sub_paths_for_folder(
 		folder: str,
 ) -> None:
-	directories: List[str] = folder.split('/')
-	recursive_sub_directories: Iterator[str] = itertools.accumulate(directories, lambda x, y: '/'.join([x, y]))
+	directories: List[str] = folder.split("/")
+	recursive_sub_directories: Iterator[str] = itertools.accumulate(directories, lambda x, y: "/".join([x, y]))
 	sub_directory: str
 	for sub_directory in recursive_sub_directories:
 		if not os.path.isdir(sub_directory):
@@ -575,12 +575,12 @@ def write_list_to_file(
 		folder: str,
 		list_strings: List[str],
 ) -> None:
-	output_filename: str = f'{folder}{filename}'
+	output_filename: str = f"{folder}{filename}"
 	output_write_type: str
 	if os.path.exists(output_filename):
-		output_write_type = 'a+'
+		output_write_type = "a+"
 	else:
-		output_write_type = 'w+'
+		output_write_type = "w+"
 		generate_sub_paths_for_folder(
 			folder=folder,
 		)
@@ -589,7 +589,7 @@ def write_list_to_file(
 		for string in list_strings:
 			if string not in output_file:
 				output_file.write(str(string))
-				output_file.write('\n')
+				output_file.write("\n")
 	output_file.close()
 
 
@@ -599,8 +599,8 @@ def check_partition_valid_for_aggregation(
 		partition_total: int,
 ) -> bool:
 	if get_partition_group() > 1 or get_partition_total() > 1:
-		log_error(error=f'{ERROR_PARTITION}{HYPHEN}{error_label}')
-		print_statement: str = f'Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE ''total partition due to race conditions. ' f'Not guaranteed that the other partitions have finished running; please check and rerun. Current partition group: {partition_group}. Current partition total: {partition_total}.'
+		log_error(error=f"{ERROR_PARTITION}{HYPHEN}{error_label}")
+		print_statement: str = f"Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE total partition due to race conditions. Not guaranteed that the other partitions have finished running; please check and rerun. Current partition group: {partition_group}. Current partition total: {partition_total}."
 		print(print_statement)
 		return False
 	else:
@@ -619,16 +619,16 @@ def set_partition_total(
 		partition_total: int = 1,
 ) -> None:
 	global PARTITION_TOTAL
-	assert partition_total > 0, f'Partition total must be above 0'
+	assert partition_total > 0, f"Partition total must be above 0"
 	PARTITION_TOTAL = partition_total
-	assert PARTITION_TOTAL >= PARTITION_GROUP, f'Partition total must be greater than or equal to the partition groups'
+	assert PARTITION_TOTAL >= PARTITION_GROUP, f"Partition total must be greater than or equal to the partition groups"
 
 
 def set_partition_group(
 		partition_group: int = 1,
 ) -> None:
 	global PARTITION_GROUP
-	assert partition_group > 0, f'Partition group must be above 0'
+	assert partition_group > 0, f"Partition group must be above 0"
 	PARTITION_GROUP = partition_group
 
 
@@ -642,9 +642,9 @@ def log_error(
 		ERROR_LIST.append(error)
 	if not bool_suppress_print:
 		if log:
-			print(f'{LOG} : {error}')
+			print(f"{LOG} : {error}")
 		else:
-			print(f'error : {error}')
+			print(f"error : {error}")
 
 
 def set_error_folder(
@@ -652,7 +652,7 @@ def set_error_folder(
 ) -> None:
 	global ERROR_FOLDER
 	ERROR_FOLDER = error_folder
-	print(f'error_folder : {error_folder}')
+	print(f"error_folder : {error_folder}")
 
 
 def set_error_file_origin(
@@ -660,7 +660,7 @@ def set_error_file_origin(
 ) -> None:
 	global ERROR_FILE_ORIGIN
 	ERROR_FILE_ORIGIN = file_origin
-	print(f'file_origin : {file_origin}')
+	print(f"file_origin : {file_origin}")
 
 
 def set_error_task_origin(
@@ -669,7 +669,7 @@ def set_error_task_origin(
 	global ERROR_TASK_ORIGIN
 	ERROR_TASK_ORIGIN = task_origin
 	if task_origin:
-		print(f'task_origin : {task_origin}')
+		print(f"task_origin : {task_origin}")
 
 
 def write_errors_to_disk(
@@ -687,12 +687,12 @@ def write_errors_to_disk(
 		error_file_origin = ERROR_FILE_ORIGIN
 	else:
 		error_file_origin = UNKNOWN
-		print(f'No file origin was specified for the error log.')
+		print(f"No file origin was specified for the error log.")
 	if ERROR_TASK_ORIGIN:
 		error_task_origin = ERROR_TASK_ORIGIN
 	else:
 		error_task_origin = UNKNOWN
-		print(f'No task origin was specified for the error log.')
+		print(f"No task origin was specified for the error log.")
 
 	output_filename: str = generate_filename(
 		filename_nt=NT_filename_errors(
@@ -705,36 +705,36 @@ def write_errors_to_disk(
 	)
 	output_write_type: str
 	if overwrite:
-		output_write_type = 'w+'
+		output_write_type = "w+"
 	elif os.path.exists(output_filename):
-		output_write_type = 'a+'
+		output_write_type = "a+"
 	else:
-		output_write_type = 'w+'
+		output_write_type = "w+"
 
 	with open(output_filename, output_write_type) as error_log_file:
-		current_datetime: str = datetime.now().strftime('%m/%d/%Y %H:%M:%S')
-		error_log_file.write(f'{current_datetime} : {error_task_origin}')
-		error_log_file.write('\n')
+		current_datetime: str = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+		error_log_file.write(f"{current_datetime} : {error_task_origin}")
+		error_log_file.write("\n")
 
 		error: str
 		for error in ERROR_LIST:
 			error_log_file.write(str(error))
-			error_log_file.write('\n')
-		error_log_file.write('\n')
-		error_log_file.write('\n')
+			error_log_file.write("\n")
+		error_log_file.write("\n")
+		error_log_file.write("\n")
 
 	ERROR_LIST = []
 	if clear_task_origin:
-		set_error_task_origin(EMPTY_STRING)
+		set_error_task_origin("")
 	if not bool_suppress_print:
-		print(f'Error log outputted to: {output_filename}')
+		print(f"Error log outputted to: {output_filename}")
 
 
-if __name__ == '__main__':
-	print(f'universal.py is not meant to be run as a script. Aborting.')
+if __name__ == "__main__":
+	print(f"universal.py is not meant to be run as a script. Aborting.")
 	exit(1)
 
-with open(f'{UNIVERSAL}{HYPHEN}{PARAMETERS}{JSON}') as universal_json_file:
+with open(f"{UNIVERSAL}{HYPHEN}{PARAMETERS}{JSON}") as universal_json_file:
 	universal_parameters = json.load(universal_json_file)
 	COMMON_WORD_UNIVERSAL: str = universal_parameters[COMMON_WORD]
 	MAX_SEARCH_VOLUME: float = universal_parameters[PARAM_MAX_SEARCH_FREQUENCY]

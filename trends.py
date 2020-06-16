@@ -9,10 +9,10 @@ import pytrends.request
 from universal import *
 
 # STATIC VARIABLES
-ERROR_MAX_VOLUME: str = 'max_volume_exceeds'
-ERROR_RESPONSE: str = 'response_missing'
-IS_PARTIAL: str = 'isPartial'
-US: str = 'US'
+ERROR_MAX_VOLUME: str = "max_volume_exceeds"
+ERROR_RESPONSE: str = "response_missing"
+IS_PARTIAL: str = "isPartial"
+US: str = "US"
 
 # DEFAULT
 DEFAULT_DOWNLOAD_WITH_COMMON: bool = False
@@ -25,14 +25,14 @@ DEFAULT_SOURCE_FOLDERS: Tuple[str, ...] = (
 )
 
 # PARAMETERS
-PARAM_VALIDATE_DOWNLOAD: str = 'validate_download'
-PARAM_DOWNLOAD_WITH_COMMON_WORD: str = 'download_with_common_word'
-PARAM_ONLY_STITCH_MISSING: str = 'only_stitch_missing'
-PARAM_SOURCE_FOLDERS_TO_DOWNLOAD: str = 'source_folders_to_download'
+PARAM_VALIDATE_DOWNLOAD: str = "validate_download"
+PARAM_DOWNLOAD_WITH_COMMON_WORD: str = "download_with_common_word"
+PARAM_ONLY_STITCH_MISSING: str = "only_stitch_missing"
+PARAM_SOURCE_FOLDERS_TO_DOWNLOAD: str = "source_folders_to_download"
 
 # NAMED TUPLES
 NT_filename_trends_raw = namedtuple(
-	'NT_filename_trends_raw',
+	"NT_filename_trends_raw",
 	[
 		CITY,
 		KEYWORD,
@@ -42,7 +42,7 @@ NT_filename_trends_raw = namedtuple(
 	]
 )
 NT_filename_trends_stitch = namedtuple(
-	'NT_filename_trends_stitch',
+	"NT_filename_trends_stitch",
 	[
 		CITY,
 		KEYWORD,
@@ -63,7 +63,7 @@ def main(
 	set_error_folder(FOLDER_ERROR)
 	set_partition_group(partition_group)
 	set_partition_total(partition_total)
-	with open(f'{TRENDS}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
+	with open(f"{TRENDS}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 		json_data = json.load(json_file)
 		aggregate: bool
 		download: bool
@@ -102,7 +102,7 @@ def main(
 		set_error_task_origin(task_origin=DOWNLOAD)
 		city: str
 		for city in list_partitioned_cities:
-			log_error(f'{DOWNLOAD} : {city}', log=True)
+			log_error(f"{DOWNLOAD} : {city}", log=True)
 			dict_keyword_sets: Dict[str, List[Tuple[str, str]]] = generate_keywords_to_download_dict(
 				city=city,
 				list_date_pairs=LIST_DATE_PAIRS,
@@ -166,7 +166,7 @@ def main(
 				extension=CSV,
 			)
 			df_aggregate_keywords.to_csv(
-				f'{FOLDER_TRENDS_AGGREGATE}{output_trends_aggregate_filename}',
+				f"{FOLDER_TRENDS_AGGREGATE}{output_trends_aggregate_filename}",
 				index=True,
 			)
 		write_errors_to_disk()
@@ -249,7 +249,7 @@ def generate_keywords_to_download_dict(
 					start_date=start_date,
 					end_date=end_date,
 				)
-				log_error(error=f'VALIDATE{HYPHEN}{expected_filename}')
+				log_error(error=f"VALIDATE{HYPHEN}{expected_filename}")
 			else:
 				if expected_filename not in list_already_downloaded_filenames:
 					add_keyword_to_keyword_sets(
@@ -288,10 +288,10 @@ def generate_keywords(
 		source: str = sub_folder
 		list_keywords: List[str] = []
 		for filename in import_paths_from_folder(
-				folder=f'{folder_keywords}{sub_folder}',
+				folder=f"{folder_keywords}{sub_folder}",
 				list_paths_filter_conditions=(TXT,),
 		):
-			keyword_file = open(f'{folder_keywords}{sub_folder}{FORWARD_SLASH}{filename}', 'r')
+			keyword_file = open(f"{folder_keywords}{sub_folder}{FORWARD_SLASH}{filename}", "r")
 			list_keywords.extend(
 				[
 					keyword.lower().strip()
@@ -314,7 +314,7 @@ def is_download_missing_dates(
 		start_date: str,
 		end_date: str,
 ) -> bool:
-	df: pd.DataFrame = pd.read_csv(f'{folder_trends_raw}{filename}')
+	df: pd.DataFrame = pd.read_csv(f"{folder_trends_raw}{filename}")
 	if df.empty:
 		return False
 	else:
@@ -338,8 +338,8 @@ def submit_dma_based_query(
 	if city == USA:
 		geo_code = US
 	else:
-		geo_code = f'{US}{HYPHEN}{str(DEFAULT_CITIES[city][STATE_NAME])}{HYPHEN}{str(DEFAULT_CITIES[city][DMA])}'
-	print(f'GEO Code : {geo_code}')
+		geo_code = f"{US}{HYPHEN}{str(DEFAULT_CITIES[city][STATE_NAME])}{HYPHEN}{str(DEFAULT_CITIES[city][DMA])}"
+	print(f"GEO Code : {geo_code}")
 
 	keyword: str
 	list_of_date_pairs: List[Tuple[str, str]]
@@ -349,10 +349,10 @@ def submit_dma_based_query(
 				continue
 			else:
 				kw_set = [common_word, keyword]
-				print(f'{city} : {keyword} : {common_word}')
+				print(f"{city} : {keyword} : {common_word}")
 		else:
 			kw_set = [keyword]
-			print(f'{city} : {keyword}')
+			print(f"{city} : {keyword}")
 
 		start_date: str
 		end_date: str
@@ -382,7 +382,7 @@ def submit_dma_based_query(
 				extension=CSV,
 			)
 
-			tm: str = f'{start_date}{SINGLE_SPACE}{end_date}'
+			tm: str = f"{start_date}{SINGLE_SPACE}{end_date}"
 			time.sleep(random.randrange(2, 5))
 			try:
 				pytrend.build_payload(
@@ -391,15 +391,15 @@ def submit_dma_based_query(
 					timeframe=tm,
 				)
 			except pytrends.exceptions.ResponseError:
-				log_error(error=f'{ERROR_RESPONSE}{HYPHEN}{output_nt_trends_raw_filename}')
+				log_error(error=f"{ERROR_RESPONSE}{HYPHEN}{output_nt_trends_raw_filename}")
 				return
 
 			df_trend_interest: pd.DataFrame = pytrend.interest_over_time()
 			if df_trend_interest.empty:
-				pd.DataFrame().to_csv(f'{folder_trends_raw}{output_nt_trends_raw_filename}')
-				log_error(error=f'{ERROR_EMPTY}{HYPHEN}{output_nt_trends_raw_filename}')
+				pd.DataFrame().to_csv(f"{folder_trends_raw}{output_nt_trends_raw_filename}")
+				log_error(error=f"{ERROR_EMPTY}{HYPHEN}{output_nt_trends_raw_filename}")
 			else:
-				df_trend_interest.to_csv(f'{folder_trends_raw}{output_nt_trends_raw_filename}')
+				df_trend_interest.to_csv(f"{folder_trends_raw}{output_nt_trends_raw_filename}")
 
 
 def stitch_trends_raw_for_city(
@@ -413,7 +413,7 @@ def stitch_trends_raw_for_city(
 		max_volume: float = MAX_SEARCH_VOLUME,
 		only_stitch_missing: bool = DEFAULT_ONLY_STITCH_MISSING,
 ) -> None:
-	log_error(f'{STITCH} : {city}', log=True)
+	log_error(f"{STITCH} : {city}", log=True)
 	generate_sub_paths_for_folder(
 		folder=folder_trends_stitch,
 	)
@@ -444,7 +444,7 @@ def stitch_trends_raw_for_city(
 	)
 
 	if error_global_common_word:
-		log_error(error=f'{city}{HYPHEN}{common_word}{HYPHEN}{error_global_common_word}')
+		log_error(error=f"{city}{HYPHEN}{common_word}{HYPHEN}{error_global_common_word}")
 
 	list_already_stitched_trends_filenames: List[str] = import_paths_from_folder(
 		folder_trends_stitch,
@@ -472,7 +472,7 @@ def stitch_trends_raw_for_city(
 		)
 
 		if not only_stitch_missing or output_trends_stitch_filename not in list_already_stitched_trends_filenames:
-			print(f'{STITCH} : {city} : {keyword}')
+			print(f"{STITCH} : {city} : {keyword}")
 
 			error_keyword: str
 			df_keyword: pd.DataFrame = generate_df_from_trends_raw_file_paths(
@@ -493,7 +493,7 @@ def stitch_trends_raw_for_city(
 				max_search_frequency=max_volume,
 			)
 			if error_keyword:
-				log_error(error=f'{city}{HYPHEN}{keyword}{HYPHEN}{error_keyword}')
+				log_error(error=f"{city}{HYPHEN}{keyword}{HYPHEN}{error_keyword}")
 
 			error_keyword_common: str
 			df_keyword_common: pd.DataFrame = generate_df_from_trends_raw_file_paths(
@@ -514,7 +514,7 @@ def stitch_trends_raw_for_city(
 				common_word=common_word,
 			)
 			if error_keyword_common:
-				log_error(error=f'{city}{HYPHEN}{keyword}{HYPHEN}{error_keyword_common}')
+				log_error(error=f"{city}{HYPHEN}{keyword}{HYPHEN}{error_keyword_common}")
 
 			df: pd.DataFrame = pd.concat(
 				[
@@ -522,13 +522,13 @@ def stitch_trends_raw_for_city(
 					df_keyword_common,
 					df_keyword_common_global,
 				],
-				join='outer',
+				join="outer",
 				axis=1,
 				sort=True,
 			)
 
 			df.to_csv(
-				f'{folder_trends_stitch}{output_trends_stitch_filename}',
+				f"{folder_trends_stitch}{output_trends_stitch_filename}",
 				index=True,
 				index_label=DATE,
 				date_format=DATE_FORMAT,
@@ -564,11 +564,11 @@ def generate_trends_raw_file_paths_dict(
 		except AttributeError:
 			pass
 		else:
-			log_error(error=f'critical_error{HYPHEN}parse_trends_raw_filename{HYPHEN}{filename}')
+			log_error(error=f"critical_error{HYPHEN}parse_trends_raw_filename{HYPHEN}{filename}")
 			continue
 
 		if nt_parsed_trends_raw_filename.city != city:
-			log_error(error=f'city_mismatch{HYPHEN}{nt_parsed_trends_raw_filename.city}')
+			log_error(error=f"city_mismatch{HYPHEN}{nt_parsed_trends_raw_filename.city}")
 			continue
 
 		keyword_dict: Dict[str, List[str]] = dict_filenames.get(nt_parsed_trends_raw_filename.keyword, {})
@@ -612,11 +612,11 @@ def generate_df_from_trends_raw_file_paths(
 		start_date: str = parse_filename_date(nt_parsed_common_word_filename.start_date)
 		end_date: str = parse_filename_date(nt_parsed_common_word_filename.end_date)
 		if nt_parsed_common_word_filename.city != city:
-			log_error(error=f'city_mismatch{HYPHEN}{common_word_filename}')
+			log_error(error=f"city_mismatch{HYPHEN}{common_word_filename}")
 		if keyword != nt_parsed_common_word_filename.keyword:
-			log_error(error=f'keyword_mismatch{HYPHEN}{common_word_filename}')
+			log_error(error=f"keyword_mismatch{HYPHEN}{common_word_filename}")
 
-		df: pd.DataFrame = pd.read_csv(f'{folder_trends_raw}{common_word_filename}')
+		df: pd.DataFrame = pd.read_csv(f"{folder_trends_raw}{common_word_filename}")
 		if df.empty:
 			df = generate_empty_time_series_df(
 				start_date=start_date,
@@ -636,7 +636,7 @@ def generate_df_from_trends_raw_file_paths(
 	]
 
 	for date_pair in list_missing_date_pairs:
-		log_error(error=f'missing_date_pair{HYPHEN}{city}{HYPHEN}{keyword}{HYPHEN}{common_word}{HYPHEN}{date_pair}')
+		log_error(error=f"missing_date_pair{HYPHEN}{city}{HYPHEN}{keyword}{HYPHEN}{common_word}{HYPHEN}{date_pair}")
 
 	return pd.concat(
 		objs=list_common_word_dfs,
@@ -675,7 +675,7 @@ def stitch_and_clean_keyword_df(
 			df_keyword_filled_time_region = pd.merge(
 				df_empty,
 				df_keyword,
-				how='left',
+				how="left",
 				left_index=True,
 				right_index=True,
 			)
@@ -714,7 +714,7 @@ def stitch_and_clean_keyword_df(
 			df_keyword_filled_time_region = pd.merge(
 				df_empty,
 				df_keyword,
-				how='left',
+				how="left",
 				left_index=True,
 				right_index=True,
 			)
@@ -740,7 +740,7 @@ def stitch_keyword_df(
 	months_in_table: pd.DatetimeIndex = pd.date_range(
 		start=first_date_in_table,
 		end=last_date_in_table,
-		freq='M',
+		freq="M",
 	)
 
 	list_of_stitch_time_ranges: List[pd.DataFrame] = []
@@ -771,7 +771,7 @@ def stitch_keyword_df(
 			elif is_last_month:
 				df_time_range = df_keyword.iloc[first_slice_index:]
 			else:
-				return pd.DataFrame(), f'stitch_keyword{HYPHEN}both_stitching_month_and_last_month_are_false'
+				return pd.DataFrame(), f"stitch_keyword{HYPHEN}both_stitching_month_and_last_month_are_false"
 			df_time_range.set_index(DATE, inplace=True)
 
 			if not is_first_run:
@@ -845,7 +845,7 @@ def aggregate_trends_stitched(
 	)
 	city: str
 	for city in list_cities:
-		log_error(error=f'{AGGREGATE} : {city}', log=True)
+		log_error(error=f"{AGGREGATE} : {city}", log=True)
 
 		list_stitched_keywords_for_city_dfs: List[pd.DataFrame] = []
 		stitched_keyword_filename: str
@@ -862,14 +862,14 @@ def aggregate_trends_stitched(
 
 			if nt_parsed_trends_stitch_filename.city != city:
 				log_error(
-					error=f'city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_trends_stitch_filename.city}{HYPHEN}{stitched_keyword_filename}')
+					error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_trends_stitch_filename.city}{HYPHEN}{stitched_keyword_filename}")
 				continue
 			if nt_parsed_trends_stitch_filename.start_date != generate_date_for_filename_output(start_date):
-				log_error(error=f'start_date_mismatch{HYPHEN}{start_date}{HYPHEN}{stitched_keyword_filename}')
+				log_error(error=f"start_date_mismatch{HYPHEN}{start_date}{HYPHEN}{stitched_keyword_filename}")
 			if nt_parsed_trends_stitch_filename.end_date != generate_date_for_filename_output(end_date):
-				log_error(error=f'end_date_mismatch{HYPHEN}{end_date}{HYPHEN}{stitched_keyword_filename}')
+				log_error(error=f"end_date_mismatch{HYPHEN}{end_date}{HYPHEN}{stitched_keyword_filename}")
 			df_stitched_keyword: pd.DataFrame = pd.read_csv(
-				f'{folder_trends_stitch}{stitched_keyword_filename}',
+				f"{folder_trends_stitch}{stitched_keyword_filename}",
 				parse_dates=[DATE],
 				infer_datetime_format=True,
 				index_col=DATE,
@@ -879,7 +879,7 @@ def aggregate_trends_stitched(
 			df_stitched_keyword.insert(2, KEYWORD, nt_parsed_trends_stitch_filename.keyword)
 			source: str = source_dict.get(nt_parsed_trends_stitch_filename.keyword, source_error)
 			if source == source_error:
-				log_error(error=f'{city}{HYPHEN}{UNKNOWN}{HYPHEN}{SOURCE}{HYPHEN}{nt_parsed_trends_stitch_filename.keyword}')
+				log_error(error=f"{city}{HYPHEN}{UNKNOWN}{HYPHEN}{SOURCE}{HYPHEN}{nt_parsed_trends_stitch_filename.keyword}")
 			df_stitched_keyword.insert(3, SOURCE, source)
 			list_stitched_keywords_for_city_dfs.append(df_stitched_keyword)
 
@@ -894,7 +894,7 @@ def aggregate_trends_stitched(
 			extension=CSV,
 		)
 		df_city_stitch_keywords.to_csv(
-			f'{folder_trends_aggregate}{output_aggregate_for_city_filename}',
+			f"{folder_trends_aggregate}{output_aggregate_for_city_filename}",
 			index_label=DATE,
 		)
 		list_all_stitched_cities_dfs.append(df_city_stitch_keywords)
@@ -916,7 +916,7 @@ def generate_source_dict_from_keywords_dict(
 	keyword_error: str
 	if len(dict_keywords) == 0:
 		log_error(
-			error=f'{MISSING}{HYPHEN}dict_keywords',
+			error=f"{MISSING}{HYPHEN}dict_keywords",
 			bool_suppress_print=True,
 		)
 		return {}, MISSING
@@ -933,7 +933,7 @@ def generate_source_dict_from_keywords_dict(
 		return dict_source, UNKNOWN
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	called_from_main = True
 	if len(sys.argv) == 3:
 		partition_group: int = int(sys.argv[1])

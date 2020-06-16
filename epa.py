@@ -4,21 +4,20 @@ import requests
 from universal import *
 
 # STATIC VARIABLES
-DATE_EPA: str = 'Date'
-OZONE_DONGHAI: str = 'Ozone'
-EPA_API_CBSA: str = 'cbsa'
-EPA_API_DATE_FORMAT: str = '%Y%m%d'
-EPA_API_START_DATE: str = 'bdate'
-EPA_API_END_DATE: str = 'edate'
+DATE_EPA: str = "Date"
+OZONE_DONGHAI: str = "Ozone"
+EPA_API_CBSA: str = "cbsa"
+EPA_API_DATE_FORMAT: str = "%Y%m%d"
+EPA_API_START_DATE: str = "bdate"
+EPA_API_END_DATE: str = "edate"
 
 # PARAMS
 PARAM_DOWNLOAD_DATA_TYPE: str = "download_data_type"
 PARAM_ONLY_DOWNLOAD_MISSING: str = "only_download_missing"
 
 # NAMED TUPLES
-# NAMED TUPLES
 NT_filename_epa_raw = namedtuple(
-	'NT_filename_epa_raw',
+	"NT_filename_epa_raw",
 	[
 		CITY,
 		POLLUTANT,
@@ -27,7 +26,7 @@ NT_filename_epa_raw = namedtuple(
 	]
 )
 NT_filename_epa_stitch = namedtuple(
-	'NT_filename_epa_stitch',
+	"NT_filename_epa_stitch",
 	[
 		CITY,
 		POLLUTANT,
@@ -48,7 +47,7 @@ def main(
 	set_error_folder(FOLDER_ERROR)
 	set_partition_group(partition_group)
 	set_partition_total(partition_total)
-	with open(f'{EPA}{HYPHEN}{PARAMETERS}{JSON}') as json_file:
+	with open(f"{EPA}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 		json_data = json.load(json_file)
 		aggregate: bool
 		download: bool
@@ -147,7 +146,7 @@ def main(
 				extension=CSV,
 			)
 			df_aggregate_epa.to_csv(
-				f'{FOLDER_EPA_AGGREGATE}{output_epa_aggregate_filename}',
+				f"{FOLDER_EPA_AGGREGATE}{output_epa_aggregate_filename}",
 				index=False,
 			)
 		write_errors_to_disk()
@@ -232,7 +231,7 @@ def aggregate_epa(
 	list_city_dfs: List[pd.DataFrame] = []
 	city: str
 	for city in list_cities:
-		log_error(f'{AGGREGATE} : {city}', log=True)
+		log_error(f"{AGGREGATE} : {city}", log=True)
 		list_parsed_epa_df_for_city: List[pd.DataFrame] = []
 		list_stitched_epa_filenames: List[str] = import_paths_from_folder(
 			folder=folder_epa_stitch,
@@ -242,13 +241,13 @@ def aggregate_epa(
 			filename: str
 			for filename in list_stitched_epa_filenames:
 				df: pd.DataFrame = pd.read_csv(
-					f'{folder_epa_stitch}{filename}',
+					f"{folder_epa_stitch}{filename}",
 					parse_dates=[DATE],
 				)
 				parsed_city: str
 				pollutant: str
 				target_statistic: str
-				parsed_city, pollutant, target_statistic = filename.replace(CSV, EMPTY_STRING).split(HYPHEN)
+				parsed_city, pollutant, target_statistic = filename.replace(CSV, "").split(HYPHEN)
 				df.insert(0, CITY, city)
 				df.insert(1, POLLUTANT, pollutant)
 				df.insert(2, TARGET_STATISTIC, target_statistic)
@@ -266,7 +265,7 @@ def aggregate_epa(
 				extension=CSV,
 			)
 			df_parsed_city.to_csv(
-				f'{folder_epa_aggregate}{output_aggregate_for_city_filename}',
+				f"{folder_epa_aggregate}{output_aggregate_for_city_filename}",
 				index=False,
 			)
 
@@ -282,7 +281,7 @@ def stitch_epa(
 		folder_epa_raw: str = FOLDER_EPA_RAW,
 		folder_epa_stitch: str = FOLDER_EPA_STITCH,
 ) -> None:
-	log_error(f'{STITCH} : {city}', log=True)
+	log_error(f"{STITCH} : {city}", log=True)
 
 	generate_sub_paths_for_folder(
 		folder=folder_epa_stitch,
@@ -293,7 +292,7 @@ def stitch_epa(
 	)
 	if filename:
 		df_city: pd.DataFrame = pd.read_csv(
-			f'{folder_epa_raw}{filename}',
+			f"{folder_epa_raw}{filename}",
 			parse_dates=[DATE_EPA],
 		)
 		df_city.rename(columns={DATE_EPA: DATE}, inplace=True)
@@ -308,7 +307,7 @@ def stitch_epa(
 			target_statistic: str
 			parsed_city, pollutant, target_statistic = parse_column_name(column_name)
 			if parsed_city != city:
-				log_error(error=f'city_mismatch{HYPHEN}{city}{HYPHEN}{parsed_city}')
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{parsed_city}")
 			df_single_column: pd.DataFrame = df_city[column_name].to_frame(name=epa_column_name)
 			nt_epa_stitch_filename: tuple = NT_filename_epa_stitch(
 				city=city,
@@ -320,9 +319,9 @@ def stitch_epa(
 				extension=CSV,
 				delimiter=HYPHEN,
 			)
-			df_single_column.to_csv(f'{folder_epa_stitch}{output_epa_stitch_filename}')
+			df_single_column.to_csv(f"{folder_epa_stitch}{output_epa_stitch_filename}")
 	else:
-		log_error(error=f'city_not_found{HYPHEN}{city}')
+		log_error(error=f"city_not_found{HYPHEN}{city}")
 
 
 def parse_column_name(column_name: str) -> Tuple[str, str, str]:
@@ -342,7 +341,7 @@ def parse_city_code(city_code: str) -> str:
 	for city_name, city_info in DEFAULT_CITIES.items():
 		if city_code == city_info.get(CITY_AB, EMPTY_STRING):
 			return city_name
-	log_error(error=f'city_code_not_found{HYPHEN}{city_code}')
+	log_error(error=f"city_code_not_found{HYPHEN}{city_code}")
 	return EMPTY_STRING
 
 
@@ -356,11 +355,11 @@ def parse_pollutant(
 	if pollutant in list_pollutants:
 		return pollutant
 	else:
-		log_error(error=f'pollutant_not_found{HYPHEN}{pollutant}')
+		log_error(error=f"pollutant_not_found{HYPHEN}{pollutant}")
 		return EMPTY_STRING
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	called_from_main = True
 	if len(sys.argv) == 3:
 		partition_group: int = int(sys.argv[1])
