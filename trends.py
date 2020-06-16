@@ -214,7 +214,7 @@ def generate_keywords_to_download_dict(
 	end_date: str
 	for keyword in list_all_keywords:
 		for start_date, end_date in list_date_pairs:
-			nt_expected_trends_raw_filename: tuple = NT_filename_trends_raw(
+			nt_filename_trends_raw: tuple = NT_filename_trends_raw(
 				city=city,
 				keyword=keyword,
 				common_word=generate_common_word_filename_output(
@@ -229,16 +229,16 @@ def generate_keywords_to_download_dict(
 					date=end_date,
 				),
 			)
-			expected_filename: str = generate_filename(
-				filename_nt=nt_expected_trends_raw_filename,
+			filename_trends_raw: str = generate_filename(
+				filename_nt=nt_filename_trends_raw,
 				delimiter=HYPHEN,
 				extension=CSV,
 			)
 			download_is_missing_dates: bool = False
 			if validate_download:
-				if expected_filename in list_already_downloaded_filenames:
+				if filename_trends_raw in list_already_downloaded_filenames:
 					download_is_missing_dates = is_download_missing_dates(
-						filename=expected_filename,
+						filename=filename_trends_raw,
 						folder_trends_raw=folder_trends_raw,
 						start_date=start_date,
 						end_date=end_date,
@@ -249,9 +249,9 @@ def generate_keywords_to_download_dict(
 					start_date=start_date,
 					end_date=end_date,
 				)
-				log_error(error=f"VALIDATE{HYPHEN}{expected_filename}")
+				log_error(error=f"VALIDATE{HYPHEN}{filename_trends_raw}")
 			else:
-				if expected_filename not in list_already_downloaded_filenames:
+				if filename_trends_raw not in list_already_downloaded_filenames:
 					add_keyword_to_keyword_sets(
 						keyword=keyword,
 						start_date=start_date,

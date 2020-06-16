@@ -364,37 +364,37 @@ def run_metrics(
 		df_description.insert(0, SPARSITY, (count / length_time_series))
 
 		output_filename: str
-		nt_parsed_epa_or_trends_filename: NamedTuple
+		nt_filename_epa_or_trends_parsed: NamedTuple
 		if epa_or_trends == EPA:
 			# noinspection PyTypeChecker
-			nt_parsed_epa_or_trends_filename: NamedTuple = parse_filename(
+			nt_filename_epa_or_trends_parsed: NamedTuple = parse_filename(
 				filename=filename,
 				delimiter=HYPHEN,
 				extension=CSV,
 				named_tuple=epa.NT_filename_epa_stitch,
 			)
-			if nt_parsed_epa_or_trends_filename.city != city:
-				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}")
+			if nt_filename_epa_or_trends_parsed.city != city:
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.city}")
 			df_description.insert(0, CITY, city)
-			df_description.insert(1, POLLUTANT, nt_parsed_epa_or_trends_filename.pollutant)
-			df_description.insert(2, TARGET_STATISTIC, nt_parsed_epa_or_trends_filename.target_statistic)
+			df_description.insert(1, POLLUTANT, nt_filename_epa_or_trends_parsed.pollutant)
+			df_description.insert(2, TARGET_STATISTIC, nt_filename_epa_or_trends_parsed.target_statistic)
 			df_description.insert(3, IGNORE_ZERO, ignore_zero)
-			output_filename = f"{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.pollutant}{HYPHEN}{nt_parsed_epa_or_trends_filename.target_statistic}{HYPHEN}{ignore_zero}{CSV}"
+			output_filename = f"{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.pollutant}{HYPHEN}{nt_filename_epa_or_trends_parsed.target_statistic}{HYPHEN}{ignore_zero}{CSV}"
 		elif epa_or_trends == TRENDS:
 			# noinspection PyTypeChecker
-			nt_parsed_epa_or_trends_filename: NamedTuple = parse_filename(
+			nt_filename_epa_or_trends_parsed: NamedTuple = parse_filename(
 				filename=filename,
 				delimiter=HYPHEN,
 				extension=CSV,
 				named_tuple=trends.NT_filename_trends_stitch,
 			)
-			if nt_parsed_epa_or_trends_filename.city != city:
-				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}")
+			if nt_filename_epa_or_trends_parsed.city != city:
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.city}")
 			df_description.insert(0, CITY, city)
-			df_description.insert(1, KEYWORD, nt_parsed_epa_or_trends_filename.keyword)
-			df_description.insert(2, COMMON_WORD, nt_parsed_epa_or_trends_filename.common_word)
+			df_description.insert(1, KEYWORD, nt_filename_epa_or_trends_parsed.keyword)
+			df_description.insert(2, COMMON_WORD, nt_filename_epa_or_trends_parsed.common_word)
 			df_description.insert(3, IGNORE_ZERO, ignore_zero)
-			output_filename = f"{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.common_word}{HYPHEN}{nt_parsed_epa_or_trends_filename.keyword}{HYPHEN}{ignore_zero}{CSV}"
+			output_filename = f"{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.common_word}{HYPHEN}{nt_filename_epa_or_trends_parsed.keyword}{HYPHEN}{ignore_zero}{CSV}"
 		else:
 			log_error(error=f"epa_or_trends{HYPHEN}{MISSING}")
 
@@ -455,7 +455,7 @@ def run_correlation_comparison(
 
 	filename_trends: str
 	for filename_correlation in list_filenames_correlations:
-		dict_pivot_table_info: Dict[str, Any] = parse_stats_correlations_filename(filename_correlation)
+		dict_pivot_table_info: Dict[str, Any] = parse_filename_correlations(filename_correlation)
 		is_pivot_table: bool = all(
 			[
 				dict_pivot_table_info.get(pivot_column, None) == pivot_value
@@ -489,7 +489,7 @@ def run_correlation_comparison(
 
 				dict_comparison_table_info_stripped: Dict[str, Any] = {
 					key: value
-					for key, value in parse_stats_correlations_filename(filename_comparison_table).items()
+					for key, value in parse_filename_correlations(filename_comparison_table).items()
 					if key in list_null_pivot_keys
 				}
 				dict_pivot_table_info_stripped: Dict[str, Any] = {
@@ -579,14 +579,14 @@ def run_correlations(
 				epa_set: bool = False
 
 				# noinspection PyTypeChecker
-				nt_parsed_trends_stitch_filename: NamedTuple = parse_filename(
+				nt_filename_trends_stitch_parsed: NamedTuple = parse_filename(
 					filename=filename_trends,
 					delimiter=HYPHEN,
 					extension=CSV,
 					named_tuple=trends.NT_filename_trends_stitch,
 				)
 
-				if nt_parsed_trends_stitch_filename.city != city:
+				if nt_filename_trends_stitch_parsed.city != city:
 					continue
 
 				threshold_percentile: int
@@ -601,8 +601,8 @@ def run_correlations(
 								above_or_below_threshold: str
 								for above_or_below_threshold in list_threshold_sides:
 									filename_correlation: str = generate_stats_correlations_filename(
-										city=nt_parsed_trends_stitch_filename.city,
-										keyword=nt_parsed_trends_stitch_filename.keyword,
+										city=nt_filename_trends_stitch_parsed.city,
+										keyword=nt_filename_trends_stitch_parsed.keyword,
 										pollutant=pollutant,
 										target_statistic=target_statistic,
 										bool_ignore_zero=bool_ignore_zero,
@@ -664,7 +664,7 @@ def run_correlations(
 										dict_cor_row.update(
 											{
 												CITY:                 city,
-												KEYWORD:              nt_parsed_trends_stitch_filename.keyword,
+												KEYWORD:              nt_filename_trends_stitch_parsed.keyword,
 												POLLUTANT:            pollutant,
 												TARGET_STATISTIC:     target_statistic,
 												THRESHOLD:            threshold,
@@ -709,7 +709,7 @@ def generate_stats_correlations_filename(
 	return filename
 
 
-def parse_stats_correlations_filename(
+def parse_filename_correlations(
 		filename: str,
 ) -> Dict[str, Any]:
 	split_filename: List[str] = filename.replace(CSV, EMPTY_STRING).split(HYPHEN)
@@ -717,7 +717,7 @@ def parse_stats_correlations_filename(
 	if split_filename_length != DEFAULT_SPLIT_STATS_CORRELATION_FILENAME_LENGTH:
 		log_error(error=f"file_incorrectly_formatted{HYPHEN}{filename}")
 
-	dict_parsed_filename: dict = {
+	dict_filename_correlations_parsed: dict = {
 		CITY:                 split_filename[0],
 		KEYWORD:              split_filename[1],
 		POLLUTANT:            split_filename[2],
@@ -729,7 +729,7 @@ def parse_stats_correlations_filename(
 		TIME_SHIFT:           int(parse_filename_numeric(split_filename[8]))
 	}
 
-	return dict_parsed_filename
+	return dict_filename_correlations_parsed
 
 
 def compute_correlations_for_keyword(
@@ -855,21 +855,21 @@ def run_intercity(
 	common_city_filename: str
 	for common_city_filename in list_common_city_filenames:
 		# noinspection PyTypeChecker
-		nt_parsed_trends_stitch_filename: NamedTuple = parse_filename(
+		nt_filename_trends_stitch_parsed: NamedTuple = parse_filename(
 			filename=common_city_filename,
 			delimiter=HYPHEN,
 			extension=CSV,
 			named_tuple=trends.NT_filename_trends_stitch,
 		)
 
-		if nt_parsed_trends_stitch_filename.city != common_city:
-			log_error(error=f"city_mismatch{HYPHEN}{common_city}{HYPHEN}{nt_parsed_trends_stitch_filename.city}")
+		if nt_filename_trends_stitch_parsed.city != common_city:
+			log_error(error=f"city_mismatch{HYPHEN}{common_city}{HYPHEN}{nt_filename_trends_stitch_parsed.city}")
 			continue
-		if nt_parsed_trends_stitch_filename.common_word != common_word:
-			log_error(error=f"word_mismatch{HYPHEN}{common_word}{HYPHEN}{nt_parsed_trends_stitch_filename.common_word}")
+		if nt_filename_trends_stitch_parsed.common_word != common_word:
+			log_error(error=f"word_mismatch{HYPHEN}{common_word}{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}")
 			continue
 
-		print(f"{INTERCITY} : {nt_parsed_trends_stitch_filename.keyword}")
+		print(f"{INTERCITY} : {nt_filename_trends_stitch_parsed.keyword}")
 
 		df_common_city_keyword: pd.DataFrame = pd.read_csv(
 			f"{folder_trends_stitch}{common_city_filename}",
@@ -879,28 +879,28 @@ def run_intercity(
 		)
 
 		for city in list_cities:
-			nt_generate_trends_stitch_filename = trends.NT_filename_trends_stitch(
+			nt_filename_trends_stitch = trends.NT_filename_trends_stitch(
 				city=city,
-				keyword=nt_parsed_trends_stitch_filename.keyword,
+				keyword=nt_filename_trends_stitch_parsed.keyword,
 				common_word=common_word,
 				start_date=generate_date_for_filename_output(
-					date=nt_parsed_trends_stitch_filename.start_date,
+					date=nt_filename_trends_stitch_parsed.start_date,
 				),
 				end_date=generate_date_for_filename_output(
-					date=nt_parsed_trends_stitch_filename.end_date,
+					date=nt_filename_trends_stitch_parsed.end_date,
 				),
 			)
-			expected_filename: str = generate_filename(
-				filename_nt=nt_generate_trends_stitch_filename,
+			filename_trends_stitch: str = generate_filename(
+				filename_nt=nt_filename_trends_stitch,
 				delimiter=HYPHEN,
 				extension=CSV,
 			)
-			if expected_filename in import_paths_from_folder(
+			if filename_trends_stitch in import_paths_from_folder(
 					folder=folder_trends_stitch,
 					list_paths_filter_conditions=(city, common_word, CSV),
 			):
 				df_city_to_be_scaled: pd.DataFrame = pd.read_csv(
-					f"{folder_trends_stitch}{expected_filename}",
+					f"{folder_trends_stitch}{filename_trends_stitch}",
 					index_col=DATE,
 					parse_dates=True,
 					infer_datetime_format=True,
@@ -921,15 +921,15 @@ def run_intercity(
 				)
 				df_intercity.insert(0, COMMON_CITY, common_city)
 				df_intercity.insert(1, COMMON_WORD, common_word)
-				df_intercity.insert(2, KEYWORD, nt_parsed_trends_stitch_filename.keyword)
+				df_intercity.insert(2, KEYWORD, nt_filename_trends_stitch_parsed.keyword)
 				df_intercity.insert(3, CITY, city)
 
 				df_intercity.to_csv(
-					f"{folder_stats_intercity}{common_city}{HYPHEN}{common_word}{HYPHEN}{nt_parsed_trends_stitch_filename.keyword}{HYPHEN}{city}{CSV}",
+					f"{folder_stats_intercity}{common_city}{HYPHEN}{common_word}{HYPHEN}{nt_filename_trends_stitch_parsed.keyword}{HYPHEN}{city}{CSV}",
 					index=True,
 				)
 			else:
-				log_error(error=f"missing_common_word_file{HYPHEN}{expected_filename}")
+				log_error(error=f"missing_common_word_file{HYPHEN}{filename_trends_stitch}")
 
 
 if __name__ == "__main__":
