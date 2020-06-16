@@ -623,8 +623,7 @@ def run_correlations(
 											trends_set = True
 										else:
 											if df_trends.empty:
-												log_error(
-													error=f"df_empty_despite_being_set{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
+												log_error(error=f"df_empty_despite_being_set{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
 												continue
 
 										filename_epa: str
@@ -649,8 +648,7 @@ def run_correlations(
 														city, pollutant, target_statistic, CSV,
 													)
 												)
-												log_error(
-													error=f"df_empty_despite_being_set{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
+												log_error(error=f"df_empty_despite_being_set{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
 												continue
 
 										dict_cor_row: dict = compute_correlations_for_keyword(

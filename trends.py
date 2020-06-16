@@ -861,8 +861,7 @@ def aggregate_trends_stitched(
 			)
 
 			if nt_parsed_trends_stitch_filename.city != city:
-				log_error(
-					error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_trends_stitch_filename.city}{HYPHEN}{stitched_keyword_filename}")
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_trends_stitch_filename.city}{HYPHEN}{stitched_keyword_filename}")
 				continue
 			if nt_parsed_trends_stitch_filename.start_date != generate_date_for_filename_output(start_date):
 				log_error(error=f"start_date_mismatch{HYPHEN}{start_date}{HYPHEN}{stitched_keyword_filename}")
@@ -915,10 +914,7 @@ def generate_source_dict_from_keywords_dict(
 ) -> (Dict[str, str], str):
 	keyword_error: str
 	if len(dict_keywords) == 0:
-		log_error(
-			error=f"{MISSING}{HYPHEN}dict_keywords",
-			bool_suppress_print=True,
-		)
+		log_error(error=f"{MISSING}{HYPHEN}dict_keywords", bool_suppress_print=True)
 		return {}, MISSING
 	else:
 		dict_source: Dict[str, str] = {}

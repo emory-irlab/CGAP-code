@@ -104,7 +104,7 @@ def main(
 						folder_epa_raw=FOLDER_EPA_RAW,
 					)
 		else:
-			log_error()  # todo missing api link
+			log_error(error=)  # todo missing api link
 		write_errors_to_disk(
 			clear_task_origin=False,
 			overwrite=False,
