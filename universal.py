@@ -34,6 +34,7 @@ DOWNLOAD: str = "download"
 EMPTY_STRING: str = ""
 END_DATE: str = "end_date"
 EPA: str = "epa"
+ERROR: str = "error"
 FORWARD_SLASH: str = "/"
 GOOGLE_GEO_CODE: str = "google_geo_code"
 HYPHEN: str = "-"
@@ -445,8 +446,8 @@ def parse_api_credentials(
 		with open(f"{filename}") as json_file:
 			json_data = json.load(json_file)
 			return json_data
-	# todo - fix this
-	except:
+	except FileNotFoundError:
+		log_error(f"file_not_found{HYPHEN}{filename}")
 		return {}
 
 
