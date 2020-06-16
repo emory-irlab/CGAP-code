@@ -1,5 +1,9 @@
 {
-    "stitch": true,
+    "download": true,
+    "download_data_type": "CBSA",
+    "only_download_missing": true,
+    "stitch": false,
+    "only_stitch_missing": true,
     "aggregate": false,
     "epa": {
         "city": [
@@ -13,6 +17,18 @@
             "new_york",
             "philadelphia",
             "washington"
+        ],
+        "pollutant": [
+            "PM2.5",
+            "CO",
+            "NO2",
+            "O3",
+            "PM10",
+            "SO2"
         ]
-    }
+    },
+    "api": {
+        "CBSA": "https://aqs.epa.gov/data/api/dailyData/byCBSA?"
+    },
+    "credentials": "credentials-epa.json"
 }

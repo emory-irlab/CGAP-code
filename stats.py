@@ -371,7 +371,7 @@ def run_metrics(
                 filename=filename,
                 delimiter=HYPHEN,
                 extension=CSV,
-                named_tuple=epa.NT_epa_stitch_filename,
+                named_tuple=epa.NT_filename_epa_stitch,
             )
             if nt_parsed_epa_or_trends_filename.city != city:
                 log_error(error=f'city_mismatch{HYPHEN}{city}{HYPHEN}{nt_parsed_epa_or_trends_filename.city}')

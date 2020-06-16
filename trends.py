@@ -1,7 +1,6 @@
 import random
 import sys
 import time
-from datetime import timedelta
 
 import numpy as np
 import pytrends.exceptions

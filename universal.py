@@ -1,3 +1,4 @@
+import datetime
 import itertools
 import json
 import os
@@ -73,6 +74,9 @@ ERROR_PARTITION: str = 'not available with multi-partitioning. Running on partit
 ERROR_EMPTY: str = 'empty_data_frame'
 
 # JSON PARAMETERS
+EPA_API_POLLUTANT_PARAM: str = 'param'
+PARAM_BDATE: str = 'bdate'
+PARAM_EDATE: str = 'edate'
 PARAM_DATE_START: str = 'start_dates'
 PARAM_DATE_END: str = 'end_dates'
 PARAM_FOLDER_EPA_RAW: str = 'folder_epa_raw'
@@ -127,42 +131,49 @@ DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS: Tuple[str, str] = (
 
 DEFAULT_CITIES: Dict[str, dict] = {
     ATLANTA:      {
+        CBSA:            12060,
         CITY_AB:         'ATL',
         DMA:             524,
         STATE_NAME:      'GA',
         GOOGLE_GEO_CODE: '1015254',
     },
     BOSTON:       {
+        CBSA:            14460,
         CITY_AB:         'BOS',
         DMA:             506,
         STATE_NAME:      'MA',
         GOOGLE_GEO_CODE: '1018127'
     },
     CHICAGO:      {
+        CBSA:            16980,
         CITY_AB:         'ORD',
         DMA:             602,
         STATE_NAME:      'IL',
         GOOGLE_GEO_CODE: '1016367',
     },
     DALLAS:       {
+        CBSA:            19100,
         CITY_AB:         'DFW',
         DMA:             623,
         STATE_NAME:      'TX',
         GOOGLE_GEO_CODE: '1026339',
     },
     HOUSTON:      {
+        CBSA:            26420,
         CITY_AB:         'IAH',
         DMA:             618,
         STATE_NAME:      'TX',
         GOOGLE_GEO_CODE: '1026481',
     },
     LOS_ANGELES:  {
+        CBSA:            31080,
         CITY_AB:         'LAX',
         DMA:             803,
         STATE_NAME:      'CA',
         GOOGLE_GEO_CODE: '1013962',
     },
     MIAMI:        {
+        CBSA:            33100,
         CITY_AB:         'MIA',
         DMA:             528,
         STATE_NAME:      'FL',
@@ -170,23 +181,25 @@ DEFAULT_CITIES: Dict[str, dict] = {
 
     },
     NEW_YORK:     {
+        CBSA:            35620,
         CITY_AB:         'NYC',
         DMA:             501,
         STATE_NAME:      'NY',
         GOOGLE_GEO_CODE: '1023191',
     },
     PHILADELPHIA: {
+        CBSA:            37980,
         CITY_AB:         'PHL',
         DMA:             504,
         STATE_NAME:      'PA',
         GOOGLE_GEO_CODE: '1025197',
     },
     WASHINGTON:   {  # DC
+        CBSA:            47900,
         CITY_AB:         'IAD',
         DMA:             511,
         STATE_NAME:      'DC',
         GOOGLE_GEO_CODE: '1014895'
-
     },
     USA:          {
         GOOGLE_GEO_CODE: '2840'
@@ -195,16 +208,22 @@ DEFAULT_CITIES: Dict[str, dict] = {
 
 DEFAULT_POLLUTANTS: Dict[str, dict] = {
     CO:   {
+        EPA_API_POLLUTANT_PARAM: 42101,
     },
     NO2:  {
+        EPA_API_POLLUTANT_PARAM: 42602,
     },
     O3:   {
+        EPA_API_POLLUTANT_PARAM: 44201,
     },
     PM25: {
+        EPA_API_POLLUTANT_PARAM: 88101,
     },
     PM10: {
+        EPA_API_POLLUTANT_PARAM: 81102,
     },
     SO2:  {
+        EPA_API_POLLUTANT_PARAM: 42401,
     },
 }
 
@@ -745,4 +764,3 @@ FULL_START_DATE: str
 FULL_END_DATE: str
 LIST_DATE_PAIRS: List[Tuple[str, str]] = list(zip(START_DATES, END_DATES))
 FULL_START_DATE, FULL_END_DATE = generate_date_pair_for_full_series(LIST_DATE_PAIRS)
-
