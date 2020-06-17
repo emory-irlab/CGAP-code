@@ -94,6 +94,7 @@ def main(
 			city: str
 			for city in list_partitioned_cities:
 				for pollutant in list_pollutants:
+					log_error(f"{DOWNLOAD} : {city} : {pollutant}", log=True)
 					download_epa(
 						city=city,
 						pollutant=pollutant,
@@ -243,7 +244,7 @@ def download_epa(
 				else:
 					log_error(error=f"{filename_epa_raw}{HYPHEN}missing_data")
 
-			write_errors_to_disk(clear_task_origin=False, overwrite=False)
+			write_errors_to_disk(clear_task_origin=False, overwrite=False, bool_suppress_print=True)
 
 
 def aggregate_epa(
