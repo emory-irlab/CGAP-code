@@ -246,6 +246,55 @@ def download_epa(
 			write_errors_to_disk(clear_task_origin=False, overwrite=False, bool_suppress_print=True)
 
 
+def stitch_epa(
+		city: str,
+		epa_column_name: str = POLLUTION_LEVEL,
+		folder_epa_raw: str = FOLDER_EPA_RAW,
+		folder_epa_stitch: str = FOLDER_EPA_STITCH,
+) -> None:
+	log_error(f"{STITCH} : {city}", log=True)
+
+	generate_sub_paths_for_folder(
+		folder=folder_epa_stitch,
+	)
+	filename: str = import_single_file(
+		folder=folder_epa_raw,
+		list_filename_filter_conditions=(city, CSV),
+	)
+	if filename:
+		df_city: pd.DataFrame = pd.read_csv(
+			f"{folder_epa_raw}{filename}",
+			parse_dates=[DATE_EPA],
+		)
+		df_city.rename(columns={DATE_EPA: DATE}, inplace=True)
+		df_city.set_index(DATE, inplace=True)
+		df_city.drop(columns=UNNAMED, inplace=True)
+
+		column_name: str
+		list_column_names: List[str] = list(df_city.columns)
+		for column_name in list_column_names:
+			parsed_city: str
+			pollutant: str
+			target_statistic: str
+			parsed_city, pollutant, target_statistic = parse_column_name(column_name)
+			if parsed_city != city:
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{parsed_city}")
+			df_single_column: pd.DataFrame = df_city[column_name].to_frame(name=epa_column_name)
+			nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
+				city=city,
+				pollutant=pollutant,
+				target_statistic=target_statistic,
+			)
+			filename_epa_stitch: str = generate_filename(
+				nt_filename=nt_filename_epa_stitch,
+				extension=CSV,
+				delimiter=HYPHEN,
+			)
+			df_single_column.to_csv(f"{folder_epa_stitch}{filename_epa_stitch}")
+	else:
+		log_error(error=f"city_not_found{HYPHEN}{city}")
+
+
 def aggregate_epa(
 		list_cities=tuple(DEFAULT_CITIES),
 		folder_epa_stitch=FOLDER_EPA_STITCH,
@@ -300,55 +349,6 @@ def aggregate_epa(
 		list_city_dfs,
 		sort=True,
 	)
-
-
-def stitch_epa(
-		city: str,
-		epa_column_name: str = POLLUTION_LEVEL,
-		folder_epa_raw: str = FOLDER_EPA_RAW,
-		folder_epa_stitch: str = FOLDER_EPA_STITCH,
-) -> None:
-	log_error(f"{STITCH} : {city}", log=True)
-
-	generate_sub_paths_for_folder(
-		folder=folder_epa_stitch,
-	)
-	filename: str = import_single_file(
-		folder=folder_epa_raw,
-		list_filename_filter_conditions=(city, CSV),
-	)
-	if filename:
-		df_city: pd.DataFrame = pd.read_csv(
-			f"{folder_epa_raw}{filename}",
-			parse_dates=[DATE_EPA],
-		)
-		df_city.rename(columns={DATE_EPA: DATE}, inplace=True)
-		df_city.set_index(DATE, inplace=True)
-		df_city.drop(columns=UNNAMED, inplace=True)
-
-		column_name: str
-		list_column_names: List[str] = list(df_city.columns)
-		for column_name in list_column_names:
-			parsed_city: str
-			pollutant: str
-			target_statistic: str
-			parsed_city, pollutant, target_statistic = parse_column_name(column_name)
-			if parsed_city != city:
-				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{parsed_city}")
-			df_single_column: pd.DataFrame = df_city[column_name].to_frame(name=epa_column_name)
-			nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
-				city=city,
-				pollutant=pollutant,
-				target_statistic=target_statistic,
-			)
-			filename_epa_stitch: str = generate_filename(
-				nt_filename=nt_filename_epa_stitch,
-				extension=CSV,
-				delimiter=HYPHEN,
-			)
-			df_single_column.to_csv(f"{folder_epa_stitch}{filename_epa_stitch}")
-	else:
-		log_error(error=f"city_not_found{HYPHEN}{city}")
 
 
 def parse_column_name(column_name: str) -> Tuple[str, str, str]:
