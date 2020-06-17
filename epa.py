@@ -203,16 +203,17 @@ def download_epa(
 		)
 		start_date_str: str
 		end_date_str: str
-		for start_date_str, end_date_str in list_date_pairs:
-			start_date_dt: datetime = datetime.strptime(start_date_str, DATE_FORMAT)
-			end_date_dt: datetime = datetime.strptime(end_date_str, DATE_FORMAT)
-			api_params.update({EPA_API_START_DATE: start_date_dt.strftime(EPA_API_DATE_FORMAT)})
-			api_params.update({EPA_API_END_DATE: end_date_dt.strftime(EPA_API_DATE_FORMAT)})
+		start_date_str, end_date_str = generate_date_pair_for_full_series(list_date_pairs)
+		start_date_dt: datetime = datetime.strptime(start_date_str, DATE_FORMAT)
+		end_date_dt: datetime = datetime.strptime(end_date_str, DATE_FORMAT)
+		for year in range(start_date_dt.year, (end_date_dt.year + 1)):
+			first_day_in_year: datetime = datetime(year, 1, 1)
+			last_day_in_year: datetime = datetime(year, 12, 31)
 			nt_filename_epa_raw: tuple = NT_filename_epa_raw(
 				city=city,
 				pollutant=pollutant,
-				start_date=generate_date_for_filename_output(start_date_str),
-				end_date=generate_date_for_filename_output(end_date_str),
+				start_date=generate_date_for_filename_output(first_day_in_year.strftime(DATE_FORMAT)),
+				end_date=generate_date_for_filename_output(last_day_in_year.strftime(DATE_FORMAT)),
 			)
 			filename_epa_raw: str = generate_filename(
 				nt_filename=nt_filename_epa_raw,
@@ -220,13 +221,16 @@ def download_epa(
 				extension=CSV,
 			)
 			if not only_download_missing or filename_epa_raw not in list_already_downloaded_files:
+				api_params.update({EPA_API_START_DATE: first_day_in_year.strftime(EPA_API_DATE_FORMAT)})
+				api_params.update({EPA_API_END_DATE: last_day_in_year.strftime(EPA_API_DATE_FORMAT)})
 				response: requests.Response = requests.get(
 					url=api_url,
 					params=api_params,
 				)
+
 				if response.status_code != 200:
 					log_error(error=f"{filename_epa_raw}{HYPHEN}{response.status_code}")
-					log_error(error=f"{filename_epa_raw}{HYPHEN}{response.headers.get(ERROR, UNKNOWN)}")
+					log_error(error=f"{filename_epa_raw}{HYPHEN}{response.headers}")
 					continue
 
 				response_dict: dict = json.loads(response.text)
