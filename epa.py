@@ -240,7 +240,10 @@ def download_epa(
 					df: pd.DataFrame = pd.DataFrame.from_dict(
 						data_dict,
 					)
-					df.to_csv(f"{folder_epa_raw}{filename_epa_raw}")
+					df.to_csv(
+						f"{folder_epa_raw}{filename_epa_raw}",
+						index=False,
+					)
 				else:
 					log_error(error=f"{filename_epa_raw}{HYPHEN}missing_data")
 
