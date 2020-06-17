@@ -97,6 +97,7 @@ def main(
 			api_starter_params: dict = parse_api_credentials(filename=credentials)
 			city: str
 			for city in list_partitioned_cities:
+				pollutant: str
 				for pollutant in list_pollutants:
 					download_epa(
 						city=city,
