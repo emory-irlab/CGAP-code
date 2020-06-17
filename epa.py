@@ -292,11 +292,11 @@ def stitch_epa(
 		extension=CSV,
 		delimiter=HYPHEN,
 	)
-	df_aggregate: pd.DataFrame = pd.concat(
+	df_stitched: pd.DataFrame = pd.concat(
 		list_dfs,
 		ignore_index=True,
 	)
-	df_aggregate.to_csv(
+	df_stitched.to_csv(
 		f"{folder_epa_stitch}{filename_epa_stitch}",
 		index=False,
 	)
