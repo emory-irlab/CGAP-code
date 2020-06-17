@@ -268,6 +268,7 @@ def stitch_epa(
 			filename=filename,
 			named_tuple=NT_filename_epa_raw,
 			delimiter=HYPHEN,
+			extension=CSV,
 		)
 		list_dates.append(nt_filename_epa_raw_parsed.start_date)
 		list_dates.append(nt_filename_epa_raw_parsed.end_date)
