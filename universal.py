@@ -638,7 +638,7 @@ def log_error(
 		if log:
 			print(f"{LOG} : {error}")
 		else:
-			print(f"error : {error}")
+			print(f"{ERROR} : {error}")
 
 
 def set_error_folder(
