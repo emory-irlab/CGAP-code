@@ -58,6 +58,7 @@ def main(
 		only_stitch_missing: bool
 		list_partitioned_cities: Tuple[str, ...]
 		list_pollutants: Tuple[str, ...]
+		list_years: Tuple[int, ...]
 		if called_from_main:
 			aggregate = json_data[AGGREGATE]
 			download = json_data[DOWNLOAD]
@@ -77,6 +78,7 @@ def main(
 				)
 			)
 			list_pollutants = parameters[POLLUTANT]
+			list_years = parameters[YEAR]
 		else:
 			aggregate = False
 			download = False
@@ -84,6 +86,8 @@ def main(
 			only_download_missing = True
 			stitch = True
 			list_partitioned_cities = list_cities
+			list_pollutants = ()
+			list_years = ()
 	json_file.close()
 
 	if download:
@@ -97,7 +101,7 @@ def main(
 					download_epa(
 						city=city,
 						pollutant=pollutant,
-						list_date_pairs=LIST_DATE_PAIRS,
+						list_years=list_years,
 						api_url=api_url,
 						api_starter_params=api_starter_params,
 						download_data_type=download_data_type,
@@ -163,7 +167,7 @@ def generate_api_parameters(
 def download_epa(
 		city: str,
 		pollutant: str,
-		list_date_pairs: List[Tuple[str, str]],
+		list_years: Tuple[int, ...],
 		api_url: str,
 		api_starter_params: dict,
 		download_data_type: str,
@@ -201,9 +205,7 @@ def download_epa(
 			folder=folder_epa_raw,
 			list_paths_filter_conditions=(city, pollutant,),
 		)
-		start_date_dt: datetime = datetime.strptime(FULL_START_DATE, DATE_FORMAT)
-		end_date_dt: datetime = datetime.strptime(FULL_END_DATE, DATE_FORMAT)
-		for year in range(start_date_dt.year, (end_date_dt.year + 1)):
+		for year in list_years:
 			first_day_in_year: datetime = datetime(year, 1, 1)
 			last_day_in_year: datetime = datetime(year, 12, 31)
 			nt_filename_epa_raw: tuple = NT_filename_epa_raw(

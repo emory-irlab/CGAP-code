@@ -69,6 +69,7 @@ SOURCE: str = "source"
 TARGET_STATISTIC: str = "target_statistic"
 TIME_SHIFT_NEGATIVE_SYMBOL: str = "~"
 TXT: str = ".txt"
+YEAR: str = "year"
 
 # ERROR STATEMENTS
 ERROR_PARTITION: str = "Not available with multi-partitioning. Running on partition 1."
