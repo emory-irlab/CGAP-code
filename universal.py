@@ -273,7 +273,7 @@ PARTITION_TOTAL: int = 1
 
 def generate_date_pair_for_full_series(
 		list_date_pairs: List[Tuple[str, str]],
-) -> tuple:
+) -> Tuple[str, str]:
 	first_end_date: str
 	last_start_date: str
 
