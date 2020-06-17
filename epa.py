@@ -94,7 +94,6 @@ def main(
 			city: str
 			for city in list_partitioned_cities:
 				for pollutant in list_pollutants:
-					log_error(f"{DOWNLOAD} : {city} : {pollutant}", log=True)
 					download_epa(
 						city=city,
 						pollutant=pollutant,
@@ -222,6 +221,7 @@ def download_epa(
 				extension=CSV,
 			)
 			if not only_download_missing or filename_epa_raw not in list_already_downloaded_files:
+				log_error(f"{DOWNLOAD} : {city} : {pollutant} : {year}", log=True)
 				api_params.update({EPA_API_START_DATE: first_day_in_year.strftime(EPA_API_DATE_FORMAT)})
 				api_params.update({EPA_API_END_DATE: last_day_in_year.strftime(EPA_API_DATE_FORMAT)})
 				response: requests.Response = requests.get(
