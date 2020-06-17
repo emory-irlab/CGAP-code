@@ -4,10 +4,10 @@ import requests
 from universal import *
 
 # STATIC VARIABLES
-DATE_EPA: str = "Date"
 OZONE_DONGHAI: str = "Ozone"
 EPA_API_CBSA: str = "cbsa"
 EPA_API_DATA: str = 'Data'
+EPA_API_DATE: str = "date_local"
 EPA_API_DATE_FORMAT: str = "%Y%m%d"
 EPA_API_START_DATE: str = "bdate"
 EPA_API_END_DATE: str = "edate"
@@ -31,7 +31,6 @@ NT_filename_epa_stitch = namedtuple(
 	[
 		CITY,
 		POLLUTANT,
-		TARGET_STATISTIC,
 		START_DATE,
 		END_DATE,
 	]
@@ -55,7 +54,6 @@ def main(
 		download_data_type: str
 		only_download_missing: bool
 		stitch: bool
-		only_stitch_missing: bool
 		list_partitioned_cities: Tuple[str, ...]
 		list_pollutants: Tuple[str, ...]
 		list_years: Tuple[int, ...]
@@ -117,16 +115,15 @@ def main(
 		set_error_task_origin(task_origin=STITCH)
 		city: str
 		for city in list_partitioned_cities:
-			# todo - only stitch missing
-			# todo - include pollutant as param
-			# start_date, end_date = generate_date_pair_for_full_series(list_date_pairs)
-			stitch_epa(
-				city=city,
-				folder_epa_raw=FOLDER_EPA_RAW,
-				folder_epa_stitch=FOLDER_EPA_STITCH,
-			)
-		# todo - overwrite based on only stitch missing
-		write_errors_to_disk(overwrite=(not only_stitch_missing))
+			pollutant: str
+			for pollutant in list_pollutants:
+				stitch_epa(
+					city=city,
+					pollutant=pollutant,
+					folder_epa_raw=FOLDER_EPA_RAW,
+					folder_epa_stitch=FOLDER_EPA_STITCH,
+				)
+		write_errors_to_disk()
 
 	if aggregate:
 		set_error_task_origin(task_origin=AGGREGATE)
@@ -250,51 +247,59 @@ def download_epa(
 
 def stitch_epa(
 		city: str,
-		epa_column_name: str = POLLUTION_LEVEL,
+		pollutant: str,
 		folder_epa_raw: str = FOLDER_EPA_RAW,
 		folder_epa_stitch: str = FOLDER_EPA_STITCH,
 ) -> None:
-	log_error(f"{STITCH} : {city}", log=True)
+	log_error(f"{STITCH} : {city} : {pollutant}", log=True)
 
 	generate_sub_paths_for_folder(
 		folder=folder_epa_stitch,
 	)
-	filename: str = import_single_file(
+	list_filenames: List[str] = import_paths_from_folder(
 		folder=folder_epa_raw,
-		list_filename_filter_conditions=(city, CSV),
+		list_paths_filter_conditions=(city, pollutant, CSV),
 	)
-	if filename:
-		df_city: pd.DataFrame = pd.read_csv(
-			f"{folder_epa_raw}{filename}",
-			parse_dates=[DATE_EPA],
+	filename: str
+	list_dfs:  List[pd.DataFrame] = []
+	list_dates: List[str] = []
+	for filename in list_filenames:
+		nt_filename_epa_raw_parsed = parse_filename(
+			filename=filename,
+			named_tuple=NT_filename_epa_raw,
+			delimiter=HYPHEN,
 		)
-		df_city.rename(columns={DATE_EPA: DATE}, inplace=True)
-		df_city.set_index(DATE, inplace=True)
-		df_city.drop(columns=UNNAMED, inplace=True)
+		list_dates.append(nt_filename_epa_raw_parsed.start_date)
+		list_dates.append(nt_filename_epa_raw_parsed.end_date)
 
-		column_name: str
-		list_column_names: List[str] = list(df_city.columns)
-		for column_name in list_column_names:
-			parsed_city: str
-			pollutant: str
-			target_statistic: str
-			parsed_city, pollutant, target_statistic = parse_column_name(column_name)
-			if parsed_city != city:
-				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{parsed_city}")
-			df_single_column: pd.DataFrame = df_city[column_name].to_frame(name=epa_column_name)
-			nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
-				city=city,
-				pollutant=pollutant,
-				target_statistic=target_statistic,
-			)
-			filename_epa_stitch: str = generate_filename(
-				nt_filename=nt_filename_epa_stitch,
-				extension=CSV,
-				delimiter=HYPHEN,
-			)
-			df_single_column.to_csv(f"{folder_epa_stitch}{filename_epa_stitch}")
-	else:
-		log_error(error=f"city_not_found{HYPHEN}{city}")
+		df: pd.DataFrame = pd.read_csv(
+			f"{folder_epa_raw}{filename}",
+		)
+		list_dfs.append(df)
+
+	list_dates.sort()
+	first_date: str = list_dates[0]
+	end_date: str = list_dates[-1]
+
+	nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
+		city=city,
+		pollutant=pollutant,
+		start_date=first_date,
+		end_date=end_date,
+	)
+	filename_epa_stitch: str = generate_filename(
+		nt_filename=nt_filename_epa_stitch,
+		extension=CSV,
+		delimiter=HYPHEN,
+	)
+	df_aggregate: pd.DataFrame = pd.concat(
+		list_dfs,
+		ignore_index=True,
+	)
+	df_aggregate.to_csv(
+		f"{folder_epa_stitch}{filename_epa_stitch}",
+		index=False,
+	)
 
 
 def aggregate_epa(
