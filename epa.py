@@ -201,11 +201,8 @@ def download_epa(
 			folder=folder_epa_raw,
 			list_paths_filter_conditions=(city, pollutant,),
 		)
-		start_date_str: str
-		end_date_str: str
-		start_date_str, end_date_str = generate_date_pair_for_full_series(list_date_pairs)
-		start_date_dt: datetime = datetime.strptime(start_date_str, DATE_FORMAT)
-		end_date_dt: datetime = datetime.strptime(end_date_str, DATE_FORMAT)
+		start_date_dt: datetime = datetime.strptime(FULL_START_DATE, DATE_FORMAT)
+		end_date_dt: datetime = datetime.strptime(FULL_END_DATE, DATE_FORMAT)
 		for year in range(start_date_dt.year, (end_date_dt.year + 1)):
 			first_day_in_year: datetime = datetime(year, 1, 1)
 			last_day_in_year: datetime = datetime(year, 12, 31)
