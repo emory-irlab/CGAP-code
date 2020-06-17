@@ -3,7 +3,6 @@
     "download_data_type": "CBSA",
     "only_download_missing": true,
     "stitch": false,
-    "only_stitch_missing": true,
     "aggregate": false,
     "epa": {
         "city": [
