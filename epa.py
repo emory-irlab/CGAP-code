@@ -111,7 +111,7 @@ def main(
 					)
 		else:
 			log_error(error=f"api_url_missing{HYPHEN}{download_data_type}")
-		write_errors_to_disk(clear_task_origin=False, overwrite=False)
+		write_errors_to_disk(overwrite=False)
 
 	if stitch:
 		set_error_task_origin(task_origin=STITCH)
