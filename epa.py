@@ -133,13 +133,10 @@ def main(
 			partition_total=get_partition_total(),
 		)
 		if is_valid_for_aggregation:
-			generate_sub_paths_for_folder(
-				folder=FOLDER_EPA_AGGREGATE,
-			)
 			aggregate_data_in_folder(
 				folder_input=FOLDER_EPA_STITCH,
 				folder_output_aggregate=FOLDER_EPA_AGGREGATE,
-				list_cities=tuple(DEFAULT_CITIES),
+				list_cities=list_cities,
 			)
 		write_errors_to_disk()
 
