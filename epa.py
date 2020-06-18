@@ -136,18 +136,10 @@ def main(
 			generate_sub_paths_for_folder(
 				folder=FOLDER_EPA_AGGREGATE,
 			)
-			df_aggregate_epa: pd.DataFrame = aggregate_epa(
+			aggregate_data_in_folder(
+				folder_input=FOLDER_EPA_STITCH,
+				folder_output_aggregate=FOLDER_EPA_AGGREGATE,
 				list_cities=tuple(DEFAULT_CITIES),
-				folder_epa_stitch=FOLDER_EPA_STITCH,
-				folder_epa_aggregate=FOLDER_EPA_AGGREGATE,
-			)
-			output_epa_aggregate_filename: str = generate_filename(
-				nt_filename=NT_filename_aggregate,
-				extension=CSV,
-			)
-			df_aggregate_epa.to_csv(
-				f"{FOLDER_EPA_AGGREGATE}{output_epa_aggregate_filename}",
-				index=False,
 			)
 		write_errors_to_disk()
 
@@ -328,15 +320,7 @@ def aggregate_epa(
 			for filename in list_stitched_epa_filenames:
 				df: pd.DataFrame = pd.read_csv(
 					f"{folder_epa_stitch}{filename}",
-					parse_dates=[DATE],
 				)
-				parsed_city: str
-				pollutant: str
-				target_statistic: str
-				parsed_city, pollutant, target_statistic = filename.replace(CSV, "").split(HYPHEN)
-				df.insert(0, CITY, city)
-				df.insert(1, POLLUTANT, pollutant)
-				df.insert(2, TARGET_STATISTIC, target_statistic)
 				list_parsed_epa_df_for_city.append(df)
 
 			df_parsed_city: pd.DataFrame = pd.concat(
