@@ -321,7 +321,9 @@ def aggregate_epa(
 			folder=folder_epa_stitch,
 			list_paths_filter_conditions=(city, CSV),
 		)
-		if len(list_stitched_epa_filenames) > 0:
+		if not len(list_stitched_epa_filenames) > 0:
+			log_error(error=f"city_data_missing{HYPHEN}{city}")
+		else:
 			filename: str
 			for filename in list_stitched_epa_filenames:
 				df: pd.DataFrame = pd.read_csv(
@@ -353,10 +355,14 @@ def aggregate_epa(
 				index=False,
 			)
 
-	return pd.concat(
-		list_city_dfs,
-		sort=True,
-	)
+	if list_city_dfs:
+		return pd.concat(
+			list_city_dfs,
+			sort=True,
+		)
+	else:
+		log_error(error=f"all_city_data_missing")
+		return pd.DataFrame()
 
 
 def parse_column_name(column_name: str) -> Tuple[str, str, str]:
