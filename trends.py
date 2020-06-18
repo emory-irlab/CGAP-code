@@ -174,7 +174,7 @@ def generate_keywords_to_download_dict(
 	source: str
 	list_all_keywords: List[str] = []
 	for source in list_source_folders_to_download:
-		source_keywords: {} = dict_keywords.get(source, {})
+		source_keywords: dict = dict_keywords.get(source, {})
 		if source_keywords:
 			list_all_keywords.extend(source_keywords.keys())
 
