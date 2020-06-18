@@ -14,7 +14,6 @@ EPA_API_END_DATE: str = "edate"
 
 # PARAMS
 PARAM_DOWNLOAD_DATA_TYPE: str = "download_data_type"
-PARAM_ONLY_DOWNLOAD_MISSING: str = "only_download_missing"
 
 # NAMED TUPLES
 NT_filename_epa_raw = namedtuple(

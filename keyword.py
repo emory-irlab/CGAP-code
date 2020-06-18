@@ -21,9 +21,6 @@ DEFAULT_SOURCE_PRIORITY_ORDER: Tuple[str, ...] = (
 )
 
 # PARAMETERS
-PARAM_AGGREGATE_EXPANSION: str = "aggregate_expansions"
-PARAM_KEYWORD_EXPANSION: str = "run_keyword_expansion"
-PARAM_ONLY_EXPAND_MISSING: str = "only_expand_missing"
 PARAM_SOURCE_PRIORITY_ORDER: str = "source_priority_order"
 
 # NAMED TUPLES
@@ -60,9 +57,9 @@ def main(
 	set_partition_total(partition_total)
 	with open(f"{KEYWORD}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 		json_data: dict = json.load(json_file)
-		bool_run_keyword_expansion: bool
-		bool_only_expand_missing: bool
-		bool_aggregate_expansion: bool
+		download: bool
+		only_download_missing: bool
+		aggregate: bool
 		customer_id: str
 		credentials: str
 		folder_expansion_raw: str
@@ -72,9 +69,9 @@ def main(
 		list_partitioned_cities: Tuple[str, ...]
 		list_source_priority_order: List[str]
 		if called_from_main:
-			bool_run_keyword_expansion = json_data[PARAM_KEYWORD_EXPANSION]
-			bool_only_expand_missing = json_data[PARAM_ONLY_EXPAND_MISSING]
-			bool_aggregate_expansion = json_data[PARAM_AGGREGATE_EXPANSION]
+			download = json_data[DOWNLOAD]
+			only_download_missing = json_data[PARAM_ONLY_DOWNLOAD_MISSING]
+			aggregate = json_data[AGGREGATE]
 			credentials = json_data[CREDENTIALS]
 			customer_id = json_data[CUSTOMER_ID]
 			folder_expansion_raw = json_data[PARAM_FOLDER_EXPANSION_RAW]
@@ -94,9 +91,9 @@ def main(
 			)
 		else:
 			list_partitioned_cities = list_cities
-			bool_only_expand_missing = True
-			bool_run_keyword_expansion = False
-			bool_aggregate_expansion = False
+			only_download_missing = True
+			download = False
+			aggregate = False
 			customer_id = ""
 			credentials = ""
 			list_source_priority_order = []
@@ -108,15 +105,15 @@ def main(
 
 	google_ads_client: GoogleAdsClient = GoogleAdsClient.load_from_storage(credentials)
 
-	if bool_run_keyword_expansion:
-		set_error_task_origin(task_origin=PARAM_KEYWORD_EXPANSION)
+	if download:
+		set_error_task_origin(task_origin=DOWNLOAD)
 		city: str
 		for city in list_partitioned_cities:
-			run_keyword_expansion(
+			download_expansion(
 				city=city,
 				client=google_ads_client,
 				customer_id=customer_id,
-				only_expand_missing=bool_only_expand_missing,
+				only_expand_missing=only_download_missing,
 				folder_expansion_raw=folder_expansion_raw,
 				folder_expansion_parents=folder_expansion_parents,
 				folder_keywords_google=folder_keywords_google,
@@ -124,8 +121,8 @@ def main(
 			)
 			write_errors_to_disk(overwrite=False)
 
-	if bool_aggregate_expansion:
-		set_error_task_origin(task_origin=PARAM_AGGREGATE_EXPANSION)
+	if aggregate:
+		set_error_task_origin(task_origin=AGGREGATE)
 		is_valid_for_aggregation = check_partition_valid_for_aggregation(
 			error_label=AGGREGATE,
 			partition_group=get_partition_group(),
@@ -157,7 +154,7 @@ def main(
 		write_errors_to_disk(overwrite=False)
 
 
-def run_keyword_expansion(
+def download_expansion(
 		city: str,
 		client: GoogleAdsClient,
 		customer_id: str,

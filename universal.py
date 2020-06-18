@@ -103,6 +103,7 @@ PARAM_FOLDER_TRENDS_RAW: str = "folder_trends_raw"
 PARAM_FOLDER_TRENDS_STITCH: str = "folder_trends_stitch"
 PARAM_FOLDER_TRENDS_AGGREGATE: str = "folder_trends_aggregate"
 PARAM_MAX_SEARCH_FREQUENCY: str = "max_search_frequency"
+PARAM_ONLY_DOWNLOAD_MISSING: str = "only_download_missing"
 
 # USER SET
 ATLANTA: str = "atlanta"
