@@ -194,7 +194,6 @@ def main(
 			partition_group=get_partition_group(),
 			partition_total=get_partition_total(),
 		)
-
 		if is_valid_for_aggregation:
 			aggregate_data_in_folder(
 				folder_input=FOLDER_EPA_METRICS_RAW,
