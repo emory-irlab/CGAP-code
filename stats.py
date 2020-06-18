@@ -695,6 +695,7 @@ def generate_stats_correlations_filename(
 		above_or_below_threshold: str,
 		time_shift: int,
 ) -> str:
+	# @formatter:off
 	filename: str = f"{city}{HYPHEN}" \
 					f"{keyword}{HYPHEN}" \
 					f"{pollutant}{HYPHEN}" \
@@ -705,6 +706,7 @@ def generate_stats_correlations_filename(
 					f"{above_or_below_threshold}{HYPHEN}" \
 					f"{generate_numeric_for_filename_output(time_shift)}" \
 					f"{CSV}"
+	# @formatter:on
 
 	return filename
 
