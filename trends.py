@@ -114,7 +114,7 @@ def main(
 				validate_download=validate_download,
 			)
 			if dict_keyword_sets:
-				submit_dma_based_query(
+				download_trends(
 					city=city,
 					dict_keyword_set=dict_keyword_sets,
 					common_word=COMMON_WORD_UNIVERSAL,
@@ -126,7 +126,7 @@ def main(
 	if stitch:
 		set_error_task_origin(task_origin=STITCH)
 		for city in list_partitioned_cities:
-			stitch_trends_raw_for_city(
+			stitch_trends(
 				city=city,
 				start_date=FULL_START_DATE,
 				end_date=FULL_END_DATE,
@@ -308,7 +308,7 @@ def is_download_missing_dates(
 		return not ((parsed_start_date == start_date) and (parsed_end_date == end_date))
 
 
-def submit_dma_based_query(
+def download_trends(
 		city: str,
 		dict_keyword_set: Dict[str, List[Tuple[str, str]]],
 		common_word: str = DEFAULT_COMMON_WORD,
@@ -387,7 +387,7 @@ def submit_dma_based_query(
 				df_trend_interest.to_csv(f"{folder_trends_raw}{filename_trends_raw}")
 
 
-def stitch_trends_raw_for_city(
+def stitch_trends(
 		city: str,
 		start_date: str,
 		end_date: str,
