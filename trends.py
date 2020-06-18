@@ -131,7 +131,9 @@ def main(
 				start_date=FULL_START_DATE,
 				end_date=FULL_END_DATE,
 				list_date_pairs=LIST_DATE_PAIRS,
+				list_source_folders_to_download=tuple(list_source_folders_to_download),
 				common_word=COMMON_WORD_UNIVERSAL,
+				folder_keywords=FOLDER_KEYWORDS,
 				folder_trends_raw=FOLDER_TRENDS_RAW,
 				folder_trends_stitch=FOLDER_TRENDS_STITCH,
 				max_volume=MAX_SEARCH_VOLUME,
@@ -404,7 +406,9 @@ def stitch_trends_raw_for_city(
 		start_date: str,
 		end_date: str,
 		list_date_pairs: List[Tuple[str, str]],
+		list_source_folders_to_download: Tuple[str, ...] = (),
 		common_word: str = DEFAULT_COMMON_WORD,
+		folder_keywords: str = FOLDER_KEYWORDS,
 		folder_trends_raw: str = FOLDER_TRENDS_RAW,
 		folder_trends_stitch: str = FOLDER_TRENDS_STITCH,
 		max_volume: float = MAX_SEARCH_VOLUME,
@@ -446,6 +450,16 @@ def stitch_trends_raw_for_city(
 	list_already_stitched_trends_filenames: List[str] = import_paths_from_folder(
 		folder_trends_stitch,
 		(city, CSV),
+	)
+
+	dict_keywords: dict = generate_keywords(
+		folder_keywords=folder_keywords,
+	)
+	source_dict: Dict[str, str]
+	source_error: str
+	source_dict, source_error = generate_source_dict_from_keywords_dict(
+		dict_keywords=dict_keywords,
+		list_source_folders_to_download=list_source_folders_to_download,
 	)
 
 	keyword: str
@@ -523,6 +537,14 @@ def stitch_trends_raw_for_city(
 				axis=1,
 				sort=True,
 			)
+
+			df.insert(0, CITY, city)
+			df.insert(1, COMMON_WORD, common_word)
+			df.insert(2, KEYWORD, keyword)
+			source: str = source_dict.get(keyword, source_error)
+			if source == source_error:
+				log_error(error=f"{city}{HYPHEN}{UNKNOWN}{HYPHEN}{SOURCE}{HYPHEN}{keyword}")
+			df.insert(3, SOURCE, source)
 
 			df.to_csv(
 				f"{folder_trends_stitch}{filename_trends_stitch}",
