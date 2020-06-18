@@ -840,6 +840,27 @@ def generate_empty_time_series_df(
 	return pd.DataFrame({DATE: dates_list})
 
 
+def generate_source_dict_from_keywords_dict(
+		dict_keywords: dict,
+		list_source_folders_to_download: Tuple[str, ...] = (),
+) -> (Dict[str, str], str):
+	keyword_error: str
+	if len(dict_keywords) == 0:
+		log_error(error=f"{MISSING}{HYPHEN}dict_keywords", bool_suppress_print=True)
+		return {}, MISSING
+	else:
+		dict_source: Dict[str, str] = {}
+		source_folder: str
+		dict_source.update(
+			{
+				keyword: source_folder
+				for source_folder in reversed(list_source_folders_to_download)
+				for keyword in dict_keywords.get(source_folder, {})
+			}
+		)
+		return dict_source, UNKNOWN
+
+
 def aggregate_trends_stitched(
 		start_date: str,
 		end_date: str,
@@ -922,27 +943,6 @@ def aggregate_trends_stitched(
 		list_all_stitched_cities_dfs,
 		sort=True,
 	)
-
-
-def generate_source_dict_from_keywords_dict(
-		dict_keywords: dict,
-		list_source_folders_to_download: Tuple[str, ...] = (),
-) -> (Dict[str, str], str):
-	keyword_error: str
-	if len(dict_keywords) == 0:
-		log_error(error=f"{MISSING}{HYPHEN}dict_keywords", bool_suppress_print=True)
-		return {}, MISSING
-	else:
-		dict_source: Dict[str, str] = {}
-		source_folder: str
-		dict_source.update(
-			{
-				keyword: source_folder
-				for source_folder in reversed(list_source_folders_to_download)
-				for keyword in dict_keywords.get(source_folder, {})
-			}
-		)
-		return dict_source, UNKNOWN
 
 
 if __name__ == "__main__":
