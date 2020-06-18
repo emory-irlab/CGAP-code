@@ -349,7 +349,7 @@ def aggregate_data_in_folder(
 		folder_output_aggregate: str,
 		optional_filename_label: str = "",
 		list_cities: Tuple[str, ...] = tuple(DEFAULT_CITIES),
-		bool_suppress_print: bool = True,
+		bool_suppress_print: bool = False,
 ) -> None:
 	generate_sub_paths_for_folder(
 		folder=folder_output_aggregate,
@@ -389,7 +389,7 @@ def aggregate_data_in_folder(
 			list_data_dfs_for_all_cities.append(concatenated_data_per_city)
 		else:
 			log_error(error=f"{city}{HYPHEN}{ERROR_EMPTY}")
-		write_errors_to_disk(clear_task_origin=False, bool_suppress_print=bool_suppress_print, overwrite=False)
+		write_errors_to_disk(clear_task_origin=False, bool_suppress_print=True, overwrite=False)
 
 	df_aggregate: pd.DataFrame = pd.concat(
 		list_data_dfs_for_all_cities,
