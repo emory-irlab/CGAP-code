@@ -253,7 +253,7 @@ def stitch_epa(
 		list_paths_filter_conditions=(city, pollutant, CSV),
 	)
 	filename: str
-	list_dfs:  List[pd.DataFrame] = []
+	list_dfs: List[pd.DataFrame] = []
 	list_dates: List[str] = []
 	for filename in list_filenames:
 		nt_filename_epa_raw_parsed = parse_filename(
