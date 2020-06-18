@@ -143,30 +143,16 @@ def main(
 
 	if aggregate:
 		set_error_task_origin(task_origin=AGGREGATE)
-		partitioning_is_valid_for_aggregation: bool = check_partition_valid_for_aggregation(
+		is_valid_for_aggregation: bool = check_partition_valid_for_aggregation(
 			error_label=TRENDS,
 			partition_group=get_partition_group(),
 			partition_total=get_partition_total(),
 		)
-		if partitioning_is_valid_for_aggregation:
-			df_aggregate_keywords: pd.DataFrame = aggregate_trends_stitched(
-				start_date=FULL_START_DATE,
-				end_date=FULL_END_DATE,
-				list_cities=tuple(list_input_cities),
-				list_source_folders_to_download=tuple(list_source_folders_to_download),
-				folder_keywords=FOLDER_KEYWORDS,
-				folder_trends_stitch=FOLDER_TRENDS_STITCH,
-				folder_trends_aggregate=FOLDER_TRENDS_AGGREGATE,
-			)
-			output_trends_aggregate_filename: str = generate_filename(
-				nt_filename=NT_filename_aggregate(
-					aggregate=AGGREGATE,
-				),
-				extension=CSV,
-			)
-			df_aggregate_keywords.to_csv(
-				f"{FOLDER_TRENDS_AGGREGATE}{output_trends_aggregate_filename}",
-				index=True,
+		if is_valid_for_aggregation:
+			aggregate_data_in_folder(
+				folder_input=FOLDER_TRENDS_STITCH,
+				folder_output_aggregate=FOLDER_TRENDS_AGGREGATE,
+				list_cities=list_cities,
 			)
 		write_errors_to_disk()
 
@@ -859,90 +845,6 @@ def generate_source_dict_from_keywords_dict(
 			}
 		)
 		return dict_source, UNKNOWN
-
-
-def aggregate_trends_stitched(
-		start_date: str,
-		end_date: str,
-		list_cities: Tuple[str, ...] = tuple(DEFAULT_CITIES),
-		list_source_folders_to_download: Tuple[str, ...] = (),
-		folder_keywords: str = FOLDER_KEYWORDS,
-		folder_trends_stitch: str = FOLDER_TRENDS_STITCH,
-		folder_trends_aggregate: str = FOLDER_TRENDS_AGGREGATE,
-) -> pd.DataFrame:
-	generate_sub_paths_for_folder(
-		folder=folder_trends_aggregate,
-	)
-	list_all_stitched_cities_dfs: List[pd.DataFrame] = []
-	dict_keywords: dict = generate_keywords(
-		folder_keywords=folder_keywords,
-	)
-	source_dict: Dict[str, str]
-	source_error: str
-	source_dict, source_error = generate_source_dict_from_keywords_dict(
-		dict_keywords=dict_keywords,
-		list_source_folders_to_download=list_source_folders_to_download,
-	)
-	city: str
-	for city in list_cities:
-		log_error(error=f"{AGGREGATE} : {city}", log=True)
-
-		list_stitched_keywords_for_city_dfs: List[pd.DataFrame] = []
-		stitched_keyword_filename: str
-		for stitched_keyword_filename in import_paths_from_folder(
-				folder=folder_trends_stitch,
-				list_paths_filter_conditions=(CSV, city),
-		):
-			nt_filename_trends_stitch_parsed = parse_filename(
-				filename=stitched_keyword_filename,
-				delimiter=HYPHEN,
-				named_tuple=NT_filename_trends_stitch,
-				extension=CSV,
-			)
-
-			if nt_filename_trends_stitch_parsed.city != city:
-				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_filename_trends_stitch_parsed.city}{HYPHEN}{stitched_keyword_filename}")
-				continue
-			if nt_filename_trends_stitch_parsed.start_date != generate_date_for_filename_output(start_date):
-				log_error(error=f"start_date_mismatch{HYPHEN}{start_date}{HYPHEN}{stitched_keyword_filename}")
-			if nt_filename_trends_stitch_parsed.end_date != generate_date_for_filename_output(end_date):
-				log_error(error=f"end_date_mismatch{HYPHEN}{end_date}{HYPHEN}{stitched_keyword_filename}")
-			df_stitched_keyword: pd.DataFrame = pd.read_csv(
-				f"{folder_trends_stitch}{stitched_keyword_filename}",
-				parse_dates=[DATE],
-				infer_datetime_format=True,
-				index_col=DATE,
-			)
-			df_stitched_keyword.insert(0, CITY, city)
-			df_stitched_keyword.insert(1, COMMON_WORD, nt_filename_trends_stitch_parsed.common_word)
-			df_stitched_keyword.insert(2, KEYWORD, nt_filename_trends_stitch_parsed.keyword)
-			source: str = source_dict.get(nt_filename_trends_stitch_parsed.keyword, source_error)
-			if source == source_error:
-				log_error(error=f"{city}{HYPHEN}{UNKNOWN}{HYPHEN}{SOURCE}{HYPHEN}{nt_filename_trends_stitch_parsed.keyword}")
-			df_stitched_keyword.insert(3, SOURCE, source)
-			list_stitched_keywords_for_city_dfs.append(df_stitched_keyword)
-
-		df_city_stitch_keywords: pd.DataFrame = pd.concat(
-			list_stitched_keywords_for_city_dfs,
-			sort=True,
-		)
-		output_aggregate_for_city_filename: str = generate_filename(
-			nt_filename=NT_filename_city_aggregate(
-				city=city,
-			),
-			extension=CSV,
-		)
-		df_city_stitch_keywords.to_csv(
-			f"{folder_trends_aggregate}{output_aggregate_for_city_filename}",
-			index_label=DATE,
-		)
-		list_all_stitched_cities_dfs.append(df_city_stitch_keywords)
-		write_errors_to_disk(clear_task_origin=False, overwrite=False)
-
-	return pd.concat(
-		list_all_stitched_cities_dfs,
-		sort=True,
-	)
 
 
 if __name__ == "__main__":
