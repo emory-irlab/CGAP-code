@@ -523,6 +523,7 @@ def stitch_trends(
 				axis=1,
 				sort=True,
 			)
+			# todo - date mismatch error: between what the full time range was and what it should be
 
 			df.insert(0, CITY, city)
 			df.insert(1, COMMON_WORD, common_word)
