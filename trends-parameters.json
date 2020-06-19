@@ -2,7 +2,7 @@
     "download": true,
     "validate_download": false,
     "download_with_common_word": false,
-    "stitch": true,
+    "stitch": false,
     "only_stitch_missing": true,
     "aggregate": false,
     "source_folders_to_download": [
