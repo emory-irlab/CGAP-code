@@ -755,7 +755,7 @@ def stitch_keyword_df(
 
 	last_datetime_in_month: datetime
 	for last_datetime_in_month in months_in_table:
-		first_day_in_month: str = datetime(last_datetime_in_month.year, last_datetime_in_month.month, 1).strftime(
+		first_day_in_month: str = datetime.datetime(last_datetime_in_month.year, last_datetime_in_month.month, 1).strftime(
 			date_format)
 		last_day_in_month: str = last_datetime_in_month.strftime(date_format)
 		duplicate_first_day_in_month_list = np.where(df_keyword[DATE] == first_day_in_month)[0]
