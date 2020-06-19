@@ -4,7 +4,6 @@ import json
 import os
 import re
 from collections import namedtuple
-from datetime import datetime
 from typing import Any
 from typing import Callable
 from typing import Dict
