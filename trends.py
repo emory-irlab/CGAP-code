@@ -141,7 +141,7 @@ def main(
 				max_volume=MAX_SEARCH_VOLUME,
 				only_stitch_missing=only_stitch_missing,
 			)
-			write_errors_to_disk(overwrite=(not only_stitch_missing))
+			write_errors_to_disk(clear_task_origin=False, overwrite=(not only_stitch_missing))
 
 	if aggregate:
 		set_error_task_origin(task_origin=AGGREGATE)
