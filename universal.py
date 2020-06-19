@@ -707,7 +707,7 @@ def write_errors_to_disk(
 		output_write_type = "w+"
 
 	with open(output_filename, output_write_type) as error_log_file:
-		current_datetime: str = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+		current_datetime: str = datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 		error_log_file.write(f"{current_datetime} : {error_task_origin}")
 		error_log_file.write("\n")
 
