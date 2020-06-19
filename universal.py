@@ -595,8 +595,7 @@ def check_partition_valid_for_aggregation(
 ) -> bool:
 	if get_partition_group() > 1 or get_partition_total() > 1:
 		log_error(error=f"{ERROR_PARTITION}{HYPHEN}{error_label}")
-		print_statement: str = f"Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE total partition due to race conditions. Not guaranteed that the other partitions have finished running; please check and rerun. Current partition group: {partition_group}. Current partition total: {partition_total}."
-		print(print_statement)
+		print(f"Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE total partition due to race conditions. Not guaranteed that the other partitions have finished running; please check and rerun. Current partition group: {partition_group}. Current partition total: {partition_total}.")
 		return False
 	else:
 		return True
