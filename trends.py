@@ -815,8 +815,8 @@ def generate_empty_time_series_df(
 		end_date: str,
 		date_format: str = DATE_FORMAT,
 ) -> pd.DataFrame:
-	s_dt: datetime = datetime.strptime(start_date, date_format)
-	e_dt: datetime = datetime.strptime(end_date, date_format)
+	s_dt: datetime = datetime.datetime.strptime(start_date, date_format)
+	e_dt: datetime = datetime.datetime.strptime(end_date, date_format)
 	delta: datetime.timedelta = e_dt - s_dt
 	dates_list: List[str] = [
 		(s_dt + datetime.timedelta(days=x)).strftime(date_format)
