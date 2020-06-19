@@ -6,10 +6,10 @@
     "only_stitch_missing": true,
     "aggregate": false,
     "source_folders_to_download": [
-        "symptoms",
+        "common",
         "cgap",
         "covid",
-        "common",
+        "random",
         "glove"
     ],
     "trends": {
@@ -26,5 +26,13 @@
             "washington",
             "usa"
         ]
-    }
+    },
+    "source_folders": [
+        "common",
+        "cgap",
+        "covid",
+        "random",
+        "glove",
+        "google"
+    ]
 }

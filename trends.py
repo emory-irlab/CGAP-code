@@ -28,6 +28,7 @@ DEFAULT_SOURCE_FOLDERS: Tuple[str, ...] = (
 PARAM_VALIDATE_DOWNLOAD: str = "validate_download"
 PARAM_DOWNLOAD_WITH_COMMON_WORD: str = "download_with_common_word"
 PARAM_ONLY_STITCH_MISSING: str = "only_stitch_missing"
+PARAM_SOURCE_FOLDERS: str = "source_folders"
 PARAM_SOURCE_FOLDERS_TO_DOWNLOAD: str = "source_folders_to_download"
 
 # NAMED TUPLES
@@ -71,6 +72,7 @@ def main(
 		stitch: bool
 		only_stitch_missing: bool
 		list_partitioned_cities: Tuple[str, ...]
+		list_source_folders: List[str] = json_data[PARAM_SOURCE_FOLDERS]
 		list_source_folders_to_download: List[str] = json_data[PARAM_SOURCE_FOLDERS_TO_DOWNLOAD]
 		if called_from_main:
 			aggregate = json_data[AGGREGATE]
@@ -131,7 +133,7 @@ def main(
 				start_date=FULL_START_DATE,
 				end_date=FULL_END_DATE,
 				list_date_pairs=LIST_DATE_PAIRS,
-				list_source_folders_to_download=tuple(list_source_folders_to_download),
+				list_source_folders_to_download=tuple(list_source_folders),
 				common_word=COMMON_WORD_UNIVERSAL,
 				folder_keywords=FOLDER_KEYWORDS,
 				folder_trends_raw=FOLDER_TRENDS_RAW,
