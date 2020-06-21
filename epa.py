@@ -192,8 +192,8 @@ def download_epa(
 			list_paths_filter_conditions=(city, pollutant,),
 		)
 		for year in list_years:
-			first_day_in_year: datetime = datetime(year, 1, 1)
-			last_day_in_year: datetime = datetime(year, 12, 31)
+			first_day_in_year: datetime = datetime.datetime(year, 1, 1)
+			last_day_in_year: datetime = datetime.datetime(year, 12, 31)
 			nt_filename_epa_raw: tuple = NT_filename_epa_raw(
 				city=city,
 				pollutant=pollutant,
