@@ -142,7 +142,7 @@ def main(
 
 def generate_api_parameters(
 		api_call_type: str,
-) -> {}:
+) -> dict:
 	if api_call_type == CBSA:
 
 		return {}
