@@ -291,60 +291,6 @@ def stitch_epa(
 	)
 
 
-def aggregate_epa(
-		list_cities=tuple(DEFAULT_CITIES),
-		folder_epa_stitch=FOLDER_EPA_STITCH,
-		folder_epa_aggregate=FOLDER_EPA_AGGREGATE,
-) -> pd.DataFrame:
-	set_error_task_origin(task_origin=AGGREGATE)
-	generate_sub_paths_for_folder(
-		folder=folder_epa_aggregate,
-	)
-	list_city_dfs: List[pd.DataFrame] = []
-	city: str
-	for city in list_cities:
-		log_error(f"{AGGREGATE} : {city}", log=True)
-		list_parsed_epa_df_for_city: List[pd.DataFrame] = []
-		list_stitched_epa_filenames: List[str] = import_paths_from_folder(
-			folder=folder_epa_stitch,
-			list_paths_filter_conditions=(city, CSV),
-		)
-		if not len(list_stitched_epa_filenames) > 0:
-			log_error(error=f"city_data_missing{HYPHEN}{city}")
-		else:
-			filename: str
-			for filename in list_stitched_epa_filenames:
-				df: pd.DataFrame = pd.read_csv(
-					f"{folder_epa_stitch}{filename}",
-				)
-				list_parsed_epa_df_for_city.append(df)
-
-			df_parsed_city: pd.DataFrame = pd.concat(
-				list_parsed_epa_df_for_city,
-				sort=True,
-			)
-			list_city_dfs.append(df_parsed_city)
-			output_aggregate_for_city_filename: str = generate_filename(
-				nt_filename=NT_filename_city_aggregate(
-					city=city,
-				),
-				extension=CSV,
-			)
-			df_parsed_city.to_csv(
-				f"{folder_epa_aggregate}{output_aggregate_for_city_filename}",
-				index=False,
-			)
-
-	if list_city_dfs:
-		return pd.concat(
-			list_city_dfs,
-			sort=True,
-		)
-	else:
-		log_error(error=f"all_city_data_missing")
-		return pd.DataFrame()
-
-
 def parse_column_name(column_name: str) -> Tuple[str, str, str]:
 	city_code: str
 	pollutant_code: str
