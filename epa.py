@@ -4,7 +4,6 @@ import requests
 from universal import *
 
 # STATIC VARIABLES
-OZONE_DONGHAI: str = "Ozone"
 EPA_API_CBSA: str = "cbsa"
 EPA_API_DATA: str = 'Data'
 EPA_API_DATE: str = "date_local"
@@ -289,41 +288,6 @@ def stitch_epa(
 		f"{folder_epa_stitch}{filename_epa_stitch}",
 		index=False,
 	)
-
-
-def parse_column_name(column_name: str) -> Tuple[str, str, str]:
-	city_code: str
-	pollutant_code: str
-	target_statistic: str
-	city_code, pollutant_code, target_statistic = column_name.split(UNDERSCORE)
-	city_name: str = parse_city_code(city_code)
-	pollutant: str = parse_pollutant(pollutant_code)
-
-	return city_name, pollutant, target_statistic
-
-
-def parse_city_code(city_code: str) -> str:
-	city_name: str
-	city_info: dict
-	for city_name, city_info in DEFAULT_CITIES.items():
-		if city_code == city_info.get(CITY_AB, EMPTY_STRING):
-			return city_name
-	log_error(error=f"city_code_not_found{HYPHEN}{city_code}")
-	return EMPTY_STRING
-
-
-def parse_pollutant(
-		pollutant: str,
-		list_pollutants: Tuple[str, ...] = tuple(DEFAULT_POLLUTANTS),
-) -> str:
-	if pollutant == OZONE_DONGHAI:
-		pollutant = O3
-
-	if pollutant in list_pollutants:
-		return pollutant
-	else:
-		log_error(error=f"pollutant_not_found{HYPHEN}{pollutant}")
-		return EMPTY_STRING
 
 
 if __name__ == "__main__":
