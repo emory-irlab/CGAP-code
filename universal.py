@@ -383,7 +383,7 @@ def aggregate_data_in_folder(
 				sort=True,
 			)
 			concatenated_data_per_city.to_csv(
-				f"{folder_output_aggregate}{city}{HYPHEN}{filename_label}{CSV}",
+				f"{folder_output_aggregate}{city}{filename_label}{CSV}",
 				index=False,
 			)
 			list_data_dfs_for_all_cities.append(concatenated_data_per_city)
