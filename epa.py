@@ -277,8 +277,6 @@ def stitch_epa(
 			filter_conditions=filter_conditions,
 		)
 		df = df[EPA_COLUMNS]
-		df.insert(1, POLLUTANT, pollutant)
-		df.insert(1, CITY, city)
 		list_dfs.append(df)
 
 	list_dates.sort()
@@ -299,6 +297,14 @@ def stitch_epa(
 			log_error(error=f"not_valid_group_by_function{HYPHEN}{target_statistic}")
 			continue
 
+		df_target_statistic.insert(1, TARGET_STATISTIC, target_statistic)
+		df_target_statistic.insert(1, POLLUTANT, pollutant)
+		df_target_statistic.insert(1, CITY, city)
+		df_target_statistic.rename(
+			columns={EPA_COLUMN_ARITHMETIC_MEAN: POLLUTION_LEVEL},
+			inplace=True,
+		)
+
 		nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
 			city=city,
 			pollutant=pollutant,
@@ -313,7 +319,7 @@ def stitch_epa(
 		)
 		df_target_statistic.to_csv(
 			f"{folder_epa_stitch}{filename_epa_stitch}",
-			index=False,
+			index=True,
 		)
 
 
