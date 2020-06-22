@@ -324,7 +324,7 @@ def filter_epa(
 		column: str
 		values: Any
 		for column, values in filter_conditions.items():
-			if isinstance(values, Iterable):
+			if isinstance(values, list):
 				df = df[df[column].isin(values)]
 			else:
 				df = df[df[column] == values]

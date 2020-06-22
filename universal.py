@@ -3,7 +3,6 @@ import itertools
 import json
 import os
 import re
-from collections import Iterable
 from collections import namedtuple
 from typing import Any
 from typing import Callable
