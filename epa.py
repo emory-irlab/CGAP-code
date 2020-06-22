@@ -300,8 +300,15 @@ def stitch_epa(
 		df_target_statistic.insert(1, TARGET_STATISTIC, target_statistic)
 		df_target_statistic.insert(1, POLLUTANT, pollutant)
 		df_target_statistic.insert(1, CITY, city)
+		df_target_statistic.reset_index(
+			drop=False,
+			inplace=True,
+		)
 		df_target_statistic.rename(
-			columns={EPA_COLUMN_ARITHMETIC_MEAN: POLLUTION_LEVEL},
+			columns={
+				EPA_COLUMN_ARITHMETIC_MEAN: POLLUTION_LEVEL,
+				EPA_API_DATE: DATE,
+			},
 			inplace=True,
 		)
 
@@ -319,7 +326,7 @@ def stitch_epa(
 		)
 		df_target_statistic.to_csv(
 			f"{folder_epa_stitch}{filename_epa_stitch}",
-			index=True,
+			index=False,
 		)
 
 
