@@ -799,7 +799,6 @@ def stitch_keyword_df(
 			first_slice_index = duplicate_last_day_in_month_list[1] + 1
 
 	if len(list_of_stitch_time_ranges) > 0:
-
 		return (
 			pd.concat(
 				list_of_stitch_time_ranges,
@@ -807,9 +806,7 @@ def stitch_keyword_df(
 			),
 			EMPTY_STRING,
 		)
-
 	else:
-
 		return pd.DataFrame(), ERROR_EMPTY
 
 
