@@ -127,11 +127,6 @@ def main(
 			folder_stats_correlations_comparison: str = json_data[PARAM_FOLDER_STATS_CORRELATIONS_COMPARISON]
 		json_file.close()
 
-	# list_date_pairs: List[Tuple[str, str]] = list(zip(START_DATES, END_DATES))
-	# start_date: str
-	# end_date: str
-	# start_date, end_date = generate_date_pairs(list_date_pairs)
-
 	list_threshold_sides: List[str] = []
 	if bool_correlate_above_threshold:
 		list_threshold_sides.append(CORRELATE_ABOVE_THRESHOLD)
