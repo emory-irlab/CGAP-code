@@ -340,7 +340,7 @@ def run_metrics(
 		if ignore_zero:
 			df.replace(
 				to_replace=0,
-				value=pd.np.NaN,
+				value=np.NaN,
 				inplace=True,
 			)
 
@@ -385,7 +385,6 @@ def run_metrics(
 			output_filename = f"{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.common_word}{HYPHEN}{nt_filename_epa_or_trends_parsed.keyword}{HYPHEN}{ignore_zero}{CSV}"
 		else:
 			log_error(error=f"epa_or_trends{HYPHEN}{MISSING}")
-
 			return
 
 		df_description.to_csv(
@@ -745,7 +744,7 @@ def compute_correlations_for_keyword(
 	trends_column_name_ignore_zero: str = f"{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}"
 	df_merged[trends_column_name_ignore_zero] = df_merged[target_variable_column_name_trends].replace(
 		to_replace=0,
-		value=pd.np.NaN,
+		value=np.NaN,
 	)
 	df_length: int = len(df_merged.index)
 
@@ -905,8 +904,8 @@ def run_intercity(
 				df_intercity[KEYWORD_FREQUENCY_RELATIVE] = df_keyword_frequency_scaled_cross_city
 				df_intercity.insert(0, COMMON_WORD_FREQUENCY, df_common_city_keyword[COMMON_WORD_FREQUENCY])
 				df_intercity.replace(
-					to_replace=[pd.np.inf, -pd.np.inf],
-					value=pd.np.nan,
+					to_replace=[np.inf, -np.inf],
+					value=np.nan,
 					inplace=True,
 				)
 				df_intercity.insert(0, COMMON_CITY, common_city)

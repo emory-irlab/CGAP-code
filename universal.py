@@ -14,6 +14,7 @@ from typing import Pattern
 from typing import Tuple
 
 import pandas as pd
+import numpy as np
 
 # STATIC VARIABLES
 AGGREGATE: str = "aggregate"
