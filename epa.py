@@ -1,4 +1,5 @@
 import sys
+
 import requests
 
 from universal import *
@@ -29,6 +30,7 @@ NT_filename_epa_stitch = namedtuple(
 	[
 		CITY,
 		POLLUTANT,
+		TARGET_STATISTIC,
 		START_DATE,
 		END_DATE,
 	]
@@ -235,6 +237,7 @@ def download_epa(
 def stitch_epa(
 		city: str,
 		pollutant: str,
+		list_target_statistics: List[str] = DEFAULT_TARGET_STATISTICS,
 		folder_epa_raw: str = FOLDER_EPA_RAW,
 		folder_epa_stitch: str = FOLDER_EPA_STITCH,
 ) -> None:
@@ -262,32 +265,70 @@ def stitch_epa(
 
 		df: pd.DataFrame = pd.read_csv(
 			f"{folder_epa_raw}{filename}",
+			parse_dates=[EPA_COLUMN_DATE_LOCAL],
+			infer_datetime_format=True,
 		)
+		filter_conditions: dict = DEFAULT_POLLUTANTS.get(pollutant, {}).get(EPA_FILTER, {})
+		df = filter_epa(
+			df=df,
+			filter_conditions=filter_conditions,
+		)
+		df = df[EPA_COLUMNS]
+		df.insert(1, POLLUTANT, pollutant)
+		df.insert(1, CITY, city)
 		list_dfs.append(df)
 
 	list_dates.sort()
 	first_date: str = list_dates[0]
 	end_date: str = list_dates[-1]
 
-	nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
-		city=city,
-		pollutant=pollutant,
-		start_date=first_date,
-		end_date=end_date,
-	)
-	filename_epa_stitch: str = generate_filename(
-		nt_filename=nt_filename_epa_stitch,
-		extension=CSV,
-		delimiter=HYPHEN,
-	)
 	df_stitched: pd.DataFrame = pd.concat(
 		list_dfs,
 		ignore_index=True,
 	)
-	df_stitched.to_csv(
-		f"{folder_epa_stitch}{filename_epa_stitch}",
-		index=False,
-	)
+	df_stitched = df_stitched.groupby([EPA_COLUMN_DATE_LOCAL, EPA_COLUMN_SITE_NUMBER]).agg('mean')
+
+	for target_statistic in list_target_statistics:
+		try:
+			df_target_statistic = df_stitched.groupby([EPA_COLUMN_DATE_LOCAL]).agg(target_statistic)
+		except AttributeError:
+			log_error(error=f"not_valid_group_by_function{HYPHEN}{target_statistic}")
+			continue
+
+		nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
+			city=city,
+			pollutant=pollutant,
+			target_statistic=target_statistic,
+			start_date=first_date,
+			end_date=end_date,
+		)
+		filename_epa_stitch: str = generate_filename(
+			nt_filename=nt_filename_epa_stitch,
+			extension=CSV,
+			delimiter=HYPHEN,
+		)
+		df_target_statistic.to_csv(
+			f"{folder_epa_stitch}{filename_epa_stitch}",
+			index=False,
+		)
+
+
+def filter_epa(
+		df: pd.DataFrame,
+		filter_conditions: dict,
+) -> pd.DataFrame:
+	if not filter_conditions:
+		log_error(error=f"filter_epa_df_conditions{HYPHEN}empty")
+		return df
+	else:
+		column: str
+		values: Any
+		for column, values in filter_conditions.items():
+			if isinstance(values, Iterable):
+				df = df[df[column].isin(values)]
+			else:
+				df = df[df[column] == values]
+		return df
 
 
 if __name__ == "__main__":

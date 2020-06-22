@@ -3,6 +3,7 @@ import itertools
 import json
 import os
 import re
+from collections import Iterable
 from collections import namedtuple
 from typing import Any
 from typing import Callable
@@ -75,7 +76,6 @@ ERROR_PARTITION: str = "Not available with multi-partitioning. Running on partit
 ERROR_EMPTY: str = "empty_data_frame"
 
 # JSON PARAMETERS
-EPA_API_POLLUTANT_PARAM: str = "param"
 PARAM_BDATE: str = "bdate"
 PARAM_EDATE: str = "edate"
 PARAM_DATE_START: str = "start_dates"
@@ -129,6 +129,11 @@ DEFAULT_COMMON_WORD: str = "pins"
 DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS: Tuple[str, str] = (
 	AGGREGATE,
 	CSV,
+)
+DEFAULT_TARGET_STATISTICS: Tuple[str, str, str] = (
+	MAX,
+	MEAN,
+	MEDIAN,
 )
 
 DEFAULT_CITIES: Dict[str, dict] = {
@@ -208,25 +213,68 @@ DEFAULT_CITIES: Dict[str, dict] = {
 	},
 }
 
+EPA_FILTER: str = "filter"
+EPA_API_POLLUTANT_PARAM: str = "param"
+EPA_COLUMN_ARITHMETIC_MEAN: str = "arithmetic_mean"
+EPA_COLUMN_DATE_LOCAL: str = "date_local"
+EPA_COLUMN_FIRST_MAX_HOUR: str = "first_max_hour"
+EPA_COLUMN_FIRST_MAX_VALUE: str = "first_max_value"
+EPA_COLUMN_PARAMETER_CODE: str = "parameter_code"
+EPA_COLUMN_SAMPLE_DURATION: str = "sample_duration"
+EPA_COLUMN_SITE_NUMBER: str = "site_number"
+EPA_COLUMNS: List[str] = [
+	EPA_COLUMN_DATE_LOCAL,
+	EPA_COLUMN_SITE_NUMBER,
+	EPA_COLUMN_ARITHMETIC_MEAN,
+	EPA_COLUMN_FIRST_MAX_VALUE,
+]
+
 DEFAULT_POLLUTANTS: Dict[str, dict] = {
 	CO:   {
 		EPA_API_POLLUTANT_PARAM: 42101,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  42101,
+			EPA_COLUMN_SAMPLE_DURATION: "8-HR RUN AVG END HOUR",
+		},
 	},
 	NO2:  {
 		EPA_API_POLLUTANT_PARAM: 42602,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  42602,
+			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
+		},
 	},
 	O3:   {
 		EPA_API_POLLUTANT_PARAM: 44201,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  44201,
+			EPA_COLUMN_SAMPLE_DURATION: "8-HR RUN AVG BEGIN HOUR",
+		},
 	},
 	PM25: {
 		EPA_API_POLLUTANT_PARAM: 88101,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  88101,
+			EPA_COLUMN_SAMPLE_DURATION: [
+				"24-HR BLK AVG",
+				"24 HOUR",
+			],
+		},
 	},
 	PM10: {
 		EPA_API_POLLUTANT_PARAM: 81102,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  81102,
+			EPA_COLUMN_SAMPLE_DURATION: "24 HOUR",
+		},
 	},
 	SO2:  {
 		EPA_API_POLLUTANT_PARAM: 42401,
-	},
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  42401,
+			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
+		},
+	}
 }
 
 # GLOBAL NAMED TUPLES

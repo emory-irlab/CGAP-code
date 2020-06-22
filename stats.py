@@ -56,12 +56,6 @@ DEFAULT_IGNORE_ZERO_TRENDS: Tuple[bool, ...] = (
 	False,
 )
 
-DEFAULT_TARGET_STATISTICS: Tuple[str, str, str] = (
-	MAX,
-	MEAN,
-	MEDIAN,
-)
-
 DEFAULT_THRESHOLD_PERCENTILES: Tuple[int, ...] = (
 	100,
 )
