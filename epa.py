@@ -56,6 +56,7 @@ def main(
 		stitch: bool
 		list_partitioned_cities: Tuple[str, ...]
 		list_pollutants: Tuple[str, ...]
+		list_target_statistics: Tuple[str, ...]
 		list_years: Tuple[int, ...]
 		if called_from_main:
 			aggregate = json_data[AGGREGATE]
@@ -76,6 +77,7 @@ def main(
 				)
 			)
 			list_pollutants = parameters[POLLUTANT]
+			list_target_statistics = parameters[TARGET_STATISTIC]
 			list_years = parameters[YEAR]
 		else:
 			aggregate = False
@@ -120,6 +122,7 @@ def main(
 				stitch_epa(
 					city=city,
 					pollutant=pollutant,
+					list_target_statistics=tuple(list_target_statistics),
 					folder_epa_raw=FOLDER_EPA_RAW,
 					folder_epa_stitch=FOLDER_EPA_STITCH,
 				)
@@ -237,7 +240,7 @@ def download_epa(
 def stitch_epa(
 		city: str,
 		pollutant: str,
-		list_target_statistics: List[str] = DEFAULT_TARGET_STATISTICS,
+		list_target_statistics: Tuple[str, ...] = DEFAULT_TARGET_STATISTICS,
 		folder_epa_raw: str = FOLDER_EPA_RAW,
 		folder_epa_stitch: str = FOLDER_EPA_STITCH,
 ) -> None:
@@ -289,6 +292,7 @@ def stitch_epa(
 	df_stitched = df_stitched.groupby([EPA_COLUMN_DATE_LOCAL, EPA_COLUMN_SITE_NUMBER]).agg('mean')
 
 	for target_statistic in list_target_statistics:
+		log_error(f"{STITCH} : {city} : {pollutant} : {target_statistic}", log=True)
 		try:
 			df_target_statistic = df_stitched.groupby([EPA_COLUMN_DATE_LOCAL]).agg(target_statistic)
 		except AttributeError:
