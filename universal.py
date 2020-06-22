@@ -13,8 +13,8 @@ from typing import NamedTuple
 from typing import Pattern
 from typing import Tuple
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 # STATIC VARIABLES
 AGGREGATE: str = "aggregate"
