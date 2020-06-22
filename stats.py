@@ -831,6 +831,7 @@ def run_intercity(
 		if city != common_city
 	]
 
+	# todo - why is this partitioned based on words and not the city
 	list_common_city_filenames: List[str] = import_paths_from_folder(
 		folder=folder_trends_stitch,
 		list_paths_filter_conditions=(common_city, common_word, CSV),
