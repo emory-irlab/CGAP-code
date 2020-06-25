@@ -613,29 +613,22 @@ def run_correlations(
 												log_error(error=f"df_empty_despite_being_set{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
 												continue
 
-										filename_epa: str
+										filename_epa: str = import_single_file(
+											folder=folder_epa_stitch,
+											list_filename_filter_conditions=(city, pollutant, target_statistic, CSV)
+										)
 										if not epa_set:
-											filename_epa = import_single_file(
-												folder=folder_epa_stitch,
-												list_filename_filter_conditions=(city, pollutant, target_statistic, CSV)
-											)
 											if filename_epa:
 												df_epa = pd.read_csv(
 													f"{folder_epa_stitch}{filename_epa}",
 													parse_dates=[DATE],
 												)
 												epa_set = True
+												if df_epa.empty:
+													log_error(error=f"epa_file_empty{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
+													continue
 											else:
-												continue
-										else:
-											if df_epa.empty:
-												filename_epa = import_single_file(
-													folder=folder_epa_stitch,
-													list_filename_filter_conditions=(
-														city, pollutant, target_statistic, CSV,
-													)
-												)
-												log_error(error=f"df_empty_despite_being_set{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
+												log_error(error=f"epa_file_missing{HYPHEN}{city}{HYPHEN}{pollutant}{HYPHEN}{target_statistic}")
 												continue
 
 										dict_cor_row: dict = compute_correlations_for_keyword(
