@@ -131,7 +131,7 @@
     },
     "target_variable_column_name_epa": "pollution_level",
     "target_variable_column_name_trends": "keyword_frequency",
-    "folder_stats_correlations_raw": "./CGAP-data/CGAP-stats/CGAP-correlations-stitch/",
-    "folder_stats_correlations_aggregate": "./CGAP-data/CGAP-stats/CGAP-correlations-aggregate/",
-    "folder_stats_correlations_comparison": "./CGAP-data/CGAP-stats/correlations/comparison/"
+    "folder_stats_correlations_raw": "./../CGAP-data/CGAP-stats/CGAP-correlations-stitch/",
+    "folder_stats_correlations_aggregate": "./../CGAP-data/CGAP-stats/CGAP-correlations-aggregate/",
+    "folder_stats_correlations_comparison": "./../CGAP-data/CGAP-stats/CGAP-baseline/"
 }
