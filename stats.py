@@ -327,7 +327,7 @@ def run_metrics(
 		folder_metrics_input: str,
 		folder_metrics_output: str,
 ) -> None:
-	log_error(f"{METRICS} : {epa_or_trends} : {city} : {IGNORE_ZERO}-{ignore_zero}", log=True)
+	log_error(f"{METRICS} : {epa_or_trends} : {city} : {IGNORE_ZERO}{HYPHEN}{ignore_zero}", log=True)
 	generate_sub_paths_for_folder(
 		folder=folder_metrics_output,
 	)
