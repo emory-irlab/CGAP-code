@@ -1,2 +1,0 @@
-kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
-1640,0.33675564681724846,-1,-1,-1,-1,True,-0.14096679804385426,-0.21292296551399692,atlanta,code pink,CO,max,-1.0,above_threshold,100,2

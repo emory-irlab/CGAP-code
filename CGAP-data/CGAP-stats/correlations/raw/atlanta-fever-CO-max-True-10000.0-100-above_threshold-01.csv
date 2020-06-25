@@ -1,2 +1,0 @@
-kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
-4802,0.9860369609856263,4835,0.9928131416837782,4771,0.9867631851085833,True,,,atlanta,fever,CO,max,10000.0,above_threshold,100,1

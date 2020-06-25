@@ -1,2 +1,0 @@
-kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
-831,0.1706365503080082,4835,0.9928131416837782,830,0.17166494312306102,False,0.10631415875353417,0.14818394699002968,atlanta,fahrenheit a centigrados,CO,max,10000.0,below_threshold,100,2

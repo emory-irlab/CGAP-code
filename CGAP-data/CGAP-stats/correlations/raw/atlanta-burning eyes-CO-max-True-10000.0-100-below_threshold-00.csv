@@ -1,2 +1,0 @@
-kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
-772,0.15852156057494868,4835,0.9928131416837782,771,0.1594622543950362,True,-0.10995009771428228,-0.14015825251489092,atlanta,burning eyes,CO,max,10000.0,below_threshold,100,0

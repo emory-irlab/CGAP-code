@@ -1,2 +1,0 @@
-kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
-885,0.18172484599589322,-1,-1,-1,-1,False,0.04095944870817439,0.0787570111065295,atlanta,cough runny nose,CO,max,-1.0,above_threshold,100,0
