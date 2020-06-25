@@ -404,8 +404,8 @@ def run_metrics(
 					city=city,
 					pollutant=nt_filename_epa_or_trends_parsed.pollutant,
 					target_statistic=nt_filename_epa_or_trends_parsed.target_statistic,
-					ignore_zero=ignore_zero,
-					year=year,
+					ignore_zero=str(ignore_zero),
+					year=str(year),
 				)
 			elif epa_or_trends == TRENDS:
 				# noinspection PyTypeChecker
@@ -421,8 +421,8 @@ def run_metrics(
 					city=city,
 					common_word=nt_filename_epa_or_trends_parsed.common_word,
 					keyword=nt_filename_epa_or_trends_parsed.keyword,
-					ignore_zero=ignore_zero,
-					year=year,
+					ignore_zero=str(ignore_zero),
+					year=str(year),
 				)
 			else:
 				log_error(error=f"epa_or_trends{HYPHEN}{MISSING}")
