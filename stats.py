@@ -671,6 +671,7 @@ def run_correlations(
 			write_errors_to_disk(overwrite=False)
 
 
+# todo - switch to named tuple
 def generate_stats_correlations_filename(
 		city: str,
 		keyword: str,
