@@ -12,7 +12,7 @@
     "aggregate_correlations": false,
     "aggregate_already_aggregated_cities": false,
     "baseline": false,
-    "only_compare_missing": true,
+    "only_baseline_missing": true,
     "run_intercity": false,
     "common_city": "usa",
     "common_word": "pins",
