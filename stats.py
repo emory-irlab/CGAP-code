@@ -31,14 +31,14 @@ PARAM_AGGREGATE_METRICS: str = "aggregate_metrics"
 PARAM_AGGREGATE_METRICS_EPA: str = f"{PARAM_AGGREGATE_METRICS}{UNDERSCORE}{EPA}"
 PARAM_AGGREGATE_METRICS_TRENDS = f"{PARAM_AGGREGATE_METRICS}{UNDERSCORE}{TRENDS}"
 PARAM_AGGREGATE_ALREADY_AGGREGATED_CITIES: str = "aggregate_already_aggregated_cities"
-PARAM_CORRELATIONS: str = "run_correlations"
+PARAM_BASELINE: str = "baseline"
+PARAM_CORRELATE: str = "correlate"
 PARAM_CORRELATE_ABOVE_THRESHOLD: str = "correlate_above_threshold"
 PARAM_CORRELATE_BELOW_THRESHOLD: str = "correlate_below_threshold"
-PARAM_CORRELATIONS_COMPARISON: str = "run_correlations_comparison"
 PARAM_CORRELATIONS_COMPARISON_PIVOT_VALUES: str = "correlations_comparison_pivot_values"
 PARAM_INTERCITY: str = "run_intercity"
+PARAM_ONLY_BASELINE_MISSING: str = "only_baseline_missing"
 PARAM_ONLY_CORRELATE_MISSING: str = "only_correlate_missing"
-PARAM_ONLY_COMPARE_MISSING: str = "only_compare_missing"
 PARAM_METRICS: str = "run_metrics"
 PARAM_METRICS_EPA: str = f"{PARAM_METRICS}{UNDERSCORE}{EPA}"
 PARAM_METRICS_TRENDS: str = f"{PARAM_METRICS}{UNDERSCORE}{TRENDS}"
@@ -94,12 +94,12 @@ def main(
 			bool_aggregate_metrics_epa: bool = json_data[PARAM_AGGREGATE_METRICS_EPA]
 			bool_run_metrics_trends: bool = json_data[PARAM_METRICS_TRENDS]
 			bool_aggregate_metrics_trends: bool = json_data[PARAM_AGGREGATE_METRICS_TRENDS]
-			bool_run_correlations: bool = json_data[PARAM_CORRELATIONS]
+			bool_run_correlations: bool = json_data[PARAM_CORRELATE]
 			bool_correlate_above_threshold: bool = json_data[PARAM_CORRELATE_ABOVE_THRESHOLD]
 			bool_correlate_below_threshold: bool = json_data[PARAM_CORRELATE_BELOW_THRESHOLD]
 			bool_only_correlate_missing: bool = json_data[PARAM_ONLY_CORRELATE_MISSING]
-			bool_run_correlations_comparison: bool = json_data[PARAM_CORRELATIONS_COMPARISON]
-			bool_only_compare_missing: bool = json_data[PARAM_ONLY_COMPARE_MISSING]
+			bool_run_correlations_comparison: bool = json_data[PARAM_BASELINE]
+			bool_only_compare_missing: bool = json_data[PARAM_ONLY_BASELINE_MISSING]
 			bool_aggregate_correlations: bool = json_data[PARAM_AGGREGATE_CORRELATIONS]
 			bool_aggregate_already_aggregated_cities: bool = json_data[PARAM_AGGREGATE_ALREADY_AGGREGATED_CITIES]
 			bool_run_intercity: bool = json_data[PARAM_INTERCITY]
@@ -301,9 +301,9 @@ def main(
 
 	if bool_run_correlations_comparison:
 		for city in list_partitioned_cities:
-			set_error_task_origin(task_origin=PARAM_CORRELATIONS_COMPARISON)
+			set_error_task_origin(task_origin=PARAM_BASELINE)
 			log_error(f"{CORRELATIONS_COMPARISON} : {city}", log=True)
-			run_correlation_comparison(
+			baseline(
 				city=city,
 				dict_pivot_values=dict_correlations_comparison_pivot_values,
 				folder_stats_correlations=folder_stats_correlations_raw,
@@ -397,7 +397,7 @@ def run_metrics(
 		)
 
 
-def run_correlation_comparison(
+def baseline(
 		city: str,
 		dict_pivot_values: Dict[str, Any],
 		folder_stats_correlations: str,
@@ -561,7 +561,7 @@ def run_correlations(
 	for pollutant in list_pollutants:
 		target_statistic: str
 		for target_statistic in list_target_statistics:
-			set_error_task_origin(task_origin=PARAM_CORRELATIONS)
+			set_error_task_origin(task_origin=PARAM_CORRELATE)
 			log_error(f"{CORRELATIONS} : {city} : {pollutant} : {target_statistic}", log=True)
 
 			filename_trends: str
@@ -645,7 +645,7 @@ def run_correlations(
 												log_error(error=f"epa_file_missing{HYPHEN}{city}{HYPHEN}{pollutant}{HYPHEN}{target_statistic}")
 												continue
 
-										dict_cor_row: dict = compute_correlations_for_keyword(
+										dict_cor_row: dict = correlate_for_keyword(
 											df_epa=df_epa,
 											target_variable_column_name_epa=target_variable_column_name_epa,
 											df_trends=df_trends,
@@ -729,7 +729,7 @@ def parse_filename_correlations(
 	return dict_filename_correlations_parsed
 
 
-def compute_correlations_for_keyword(
+def correlate_for_keyword(
 		df_epa: pd.DataFrame,
 		df_trends: pd.DataFrame,
 		target_variable_column_name_epa: str,
