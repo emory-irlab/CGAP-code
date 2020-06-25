@@ -381,9 +381,9 @@ def parse_filename_numeric(
 
 def generate_filename(
 		nt_filename: tuple,
+		extension: str,
 		delimiter: str = "",
 		folder: str = "",
-		extension: str = "",
 ) -> str:
 	output: str = delimiter.join(nt_filename)
 	if folder:

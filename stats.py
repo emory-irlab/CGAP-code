@@ -433,6 +433,7 @@ def run_metrics(
 				continue
 			output_filename = generate_filename(
 				nt_filename=nt_output_filename,
+				delimiter=HYPHEN,
 				extension=CSV,
 			)
 			df_description.to_csv(
