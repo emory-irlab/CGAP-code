@@ -536,12 +536,10 @@ def import_single_file(
 			filename_extra_candidate: str
 			for filename_extra_candidate in list_rest:
 				log_error(error=f"parse_filename{HYPHEN}extra_candidate{HYPHEN}{filename_extra_candidate}")
-
 		return filename
 
 	else:
-		log_error(error=f"parse_filename{HYPHEN}no_candidate")
-
+		log_error(error=f"parse_filename{HYPHEN}{'_'.join(list_filename_filter_conditions)}")
 		return ""
 
 
