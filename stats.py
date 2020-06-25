@@ -111,6 +111,8 @@ def main(
 			target_variable_column_name_trends: str = json_data[f"{TARGET_VARIABLE_COLUMN_NAME}{UNDERSCORE}{TRENDS}"]
 
 			parameters: dict = json_data[STATS]
+			start_date: str = parameters[START_DATE]
+			end_date: str = parameters[END_DATE]
 			list_input_cities: List[str] = parameters[CITY]
 			list_pollutants: List[str] = parameters[POLLUTANT]
 			list_target_statistics: List[str] = parameters[TARGET_STATISTIC]
@@ -229,6 +231,8 @@ def main(
 				city=city,
 				folder_stats_correlations=folder_stats_correlations_raw,
 				only_correlate_missing=bool_only_correlate_missing,
+				start_date=start_date,
+				end_date=end_date,
 				target_variable_column_name_epa=target_variable_column_name_epa,
 				target_variable_column_name_trends=target_variable_column_name_trends,
 				folder_epa_stitch=FOLDER_EPA_STITCH,
@@ -527,6 +531,8 @@ def run_correlations(
 		city: str,
 		folder_stats_correlations: str,
 		only_correlate_missing: bool = DEFAULT_ONLY_CORRELATE_MISSING,
+		start_date: str = "",
+		end_date: str = "",
 		target_variable_column_name_epa: str = POLLUTION_LEVEL,
 		target_variable_column_name_trends: str = KEYWORD_FREQUENCY,
 		folder_epa_stitch: str = FOLDER_EPA_STITCH,
@@ -623,9 +629,16 @@ def run_correlations(
 													f"{folder_epa_stitch}{filename_epa}",
 													parse_dates=[DATE],
 												)
+												if start_date and end_date:
+													df_epa = filter_date_for_df(
+														df=df_epa,
+														date_column_is_index=True,
+														start_date=start_date,
+														end_date=end_date,
+													)
 												epa_set = True
 												if df_epa.empty:
-													log_error(error=f"epa_file_empty{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
+													log_error(error=f"epa_df_empty{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
 													continue
 											else:
 												log_error(error=f"epa_file_missing{HYPHEN}{city}{HYPHEN}{pollutant}{HYPHEN}{target_statistic}")

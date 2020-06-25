@@ -31,6 +31,8 @@
             "washington",
             "usa"
         ],
+        "start_date": "2007-01-01",
+        "end_date": "2019-12-31",
         "target_statistic": [
             "max",
             "mean",

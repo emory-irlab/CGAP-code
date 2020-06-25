@@ -335,6 +335,26 @@ def generate_date_pair_for_full_series(
 	return NT_date_pair(start_date=first_start_date, end_date=last_end_date)
 
 
+def filter_date_for_df(
+		df: pd.DataFrame,
+		date_column_is_index: bool,
+		start_date: str,
+		end_date: str,
+		date_column: str = "",
+		date_format: str = DATE_FORMAT
+) -> pd.DataFrame:
+	start_date_dt: datetime = datetime.datetime.strptime(start_date, date_format)
+	end_date_dt: datetime = datetime.datetime.strptime(end_date, date_format)
+	if date_column_is_index:
+		return df.loc[start_date_dt:end_date_dt]
+	else:
+		if date_column:
+			return df[(df[date_column] >= start_date_dt) & (df[date_column] <= end_date_dt)]
+		else:
+			log_error(error=f"date_column_empty{HYPHEN}returning_full_df")
+			return df
+
+
 def generate_date_for_filename_output(
 		date: str,
 ) -> str:
