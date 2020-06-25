@@ -632,7 +632,8 @@ def run_correlations(
 												if start_date and end_date:
 													df_epa = filter_date_for_df(
 														df=df_epa,
-														date_column_is_index=True,
+														date_column_is_index=False,
+														date_column=DATE,
 														start_date=start_date,
 														end_date=end_date,
 													)
