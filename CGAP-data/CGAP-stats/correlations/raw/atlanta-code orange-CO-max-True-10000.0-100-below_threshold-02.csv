@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+1924,0.39507186858316223,4835,0.9928131416837782,1921,0.39731127197518096,True,-0.0486708590931283,-0.0933854704950918,atlanta,code orange,CO,max,10000.0,below_threshold,100,2

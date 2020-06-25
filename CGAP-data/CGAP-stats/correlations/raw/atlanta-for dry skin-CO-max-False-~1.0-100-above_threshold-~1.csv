@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+3094,0.6353182751540041,-1,-1,-1,-1,False,0.05610974770758688,0.07332098742812329,atlanta,for dry skin,CO,max,-1.0,above_threshold,100,-1

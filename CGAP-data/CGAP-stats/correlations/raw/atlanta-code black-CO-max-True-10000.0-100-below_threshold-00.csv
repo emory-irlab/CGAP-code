@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+3665,0.7525667351129364,4835,0.9928131416837782,3661,0.7571871768355739,True,-0.13108979457724804,-0.18835904381594307,atlanta,code black,CO,max,10000.0,below_threshold,100,0

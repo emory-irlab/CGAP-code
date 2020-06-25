@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+4865,0.9989733059548255,-1,-1,-1,-1,True,0.11724378678859787,0.1429505887853472,atlanta,discover,CO,max,-1.0,above_threshold,100,2

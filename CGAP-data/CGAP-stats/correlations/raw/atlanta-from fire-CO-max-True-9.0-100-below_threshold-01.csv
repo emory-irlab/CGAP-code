@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+3593,0.737782340862423,4835,0.9928131416837782,3590,0.7425025853154085,True,-0.10577593680280105,-0.10993104254585499,atlanta,from fire,CO,max,9.0,below_threshold,100,1

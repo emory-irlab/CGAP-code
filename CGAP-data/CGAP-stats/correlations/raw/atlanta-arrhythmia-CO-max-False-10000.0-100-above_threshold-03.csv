@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+2158,0.4431211498973306,4835,0.9928131416837782,2143,0.44322647362978285,False,,,atlanta,arrhythmia,CO,max,10000.0,above_threshold,100,3

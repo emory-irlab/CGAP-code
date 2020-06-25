@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+2755,0.5657084188911704,-1,-1,-1,-1,True,-0.08142281674903543,-0.10489809644283878,atlanta,chills,CO,max,-1.0,above_threshold,100,2

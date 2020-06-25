@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+2904,0.5963039014373717,4835,0.9928131416837782,2877,0.5950361944157188,True,0.005392133904236172,-0.0030237951629694024,atlanta,aches,CO,max,10000.0,below_threshold,100,1

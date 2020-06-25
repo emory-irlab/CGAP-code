@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+4636,0.9519507186858316,4835,0.9928131416837782,4605,0.9524301964839711,True,0.13537208001538292,0.1544887093576005,atlanta,asthma,CO,max,10000.0,below_threshold,100,2

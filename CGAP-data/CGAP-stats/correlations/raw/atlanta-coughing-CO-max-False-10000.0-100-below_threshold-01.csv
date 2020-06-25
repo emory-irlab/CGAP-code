@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+4233,0.8691991786447638,4835,0.9928131416837782,4203,0.8692864529472596,False,0.0929284737306657,0.1068225093381384,atlanta,coughing,CO,max,10000.0,below_threshold,100,1

@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+96,0.01971252566735113,4835,0.9928131416837782,96,0.01985522233712513,False,-0.007638708238411871,0.006837952302269559,atlanta,corona virus,CO,max,10000.0,below_threshold,100,3

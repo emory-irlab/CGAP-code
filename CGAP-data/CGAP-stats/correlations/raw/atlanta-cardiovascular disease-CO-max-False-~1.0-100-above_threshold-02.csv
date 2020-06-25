@@ -1,0 +1,2 @@
+kw_nonzero_count,kw_nonzero_proportion,non_polluted_days_count,non_polluted_days_proportion,kw_nonzero_for_non_polluted_days_count,kw_nonzero_for_non_polluted_days_proportion,ignore_zero,pearson_correlation,spearman_correlation,city,keyword,pollutant,target_statistic,threshold,threshold_side,threshold_percentile,time_shift
+1683,0.3455852156057495,-1,-1,-1,-1,False,0.007323159770355565,0.023205596583726847,atlanta,cardiovascular disease,CO,max,-1.0,above_threshold,100,2
