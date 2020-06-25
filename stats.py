@@ -73,6 +73,26 @@ DEFAULT_TIME_SHIFTS: Tuple[int, ...] = (
 	3,
 )
 
+NT_filename_metrics_epa = namedtuple(
+	"NT_filename_metrics_epa",
+	[
+		CITY,
+		POLLUTANT,
+		TARGET_STATISTIC,
+		IGNORE_ZERO,
+		YEAR,
+	]
+)
+NT_filename_metrics_trends = namedtuple(
+	"NT_filename_metrics_trends",
+	[
+		CITY,
+		COMMON_WORD,
+		KEYWORD,
+		IGNORE_ZERO,
+		YEAR,
+	]
+)
 
 def main(
 		called_from_main: bool = False,
@@ -337,64 +357,88 @@ def run_metrics(
 			folder=folder_metrics_input,
 			list_paths_filter_conditions=(city, CSV),
 	):
-		df: pd.DataFrame = pd.read_csv(
+		df_full: pd.DataFrame = pd.read_csv(
 			f"{folder_metrics_input}{filename}",
 			parse_dates=[DATE],
 		)
 		if ignore_zero:
-			df.replace(
+			df_full.replace(
 				to_replace=0,
 				value=np.NaN,
 				inplace=True,
 			)
 
-		count: int = df[target_variable_column_name].count()
-		length_time_series: int = len(df[DATE].unique())
-		df_description: pd.DataFrame = df[target_variable_column_name].describe()
-		df_description = df_description.to_frame()
-		df_description = df_description.transpose()
-		df_description.insert(0, SPARSITY, (count / length_time_series))
+		df_full[YEAR] = pd.DatetimeIndex(df_full[DATE]).year
+		list_years: list = list(df_full[YEAR].unique())
+		list_years.append(0)
+		for year in list_years:
+			if year:
+				df: pd.DataFrame = df_full[df_full[YEAR] == year]
+			else:
+				df = df_full
 
-		output_filename: str
-		nt_filename_epa_or_trends_parsed: NamedTuple
-		if epa_or_trends == EPA:
-			# noinspection PyTypeChecker
-			nt_filename_epa_or_trends_parsed: NamedTuple = parse_filename(
-				filename=filename,
-				delimiter=HYPHEN,
-				extension=CSV,
-				named_tuple=epa.NT_filename_epa_stitch,
-			)
-			if nt_filename_epa_or_trends_parsed.city != city:
-				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.city}")
+			count: int = df[target_variable_column_name].count()
+			length_time_series: int = len(df[DATE].unique())
+			df_description: pd.DataFrame = df[target_variable_column_name].describe()
+			df_description = df_description.to_frame()
+			df_description = df_description.transpose()
 			df_description.insert(0, CITY, city)
-			df_description.insert(1, POLLUTANT, nt_filename_epa_or_trends_parsed.pollutant)
-			df_description.insert(2, TARGET_STATISTIC, nt_filename_epa_or_trends_parsed.target_statistic)
-			df_description.insert(3, IGNORE_ZERO, ignore_zero)
-			output_filename = f"{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.pollutant}{HYPHEN}{nt_filename_epa_or_trends_parsed.target_statistic}{HYPHEN}{ignore_zero}{CSV}"
-		elif epa_or_trends == TRENDS:
-			# noinspection PyTypeChecker
-			nt_filename_epa_or_trends_parsed: NamedTuple = parse_filename(
-				filename=filename,
-				delimiter=HYPHEN,
-				extension=CSV,
-				named_tuple=trends.NT_filename_trends_stitch,
-			)
-			if nt_filename_epa_or_trends_parsed.city != city:
-				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.city}")
-			df_description.insert(0, CITY, city)
-			df_description.insert(1, KEYWORD, nt_filename_epa_or_trends_parsed.keyword)
-			df_description.insert(2, COMMON_WORD, nt_filename_epa_or_trends_parsed.common_word)
-			df_description.insert(3, IGNORE_ZERO, ignore_zero)
-			output_filename = f"{city}{HYPHEN}{nt_filename_epa_or_trends_parsed.common_word}{HYPHEN}{nt_filename_epa_or_trends_parsed.keyword}{HYPHEN}{ignore_zero}{CSV}"
-		else:
-			log_error(error=f"epa_or_trends{HYPHEN}{MISSING}")
-			return
+			df_description.insert(1, IGNORE_ZERO, ignore_zero)
+			df_description.insert(2, YEAR, year)
+			df_description.insert(3, SPARSITY, (count / length_time_series))
 
-		df_description.to_csv(
-			f"{folder_metrics_output}{output_filename}",
-			index=False,
-		)
+			output_filename: str
+			nt_filename_epa_or_trends_parsed: NamedTuple
+			if epa_or_trends == EPA:
+				# noinspection PyTypeChecker
+				nt_filename_epa_or_trends_parsed: NamedTuple = parse_filename(
+					filename=filename,
+					delimiter=HYPHEN,
+					extension=CSV,
+					named_tuple=epa.NT_filename_epa_stitch,
+				)
+				df_description.insert(0, POLLUTANT, nt_filename_epa_or_trends_parsed.pollutant)
+				df_description.insert(1, TARGET_STATISTIC, nt_filename_epa_or_trends_parsed.target_statistic)
+
+				nt_output_filename = NT_filename_metrics_epa(
+					city=city,
+					pollutant=nt_filename_epa_or_trends_parsed.pollutant,
+					target_statistic=nt_filename_epa_or_trends_parsed.target_statistic,
+					ignore_zero=ignore_zero,
+					year=year,
+				)
+			elif epa_or_trends == TRENDS:
+				# noinspection PyTypeChecker
+				nt_filename_epa_or_trends_parsed: NamedTuple = parse_filename(
+					filename=filename,
+					delimiter=HYPHEN,
+					extension=CSV,
+					named_tuple=trends.NT_filename_trends_stitch,
+				)
+				df_description.insert(0, KEYWORD, nt_filename_epa_or_trends_parsed.keyword)
+				df_description.insert(1, COMMON_WORD, nt_filename_epa_or_trends_parsed.common_word)
+				nt_output_filename = NT_filename_metrics_trends(
+					city=city,
+					common_word=nt_filename_epa_or_trends_parsed.common_word,
+					keyword=nt_filename_epa_or_trends_parsed.keyword,
+					ignore_zero=ignore_zero,
+					year=year,
+				)
+			else:
+				log_error(error=f"epa_or_trends{HYPHEN}{MISSING}")
+				return
+
+			if nt_filename_epa_or_trends_parsed.city != city:
+				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{filename}")
+				continue
+			output_filename = generate_filename(
+				nt_filename=nt_output_filename,
+				extension=CSV,
+			)
+			df_description.to_csv(
+				f"{folder_metrics_output}{output_filename}",
+				index=False,
+			)
 
 
 def baseline(
