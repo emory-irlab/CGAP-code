@@ -2,7 +2,6 @@ import random
 import sys
 import time
 
-import numpy as np
 import pytrends.exceptions
 import pytrends.request
 
