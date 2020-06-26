@@ -94,6 +94,7 @@ NT_filename_metrics_trends = namedtuple(
 	]
 )
 
+
 def main(
 		called_from_main: bool = False,
 		partition_group: int = 1,
