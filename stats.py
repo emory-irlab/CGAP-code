@@ -541,9 +541,9 @@ def baseline(
 							f"{folder_stats_correlations}{filename_correlation}",
 						)
 						pivot_table_set = True
-					else:
+
 						if df_pivot_table.empty:
-							log_error(error=f"df_empty_despite_being_set{HYPHEN}{CORRELATIONS_COMPARISON}{HYPHEN}{filename_correlation}")
+							log_error(error=f"df_empty{HYPHEN}{CORRELATIONS_COMPARISON}{HYPHEN}{filename_correlation}")
 							continue
 
 						df_comparison_table: pd.DataFrame = pd.read_csv(
