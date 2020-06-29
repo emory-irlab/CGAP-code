@@ -107,6 +107,12 @@ NT_filename_correlation = namedtuple(
 		TIME_SHIFT,
 	]
 )
+DT_filename_correlation = {
+	IGNORE_ZERO:          "bool",
+	THRESHOLD:            (lambda x: parse_filename_numeric(numeric=x, cast_type="float")),
+	THRESHOLD_PERCENTILE: "int",
+	TIME_SHIFT:           "int",
+}
 
 
 def main(
@@ -794,30 +800,6 @@ def run_correlations(
 					correlate_single_trend()
 				correlate_trends()
 				write_errors_to_disk(bool_suppress_print=True, overwrite=False)
-
-
-# todo - fix
-def parse_filename_correlations(
-		filename: str,
-) -> Dict[str, Any]:
-	split_filename: List[str] = filename.replace(CSV, EMPTY_STRING).split(HYPHEN)
-	split_filename_length = len(split_filename)
-	if split_filename_length != DEFAULT_SPLIT_STATS_CORRELATION_FILENAME_LENGTH:
-		log_error(error=f"file_incorrectly_formatted{HYPHEN}{filename}")
-
-	dict_filename_correlations_parsed: dict = {
-		CITY:                 split_filename[0],
-		KEYWORD:              split_filename[1],
-		POLLUTANT:            split_filename[2],
-		TARGET_STATISTIC:     split_filename[3],
-		IGNORE_ZERO:          bool(split_filename[4]),
-		THRESHOLD:            float(parse_filename_numeric(split_filename[5])),
-		THRESHOLD_PERCENTILE: int(split_filename[6]),
-		THRESHOLD_SIDE:       split_filename[7],
-		TIME_SHIFT:           int(parse_filename_numeric(split_filename[8]))
-	}
-
-	return dict_filename_correlations_parsed
 
 
 def correlate_for_keyword(

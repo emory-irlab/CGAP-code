@@ -321,6 +321,22 @@ PARTITION_GROUP: int = 1
 PARTITION_TOTAL: int = 1
 
 
+def cast(
+		cast_object: Any,
+		cast_type: str,
+) -> Any:
+	if cast_type == "str":
+		return str(cast_object)
+	elif cast_type == "int":
+		return int(cast_object)
+	elif cast_type == "float":
+		return float(cast_object)
+	elif cast_type == "bool":
+		return bool(cast_object)
+	else:
+		return cast_object
+
+
 def generate_date_pair_for_full_series(
 		list_date_pairs: List[Tuple[str, str]],
 ) -> Tuple[str, str]:
@@ -375,8 +391,12 @@ def generate_numeric_for_filename_output(
 
 def parse_filename_numeric(
 		numeric: str,
-) -> str:
-	return numeric.replace(TIME_SHIFT_NEGATIVE_SYMBOL, HYPHEN)
+		cast_type: str = "str",
+) -> Any:
+	return cast(
+		cast_object=numeric.replace(TIME_SHIFT_NEGATIVE_SYMBOL, HYPHEN),
+		cast_type=cast_type,
+	)
 
 
 def generate_filename(
@@ -398,6 +418,7 @@ def parse_filename(
 		delimiter: str,
 		named_tuple,  # NamedTuple annotation doesn't work when using it as a callable
 		extension: str = "",
+		dt_dict: Dict[str, Any] = None,
 ) -> tuple:
 	if extension:
 		filename = filename.replace(extension, "")
@@ -409,8 +430,26 @@ def parse_filename(
 		error: str = f"parse_filename{HYPHEN}named_tuple_size_mismatch{HYPHEN}filename"
 		parsed_filename = NT_error(error)
 		log_error(error=error)
-
-	return parsed_filename
+	if dt_dict:
+		parsed_filename_dict: Dict[str, Any] = parsed_filename._asdict()
+		list_casted_data: List[Any] = []
+		for key, value in parsed_filename_dict.items():
+			cast_type: Any = dt_dict.get(key, None)
+			if cast_type:
+				casted_value: Any
+				if callable(cast_type):
+					casted_value = cast_type(value)
+				else:
+					casted_value = cast(
+						cast_object=value,
+						cast_type=cast_type,
+					)
+				list_casted_data.append(casted_value)
+			else:
+				list_casted_data.append(value)
+		return named_tuple(*list_casted_data)
+	else:
+		return parsed_filename
 
 
 def aggregate_data_in_folder(
