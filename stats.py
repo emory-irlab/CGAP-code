@@ -610,118 +610,156 @@ def run_correlations(
 			set_error_task_origin(task_origin=PARAM_CORRELATE)
 			log_error(f"{CORRELATIONS} : {city} : {pollutant} : {target_statistic}", log=True)
 
-			filename_trends: str
-			for filename_trends in list_filenames_trends:
-				df_trends: pd.DataFrame = pd.DataFrame()
-				trends_set: bool = False
-				df_epa: pd.DataFrame = pd.DataFrame()
-				epa_set: bool = False
+			df_epa: pd.DataFrame = pd.DataFrame()
+			epa_set: bool = False
 
-				# noinspection PyTypeChecker
-				nt_filename_trends_stitch_parsed: NamedTuple = parse_filename(
-					filename=filename_trends,
-					delimiter=HYPHEN,
-					extension=CSV,
-					named_tuple=trends.NT_filename_trends_stitch,
-				)
+			filename_epa: str = import_single_file(
+				folder=folder_epa_stitch,
+				list_filename_filter_conditions=(city, pollutant, target_statistic, CSV)
+			)
+			if not filename_epa:
+				log_error(error=f"file_missing{HYPHEN}{EPA}{HYPHEN}{city}{HYPHEN}{pollutant}{HYPHEN}{target_statistic}")
+				continue
 
-				if nt_filename_trends_stitch_parsed.city != city:
-					continue
+			# noinspection PyTypeChecker
+			nt_filename_epa_stitch_parsed: NamedTuple = parse_filename(
+				filename=filename_epa,
+				delimiter=HYPHEN,
+				extension=CSV,
+				named_tuple=epa.NT_filename_epa_stitch,
+			)
 
-				threshold_percentile: int
-				for threshold_percentile in list_threshold_percentiles:
-					threshold: float
-					for threshold in DEFAULT_POLLUTANTS[pollutant][THRESHOLD]:
-						threshold = threshold * (threshold_percentile / 100)
-						time_shift: int
-						for time_shift in list_time_shifts:
-							bool_ignore_zero: bool
-							for bool_ignore_zero in list_bool_ignore_zero:
-								above_or_below_threshold: str
-								for above_or_below_threshold in list_threshold_sides:
-									filename_correlation: str = generate_stats_correlations_filename(
-										city=nt_filename_trends_stitch_parsed.city,
-										keyword=nt_filename_trends_stitch_parsed.keyword,
-										pollutant=pollutant,
-										target_statistic=target_statistic,
-										bool_ignore_zero=bool_ignore_zero,
-										threshold=threshold,
-										threshold_percentile=threshold_percentile,
-										above_or_below_threshold=above_or_below_threshold,
-										time_shift=time_shift,
-									)
+			if nt_filename_epa_stitch_parsed.city != city:
+				log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{CITY}{HYPHEN}{city}")
+				continue
+			if nt_filename_epa_stitch_parsed.pollutant != pollutant:
+				log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{POLLUTANT}{HYPHEN}{pollutant}")
+				continue
+			if nt_filename_epa_stitch_parsed.target_statistic != target_statistic:
+				log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{TARGET_STATISTIC}{HYPHEN}{target_statistic}")
+				continue
 
-									if only_correlate_missing and filename_correlation in list_filenames_correlations:
-										continue
-									else:
-										if not trends_set:
-											df_trends = pd.read_csv(
-												f"{folder_trends_stitch}{filename_trends}",
-												parse_dates=[DATE],
+			def correlate_trends() -> None:
+				nonlocal df_epa
+				nonlocal epa_set
+
+				filename_trends: str
+				for filename_trends in list_filenames_trends:
+					df_trends: pd.DataFrame = pd.DataFrame()
+					trends_set: bool = False
+
+					# noinspection PyTypeChecker
+					nt_filename_trends_stitch_parsed: NamedTuple = parse_filename(
+						filename=filename_trends,
+						delimiter=HYPHEN,
+						extension=CSV,
+						named_tuple=trends.NT_filename_trends_stitch,
+					)
+
+					if nt_filename_trends_stitch_parsed.city != city:
+						log_error(error=f"attribute_mismatch{HYPHEN}{TRENDS}{HYPHEN}{CITY}{HYPHEN}{city}")
+						continue
+
+					def correlate_single_trend() -> bool:
+						nonlocal df_epa
+						nonlocal epa_set
+						nonlocal df_trends
+						nonlocal trends_set
+
+						threshold_percentile: int
+						for threshold_percentile in list_threshold_percentiles:
+							threshold: float
+							for threshold in DEFAULT_POLLUTANTS[pollutant][THRESHOLD]:
+								threshold = threshold * (threshold_percentile / 100)
+								time_shift: int
+								for time_shift in list_time_shifts:
+									bool_ignore_zero: bool
+									for bool_ignore_zero in list_bool_ignore_zero:
+										above_or_below_threshold: str
+										for above_or_below_threshold in list_threshold_sides:
+											filename_correlation: str = generate_stats_correlations_filename(
+												city=nt_filename_trends_stitch_parsed.city,
+												keyword=nt_filename_trends_stitch_parsed.keyword,
+												pollutant=pollutant,
+												target_statistic=target_statistic,
+												bool_ignore_zero=bool_ignore_zero,
+												threshold=threshold,
+												threshold_percentile=threshold_percentile,
+												above_or_below_threshold=above_or_below_threshold,
+												time_shift=time_shift,
 											)
-											trends_set = True
-										else:
-											if df_trends.empty:
-												log_error(error=f"df_empty_despite_being_set{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
-												continue
 
-										filename_epa: str = import_single_file(
-											folder=folder_epa_stitch,
-											list_filename_filter_conditions=(city, pollutant, target_statistic, CSV)
-										)
-										if not epa_set:
-											if filename_epa:
-												df_epa = pd.read_csv(
-													f"{folder_epa_stitch}{filename_epa}",
-													parse_dates=[DATE],
-												)
-												if start_date and end_date:
-													df_epa = filter_date_for_df(
-														df=df_epa,
-														date_column_is_index=False,
-														date_column=DATE,
-														start_date=start_date,
-														end_date=end_date,
-													)
-												epa_set = True
-												if df_epa.empty:
-													log_error(error=f"epa_df_empty{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
-													continue
+											if only_correlate_missing and filename_correlation in list_filenames_correlations:
+												continue
 											else:
-												log_error(error=f"epa_file_missing{HYPHEN}{city}{HYPHEN}{pollutant}{HYPHEN}{target_statistic}")
-												continue
 
-										dict_cor_row: dict = correlate_for_keyword(
-											df_epa=df_epa,
-											target_variable_column_name_epa=target_variable_column_name_epa,
-											df_trends=df_trends,
-											target_variable_column_name_trends=target_variable_column_name_trends,
-											threshold=threshold,
-											above_or_below_threshold=above_or_below_threshold,
-											time_shift=time_shift,
-											bool_ignore_zero=bool_ignore_zero,
-										)
-										dict_cor_row.update(
-											{
-												CITY:                 city,
-												KEYWORD:              nt_filename_trends_stitch_parsed.keyword,
-												POLLUTANT:            pollutant,
-												TARGET_STATISTIC:     target_statistic,
-												THRESHOLD:            threshold,
-												THRESHOLD_SIDE:       above_or_below_threshold,
-												THRESHOLD_PERCENTILE: threshold_percentile,
-												TIME_SHIFT:           time_shift,
-											},
-										)
+												if not epa_set:
+													if filename_epa:
+														df_epa = pd.read_csv(
+															f"{folder_epa_stitch}{filename_epa}",
+															parse_dates=[DATE],
+														)
+														epa_set = True
+														if df_epa.empty:
+															log_error(error=f"df_empty{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
 
-										pd.DataFrame(
-											dict_cor_row,
-											index=[0],
-										).to_csv(
-											f"{folder_stats_correlations}{filename_correlation}",
-											index=False,
-										)
-			write_errors_to_disk(overwrite=False)
+															return False
+
+														if start_date and end_date:
+															df_epa = filter_date_for_df(
+																df=df_epa,
+																date_column_is_index=False,
+																date_column=DATE,
+																start_date=start_date,
+																end_date=end_date,
+															)
+
+												if not trends_set:
+													df_trends = pd.read_csv(
+														f"{folder_trends_stitch}{filename_trends}",
+														parse_dates=[DATE],
+													)
+													trends_set = True
+													if df_trends.empty:
+														log_error(error=f"df_empty{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
+
+														return True
+
+												dict_cor_row: dict = correlate_for_keyword(
+													df_epa=df_epa,
+													target_variable_column_name_epa=target_variable_column_name_epa,
+													df_trends=df_trends,
+													target_variable_column_name_trends=target_variable_column_name_trends,
+													threshold=threshold,
+													above_or_below_threshold=above_or_below_threshold,
+													time_shift=time_shift,
+													bool_ignore_zero=bool_ignore_zero,
+												)
+												dict_cor_row.update(
+													{
+														CITY:                 city,
+														KEYWORD:              nt_filename_trends_stitch_parsed.keyword,
+														POLLUTANT:            pollutant,
+														TARGET_STATISTIC:     target_statistic,
+														THRESHOLD:            threshold,
+														THRESHOLD_SIDE:       above_or_below_threshold,
+														THRESHOLD_PERCENTILE: threshold_percentile,
+														TIME_SHIFT:           time_shift,
+													},
+												)
+
+												pd.DataFrame(
+													dict_cor_row,
+													index=[0],
+												).to_csv(
+													f"{folder_stats_correlations}{filename_correlation}",
+													index=False,
+												)
+						return True
+
+					correlate_single_trend()
+				correlate_trends()
+				write_errors_to_disk(overwrite=False, bool_suppress_print=True)
 
 
 # todo - switch to named tuple
@@ -752,6 +790,7 @@ def generate_stats_correlations_filename(
 	return filename
 
 
+# todo - fix
 def parse_filename_correlations(
 		filename: str,
 ) -> Dict[str, Any]:
@@ -907,10 +946,10 @@ def run_intercity(
 		)
 
 		if nt_filename_trends_stitch_parsed.city != common_city:
-			log_error(error=f"city_mismatch{HYPHEN}{common_city}{HYPHEN}{nt_filename_trends_stitch_parsed.city}")
+			log_error(error=f"attribute_mismatch{HYPHEN}{CITY}{HYPHEN}{common_city}{HYPHEN}{nt_filename_trends_stitch_parsed.city}")
 			continue
 		if nt_filename_trends_stitch_parsed.common_word != common_word:
-			log_error(error=f"word_mismatch{HYPHEN}{common_word}{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}")
+			log_error(error=f"attribute_mismatch{HYPHEN}{COMMON_WORD}{HYPHEN}{common_word}{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}")
 			continue
 
 		print(f"{INTERCITY} : {nt_filename_trends_stitch_parsed.keyword}")
