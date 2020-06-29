@@ -793,7 +793,7 @@ def run_correlations(
 
 					correlate_single_trend()
 				correlate_trends()
-				write_errors_to_disk(overwrite=False, bool_suppress_print=True)
+				write_errors_to_disk(bool_suppress_print=True, overwrite=False)
 
 
 # todo - fix
