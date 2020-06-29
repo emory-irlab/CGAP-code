@@ -93,6 +93,20 @@ NT_filename_metrics_trends = namedtuple(
 		YEAR,
 	]
 )
+NT_filename_correlation = namedtuple(
+	"NT_filename_correlation",
+	[
+		CITY,
+		KEYWORD,
+		POLLUTANT,
+		TARGET_STATISTIC,
+		IGNORE_ZERO,
+		THRESHOLD,
+		THRESHOLD_PERCENTILE,
+		THRESHOLD_SIDE,
+		TIME_SHIFT,
+	]
+)
 
 
 def main(
@@ -492,7 +506,15 @@ def baseline(
 
 	filename_trends: str
 	for filename_correlation in list_filenames_correlations:
-		dict_pivot_table_info: Dict[str, Any] = parse_filename_correlations(filename_correlation)
+		# noinspection PyTypeChecker
+		nt_filename_correlation_parsed: NamedTuple = parse_filename(
+			filename=filename_correlation,
+			delimiter=HYPHEN,
+			extension=CSV,
+			named_tuple=NT_filename_correlation,
+		)
+
+		dict_pivot_table_info: Dict[str, Any] = dict(nt_filename_correlation_parsed)
 		is_pivot_table: bool = all(
 			[
 				dict_pivot_table_info.get(pivot_column, None) == pivot_value
@@ -524,9 +546,16 @@ def baseline(
 				if only_compare_missing and filename_comparison_table in list_comparison_tables_filenames:
 					continue
 
+				# noinspection PyTypeChecker
+				nt_filename_comparison_table: NamedTuple = parse_filename(
+					filename=filename_comparison_table,
+					delimiter=HYPHEN,
+					extension=CSV,
+					named_tuple=NT_filename_correlation,
+				)
 				dict_comparison_table_info_stripped: Dict[str, Any] = {
 					key: value
-					for key, value in parse_filename_correlations(filename_comparison_table).items()
+					for key, value in dict(nt_filename_comparison_table).items()
 					if key in list_null_pivot_keys
 				}
 				dict_pivot_table_info_stripped: Dict[str, Any] = {
@@ -677,16 +706,21 @@ def run_correlations(
 									for bool_ignore_zero in list_bool_ignore_zero:
 										above_or_below_threshold: str
 										for above_or_below_threshold in list_threshold_sides:
-											filename_correlation: str = generate_stats_correlations_filename(
-												city=nt_filename_trends_stitch_parsed.city,
+											nt_filename_correlation = NT_filename_correlation(
+												city=city,
 												keyword=nt_filename_trends_stitch_parsed.keyword,
 												pollutant=pollutant,
 												target_statistic=target_statistic,
 												bool_ignore_zero=bool_ignore_zero,
-												threshold=threshold,
+												threshold=generate_numeric_for_filename_output(threshold),
 												threshold_percentile=threshold_percentile,
-												above_or_below_threshold=above_or_below_threshold,
-												time_shift=time_shift,
+												threshold_side=above_or_below_threshold,
+												time_shift=generate_numeric_for_filename_output(time_shift),
+											)
+											filename_correlation: str = generate_filename(
+												nt_filename=nt_filename_correlation,
+												delimiter=HYPHEN,
+												extension=CSV,
 											)
 
 											if only_correlate_missing and filename_correlation in list_filenames_correlations:
@@ -760,34 +794,6 @@ def run_correlations(
 					correlate_single_trend()
 				correlate_trends()
 				write_errors_to_disk(overwrite=False, bool_suppress_print=True)
-
-
-# todo - switch to named tuple
-def generate_stats_correlations_filename(
-		city: str,
-		keyword: str,
-		pollutant: str,
-		target_statistic: str,
-		bool_ignore_zero: bool,
-		threshold: float,
-		threshold_percentile: int,
-		above_or_below_threshold: str,
-		time_shift: int,
-) -> str:
-	# @formatter:off
-	filename: str = f"{city}{HYPHEN}" \
-					f"{keyword}{HYPHEN}" \
-					f"{pollutant}{HYPHEN}" \
-					f"{target_statistic}{HYPHEN}" \
-					f"{bool_ignore_zero}{HYPHEN}" \
-					f"{generate_numeric_for_filename_output(threshold)}{HYPHEN}" \
-					f"{threshold_percentile}{HYPHEN}" \
-					f"{above_or_below_threshold}{HYPHEN}" \
-					f"{generate_numeric_for_filename_output(time_shift)}" \
-					f"{CSV}"
-	# @formatter:on
-
-	return filename
 
 
 # todo - fix
