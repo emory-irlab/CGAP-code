@@ -5,6 +5,7 @@ import os
 import re
 import scipy
 from collections import namedtuple
+from google.cloud import bigquery
 from typing import Any
 from typing import Callable
 from typing import Dict
