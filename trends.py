@@ -345,8 +345,8 @@ def download_trends(
 		pair_of_dates: Tuple[str, str]
 		for pair_of_dates in list_of_date_pairs:
 			start_date, end_date = pair_of_dates
-			start_date = start_date.replace(UNDERSCORE, HYPHEN)
-			end_date = end_date.replace(UNDERSCORE, HYPHEN)
+			start_date = generate_date_for_filename_output(date=start_date)
+			end_date = generate_date_for_filename_output(date=end_date)
 			nt_filename_trends_raw: tuple = NT_filename_trends_raw(
 				city=city,
 				keyword=keyword,
