@@ -483,7 +483,7 @@ def aggregate_data_in_folder(
 				)
 				list_parsed_dfs_per_city.append(df)
 			except pd.io.common.EmptyDataError:
-				log_error(error=f"{city}{HYPHEN}{AGGREGATE}{HYPHEN}{filename}{HYPHEN}{ERROR_EMPTY}", bool_suppress_print=bool_suppress_print)
+				log_error(error=f"{ERROR_EMPTY}{HYPHEN}{AGGREGATE}{city}{HYPHEN}{filename}", bool_suppress_print=bool_suppress_print)
 		if len(list_parsed_dfs_per_city) > 0:
 			log_error(error=f"{AGGREGATE} : {city}", log=True)
 			concatenated_data_per_city: pd.DataFrame = pd.concat(
