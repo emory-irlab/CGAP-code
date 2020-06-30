@@ -743,7 +743,7 @@ def run_correlations(
 														if df_epa.empty:
 															log_error(error=f"df_empty{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
 
-															return False
+															return True
 
 														if start_date and end_date:
 															df_epa = filter_date_for_df(
@@ -763,7 +763,7 @@ def run_correlations(
 													if df_trends.empty:
 														log_error(error=f"df_empty{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
 
-														return True
+														return False
 
 												dict_cor_row: dict = correlate_for_keyword(
 													df_epa=df_epa,
@@ -795,9 +795,12 @@ def run_correlations(
 													f"{folder_stats_correlations}{filename_correlation}",
 													index=False,
 												)
-						return True
+						return False
 
-					correlate_single_trend()
+					break_loop: bool = correlate_single_trend()
+					if break_loop:
+						break
+
 				correlate_trends()
 				write_errors_to_disk(bool_suppress_print=True, overwrite=False)
 
