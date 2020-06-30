@@ -13,9 +13,5 @@
             "usa"
         ]
     },
-    "folder_expansion_raw": "../CGAP-data/CGAP-keywords/expansion/raw/",
-    "folder_expansion_aggregate": "../CGAP-data/CGAP-keywords/expansion/aggregate/",
-    "folder_expansion_parents": "../CGAP-data/CGAP-keywords/expansion/parents/",
-    "folder_keywords_google": "../CGAP-data/CGAP-keywords/keywords/google/",
-    "credentials": "./credentials-keyword.yaml"
+   "credentials": "./credentials-keyword.yaml"
 }

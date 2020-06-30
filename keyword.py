@@ -62,10 +62,6 @@ def main(
 		aggregate: bool
 		customer_id: str
 		credentials: str
-		folder_expansion_raw: str
-		folder_expansion_aggregate: str
-		folder_expansion_parents: str
-		folder_keywords_google: str
 		list_partitioned_cities: Tuple[str, ...]
 		list_source_priority_order: List[str]
 		if called_from_main:
@@ -74,10 +70,6 @@ def main(
 			aggregate = json_data[AGGREGATE]
 			credentials = json_data[CREDENTIALS]
 			customer_id = json_data[CUSTOMER_ID]
-			folder_expansion_raw = json_data[PARAM_FOLDER_EXPANSION_RAW]
-			folder_expansion_aggregate = json_data[PARAM_FOLDER_EXPANSION_AGGREGATE]
-			folder_expansion_parents = json_data[PARAM_FOLDER_EXPANSION_PARENTS]
-			folder_keywords_google = json_data[PARAM_FOLDER_KEYWORDS_GOOGLE]
 			parameters: dict = json_data[KEYWORD]
 			list_source_priority_order = json_data[PARAM_SOURCE_PRIORITY_ORDER]
 			list_input_cities: List[str] = parameters[CITY]
@@ -97,10 +89,6 @@ def main(
 			customer_id = ""
 			credentials = ""
 			list_source_priority_order = []
-			folder_expansion_raw = ""
-			folder_expansion_aggregate = ""
-			folder_expansion_parents = ""
-			folder_keywords_google = ""
 	json_file.close()
 
 	google_ads_client: GoogleAdsClient = GoogleAdsClient.load_from_storage(credentials)
@@ -114,9 +102,9 @@ def main(
 				client=google_ads_client,
 				customer_id=customer_id,
 				only_expand_missing=only_download_missing,
-				folder_expansion_raw=folder_expansion_raw,
-				folder_expansion_parents=folder_expansion_parents,
-				folder_keywords_google=folder_keywords_google,
+				folder_expansion_raw=FOLDER_EXPANSION_RAW,
+				folder_expansion_parents=FOLDER_EXPANSION_PARENTS,
+				folder_keywords_google=FOLDER_KEYWORDS_GOOGLE,
 				list_source_priority_order=tuple(list_source_priority_order),
 			)
 			write_errors_to_disk(overwrite=False)
@@ -135,9 +123,9 @@ def main(
 				aggregate_data_in_folder(
 					folder_input=generate_source_folder(
 						source=source,
-						folder=folder_expansion_raw,
+						folder=FOLDER_EXPANSION_RAW,
 					),
-					folder_output_aggregate=folder_expansion_aggregate,
+					folder_output_aggregate=FOLDER_EXPANSION_AGGREGATE,
 					list_cities=list_partitioned_cities,
 					optional_filename_label=source,
 					bool_suppress_print=True,
@@ -146,8 +134,8 @@ def main(
 
 			log_error(f"{AGGREGATE} : {EXPANSION}", log=True)
 			aggregate_data_in_folder(
-				folder_input=folder_expansion_aggregate,
-				folder_output_aggregate=folder_expansion_aggregate,
+				folder_input=FOLDER_EXPANSION_AGGREGATE,
+				folder_output_aggregate=FOLDER_EXPANSION_AGGREGATE,
 				list_cities=list_partitioned_cities,
 				optional_filename_label=AGGREGATE,
 			)
