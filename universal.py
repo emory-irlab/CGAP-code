@@ -504,6 +504,7 @@ def aggregate_data_in_folder(
 		list_data_dfs_for_all_cities,
 		sort=True,
 	)
+	del list_data_dfs_for_all_cities
 	df_aggregate.to_csv(
 		f"{folder_output_aggregate}{AGGREGATE}{filename_label}{CSV}",
 		index=False,
