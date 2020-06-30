@@ -859,4 +859,4 @@ universal_json_file.close()
 FULL_START_DATE: str
 FULL_END_DATE: str
 LIST_DATE_PAIRS: List[Tuple[str, str]] = list(zip(START_DATES, END_DATES))
-FULL_START_DATE, FULL_END_DATE = generate_date_pair_for_full_series(LIST_DATE_PAIRS)
+FULL_START_DATE, FULL_END_DATE = generate_date_pair_for_full_series(list_date_pairs=LIST_DATE_PAIRS)
