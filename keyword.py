@@ -68,7 +68,7 @@ def main(
 			download = json_data[DOWNLOAD]
 			only_download_missing = json_data[PARAM_ONLY_DOWNLOAD_MISSING]
 			aggregate = json_data[AGGREGATE]
-			credentials = json_data[CREDENTIALS]
+			credentials = json_data[PARAM_CREDENTIALS]
 			customer_id = json_data[CUSTOMER_ID]
 			parameters: dict = json_data[KEYWORD]
 			list_source_priority_order = json_data[PARAM_SOURCE_PRIORITY_ORDER]

@@ -5,7 +5,6 @@ import os
 import re
 import scipy
 from collections import namedtuple
-from google.cloud import bigquery
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -27,7 +26,6 @@ CITY_AB: str = "abbreviation"
 COMMON_WORD: str = "common_word"
 COMMON_WORD_FREQUENCY: str = "common_word_frequency"
 COMMON_WORD_FREQUENCY_RELATIVE: str = "common_word_frequency_relative"
-CREDENTIALS: str = "credentials"
 CSV: str = ".csv"
 DATE: str = "date"
 DATE_FORMAT: str = "%Y-%m-%d"
@@ -80,6 +78,9 @@ ERROR_EMPTY: str = "empty_data_frame"
 # JSON PARAMETERS
 PARAM_BDATE: str = "bdate"
 PARAM_EDATE: str = "edate"
+PARAM_CREDENTIALS: str = "credentials"
+PARAM_BIGQUERY_DATASET: str = "bigquery_dataset"
+PARAM_BIGQUERY_PROJECT: str = "bigquery_project"
 PARAM_DATE_START: str = "start_dates"
 PARAM_DATE_END: str = "end_dates"
 PARAM_FOLDER_EPA_RAW: str = "folder_epa_raw"
@@ -512,6 +513,32 @@ def aggregate_data_in_folder(
 	)
 
 
+def upload_to_bigquery(
+		filename: str,
+		table_name: str,
+) -> None:
+	from google.cloud import bigquery
+
+	client = bigquery.Client.from_service_account_json(CREDENTIALS_BIGQUERY)
+	table_id = '.'.join([BIGQUERY_PROJECT, BIGQUERY_DATASET, table_name])
+	job_config = bigquery.LoadJobConfig()
+
+	# WRITE_EMPTY    : Writes the data only if the table is empty.
+	# WRITE_APPEND   : Appends the data to the end of the table.
+	# WRITE_TRUNCATE : Erases all existing data in a table before writing the new data.
+	job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
+
+	job_config.source_format = bigquery.SourceFormat.CSV
+	# job_config.skip_leading_rows = 1
+	job_config.autodetect = True
+
+	with open(filename, "rb") as source_file:
+		job = client.load_table_from_file(source_file, table_id, job_config=job_config)
+
+	job.result()
+	log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
+
+
 def flatten_list(
 		list_of_lists: List[List[Any]],
 ) -> List[Any]:
@@ -839,6 +866,9 @@ if __name__ == "__main__":
 
 with open(f"{UNIVERSAL}{HYPHEN}{PARAMETERS}{JSON}") as universal_json_file:
 	universal_parameters = json.load(universal_json_file)
+	BIGQUERY_PROJECT: str = universal_parameters[PARAM_BIGQUERY_PROJECT]
+	BIGQUERY_DATASET: str = universal_parameters[PARAM_BIGQUERY_DATASET]
+	CREDENTIALS_BIGQUERY: str = universal_parameters[PARAM_CREDENTIALS]
 	COMMON_WORD_UNIVERSAL: str = universal_parameters[COMMON_WORD]
 	MAX_SEARCH_VOLUME: float = universal_parameters[PARAM_MAX_SEARCH_FREQUENCY]
 	START_DATES: str = universal_parameters[PARAM_DATE_START]

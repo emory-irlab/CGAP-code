@@ -77,5 +77,7 @@
         "2020-01-31",
         "2020-05-01"
     ],
-    "credentials": "credentials-universal.json"
+    "credentials": "credentials-universal.json",
+    "bigquery_project": "cgap-data",
+    "bigquery_dataset": "cgap_dataset"
 }

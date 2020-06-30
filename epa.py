@@ -64,7 +64,7 @@ def main(
 			download_data_type = json_data[PARAM_DOWNLOAD_DATA_TYPE]
 			only_download_missing = json_data[PARAM_ONLY_DOWNLOAD_MISSING]
 			stitch = json_data[STITCH]
-			credentials: str = json_data[CREDENTIALS]
+			credentials: str = json_data[PARAM_CREDENTIALS]
 			parameters: dict = json_data[EPA]
 			api: dict = json_data[API]
 			list_input_cities: List[str] = parameters[CITY]
