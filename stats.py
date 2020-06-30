@@ -801,8 +801,8 @@ def run_correlations(
 					if break_loop:
 						break
 
-				correlate_trends()
-				write_errors_to_disk(bool_suppress_print=True, overwrite=False)
+			correlate_trends()
+			write_errors_to_disk(bool_suppress_print=True, overwrite=False)
 
 
 def correlate_for_keyword(
