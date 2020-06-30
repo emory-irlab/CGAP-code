@@ -460,6 +460,7 @@ def aggregate_data_in_folder(
 		optional_filename_label: str = "",
 		list_cities: Tuple[str, ...] = tuple(DEFAULT_CITIES),
 		bool_suppress_print: bool = False,
+		upload: bool = False,
 ) -> None:
 	generate_sub_paths_for_folder(
 		folder=folder_output_aggregate,
@@ -507,10 +508,16 @@ def aggregate_data_in_folder(
 		sort=True,
 	)
 	del list_data_dfs_for_all_cities
+	filename_aggregate: str = f"{folder_output_aggregate}{AGGREGATE}{filename_label}{CSV}"
 	df_aggregate.to_csv(
-		f"{folder_output_aggregate}{AGGREGATE}{filename_label}{CSV}",
+		filename_aggregate,
 		index=False,
 	)
+	if upload:
+		upload_to_bigquery(
+			filename=filename_aggregate,
+			table_name=optional_filename_label,
+		)
 
 
 def upload_to_bigquery(
