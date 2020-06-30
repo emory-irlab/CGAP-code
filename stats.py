@@ -797,8 +797,8 @@ def run_correlations(
 												)
 						return False
 
-					break_loop: bool = correlate_single_trend()
-					if break_loop:
+					break_epa_loop: bool = correlate_single_trend()
+					if break_epa_loop:
 						break
 
 			correlate_trends()
