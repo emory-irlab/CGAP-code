@@ -490,6 +490,7 @@ def aggregate_data_in_folder(
 				list_parsed_dfs_per_city,
 				sort=True,
 			)
+			del list_parsed_dfs_per_city
 			concatenated_data_per_city.to_csv(
 				f"{folder_output_aggregate}{city}{filename_label}{CSV}",
 				index=False,
