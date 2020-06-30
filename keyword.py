@@ -121,23 +121,23 @@ def main(
 			for source in list_source_priority_order:
 				log_error(f"{AGGREGATE} : {SOURCE} : {source}", log=True)
 				aggregate_data_in_folder(
+					filename_label=source,
 					folder_input=generate_source_folder(
 						source=source,
 						folder=FOLDER_EXPANSION_RAW,
 					),
 					folder_output_aggregate=FOLDER_EXPANSION_AGGREGATE,
 					list_cities=list_partitioned_cities,
-					optional_filename_label=source,
 					bool_suppress_print=True,
 				)
 				write_errors_to_disk(clear_task_origin=False, bool_suppress_print=True, overwrite=False)
 
 			log_error(f"{AGGREGATE} : {EXPANSION}", log=True)
 			aggregate_data_in_folder(
+				filename_label=KEYWORD,
 				folder_input=FOLDER_EXPANSION_AGGREGATE,
 				folder_output_aggregate=FOLDER_EXPANSION_AGGREGATE,
 				list_cities=list_partitioned_cities,
-				optional_filename_label=AGGREGATE,
 			)
 		write_errors_to_disk(overwrite=False)
 

@@ -455,9 +455,9 @@ def parse_filename(
 
 
 def aggregate_data_in_folder(
+		filename_label: str,
 		folder_input: str,
 		folder_output_aggregate: str,
-		optional_filename_label: str = "",
 		list_cities: Tuple[str, ...] = tuple(DEFAULT_CITIES),
 		bool_suppress_print: bool = False,
 		upload: bool = False,
@@ -465,8 +465,8 @@ def aggregate_data_in_folder(
 	generate_sub_paths_for_folder(
 		folder=folder_output_aggregate,
 	)
-	if optional_filename_label:
-		filename_label: str = f"{HYPHEN}{optional_filename_label}"
+	if filename_label:
+		filename_label: str = f"{HYPHEN}{filename_label}"
 	else:
 		filename_label = ""
 	list_data_dfs_for_all_cities: List[pd.DataFrame] = []
@@ -516,7 +516,7 @@ def aggregate_data_in_folder(
 	if upload:
 		upload_to_bigquery(
 			filename=filename_aggregate,
-			table_name=optional_filename_label,
+			table_name=filename_label,
 		)
 
 

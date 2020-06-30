@@ -137,6 +137,7 @@ def main(
 		)
 		if is_valid_for_aggregation:
 			aggregate_data_in_folder(
+				filename_label=EPA,
 				folder_input=FOLDER_EPA_STITCH,
 				folder_output_aggregate=FOLDER_EPA_AGGREGATE,
 				list_cities=list_cities,

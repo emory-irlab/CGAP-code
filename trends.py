@@ -151,6 +151,7 @@ def main(
 		)
 		if is_valid_for_aggregation:
 			aggregate_data_in_folder(
+				filename_label=TRENDS,
 				folder_input=FOLDER_TRENDS_STITCH,
 				folder_output_aggregate=FOLDER_TRENDS_AGGREGATE,
 				list_cities=list_cities,

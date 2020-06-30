@@ -228,6 +228,7 @@ def main(
 		)
 		if is_valid_for_aggregation:
 			aggregate_data_in_folder(
+				filename_label=PARAM_AGGREGATE_METRICS_EPA,
 				folder_input=FOLDER_EPA_METRICS_RAW,
 				folder_output_aggregate=FOLDER_EPA_METRICS_AGGREGATE,
 				list_cities=list_partitioned_cities,
@@ -260,6 +261,7 @@ def main(
 		)
 		if is_valid_for_aggregation:
 			aggregate_data_in_folder(
+				filename_label=PARAM_AGGREGATE_METRICS_TRENDS,
 				folder_input=FOLDER_TRENDS_METRICS_RAW,
 				folder_output_aggregate=FOLDER_TRENDS_METRICS_AGGREGATE,
 				list_cities=list_partitioned_cities,
@@ -296,12 +298,14 @@ def main(
 		if is_valid_for_aggregation:
 			if bool_aggregate_already_aggregated_cities:
 				aggregate_data_in_folder(
+					filename_label=CORRELATIONS,
 					folder_input=folder_stats_correlations_aggregate,
 					folder_output_aggregate=folder_stats_correlations_aggregate,
 					list_cities=list_partitioned_cities,
 				)
 			else:
 				aggregate_data_in_folder(
+					filename_label=CORRELATIONS,
 					folder_input=folder_stats_correlations_raw,
 					folder_output_aggregate=folder_stats_correlations_aggregate,
 					list_cities=list_partitioned_cities,
@@ -334,6 +338,7 @@ def main(
 		)
 		if is_valid_for_aggregation:
 			aggregate_data_in_folder(
+				filename_label=INTERCITY,
 				folder_input=FOLDER_STATS_INTERCITY_RAW,
 				folder_output_aggregate=FOLDER_STATS_INTERCITY_AGGREGATE,
 				list_cities=list_partitioned_cities,
