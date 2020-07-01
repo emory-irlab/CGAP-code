@@ -15,16 +15,17 @@ CORRELATE_BELOW_THRESHOLD: str = "below_threshold"
 INTERCITY: str = "intercity"
 KW_NONZERO_COUNT: str = "kw_nonzero_count"
 KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
-KW_NONZERO_FOR_NON_POLLUTED_DAYS_COUNT: str = "kw_nonzero_for_non_polluted_days_count"
-KW_NON_POLLUTED_DAYS_PROPORTION: str = "kw_nonzero_for_non_polluted_days_proportion"
+KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
+KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: str = "kw_nonzero_threshold_days_proportion"
 METRICS: str = "metrics"
 PEARSON_CORRELATION: str = "pearson_correlation"
-NON_POLLUTED_DAYS_COUNT: str = "non_polluted_days_count"
-NON_POLLUTED_DAYS_PROPORTION: str = "non_polluted_days_proportion"
 SPARSITY: str = "sparsity"
 SPEARMAN_CORRELATION: str = "spearman_correlation"
 STATS: str = "stats"
 TARGET_VARIABLE_COLUMN_NAME: str = "target_variable_column_name"
+THRESHOLD_EPA_DAYS_COUNT: str = "threshold_epa_days_count"
+THRESHOLD_EPA_DAYS_PROPORTION: str = "threshold_epa_days_proportion"
+TOTAL_EPA_DAYS_COUNT: str = "total_epa_days_count"
 
 # PARAMETERS
 PARAM_AGGREGATE_CORRELATIONS: str = "aggregate_correlations"
@@ -857,8 +858,8 @@ def correlate_for_keyword(
 		bool_ignore_zero: bool,
 ) -> dict:
 	dict_cor_row: dict = {}
-	df_merged: pd.DataFrame = df_trends.merge(
-		right=df_epa,
+	df_merged: pd.DataFrame = df_epa.merge(
+		right=df_trends,
 		left_on=DATE,
 		right_on=DATE,
 		how="left",
@@ -869,35 +870,6 @@ def correlate_for_keyword(
 		to_replace=0,
 		value=np.NaN,
 	)
-	df_length: int = len(df_merged.index)
-
-	kw_nonzero_count: int = df_merged[trends_column_name_ignore_zero].count()
-	dict_cor_row.update({KW_NONZERO_COUNT: kw_nonzero_count})
-
-	kw_proportion: float = kw_nonzero_count / df_length
-	dict_cor_row.update({KW_NONZERO_PROPORTION: kw_proportion})
-
-	if threshold >= 0:
-		df_non_polluted: pd.DataFrame = df_merged[target_variable_column_name_epa] < threshold
-		non_polluted_days_count: int = df_non_polluted.sum()
-		dict_cor_row.update({NON_POLLUTED_DAYS_COUNT: non_polluted_days_count})
-
-		non_polluted_days_proportion: float = non_polluted_days_count / df_length
-		dict_cor_row.update({NON_POLLUTED_DAYS_PROPORTION: non_polluted_days_proportion})
-
-		df_kw_non_polluted_days: pd.DataFrame = df_merged[
-			((df_merged[trends_column_name_ignore_zero] > 0) & (df_merged[target_variable_column_name_epa] < threshold))
-		]
-		kw_non_polluted_days_count: int = len(df_kw_non_polluted_days.index)
-		dict_cor_row.update({KW_NONZERO_FOR_NON_POLLUTED_DAYS_COUNT: kw_non_polluted_days_count})
-
-		kw_non_polluted_days_proportion: float = kw_non_polluted_days_count / non_polluted_days_count
-		dict_cor_row.update({KW_NON_POLLUTED_DAYS_PROPORTION: kw_non_polluted_days_proportion})
-	else:
-		dict_cor_row.update({NON_POLLUTED_DAYS_COUNT: -1})
-		dict_cor_row.update({NON_POLLUTED_DAYS_PROPORTION: -1})
-		dict_cor_row.update({KW_NONZERO_FOR_NON_POLLUTED_DAYS_COUNT: -1})
-		dict_cor_row.update({KW_NON_POLLUTED_DAYS_PROPORTION: -1})
 
 	trends_column: str
 	if bool_ignore_zero:
@@ -906,16 +878,38 @@ def correlate_for_keyword(
 		trends_column = target_variable_column_name_trends
 	dict_cor_row.update({IGNORE_ZERO: bool_ignore_zero})
 
-	df_trends_with_time_shift: pd.DataFrame = df_merged[trends_column].shift(periods=time_shift)
+	# need to multiply time shift by -1 to keep intuitive logic
+	# shift of 1 is tomorrow's search correlating with today's pollution
+	df_trends_with_time_shift: pd.DataFrame = df_merged[trends_column].shift(periods=(-1 * time_shift))
+
+	total_epa_days_count: int = df_merged[target_variable_column_name_epa].count()
+	dict_cor_row.update({TOTAL_EPA_DAYS_COUNT: total_epa_days_count})
+
+	kw_nonzero_count: int = df_merged[trends_column_name_ignore_zero].count()
+	dict_cor_row.update({KW_NONZERO_COUNT: kw_nonzero_count})
+
+	kw_proportion: float = kw_nonzero_count / df_merged[target_variable_column_name_trends].count()
+	dict_cor_row.update({KW_NONZERO_PROPORTION: kw_proportion})
 
 	if above_or_below_threshold == CORRELATE_ABOVE_THRESHOLD:
-		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = \
-			df_merged[target_variable_column_name_epa].mask(df_merged[target_variable_column_name_epa] < threshold)
+		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_merged[target_variable_column_name_epa].mask(df_merged[target_variable_column_name_epa] < threshold)
 	elif above_or_below_threshold == CORRELATE_BELOW_THRESHOLD:
-		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = \
-			df_merged[target_variable_column_name_epa].mask(df_merged[target_variable_column_name_epa] > threshold)
+		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_merged[target_variable_column_name_epa].mask(df_merged[target_variable_column_name_epa] >= threshold)
 	else:
 		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_merged[target_variable_column_name_epa]
+
+	threshold_epa_days_count: int = df_epa_target_variable_above_or_below_threshold.count()
+	dict_cor_row.update({THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count})
+
+	threshold_epa_days_proportion: float = threshold_epa_days_count / total_epa_days_count
+	dict_cor_row.update({THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion})
+
+	df_kw_nonzero_threshold_days: pd.DataFrame = df_merged[trends_column_name_ignore_zero] & df_epa_target_variable_above_or_below_threshold
+	kw_nonzero_threshold_days_count: int = df_kw_nonzero_threshold_days.count()
+	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_COUNT: kw_nonzero_threshold_days_count})
+
+	kw_non_zero_threshold_days_proportion: float = kw_nonzero_threshold_days_count / threshold_epa_days_count
+	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: kw_non_zero_threshold_days_proportion})
 
 	# noinspection PyArgumentList
 	# noinspection PyTypeChecker
