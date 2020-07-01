@@ -4,6 +4,7 @@ google-auth-oauthlib==0.4.1
 google-api-core==1.16.0
 google-ads==5.0.2
 google-cloud-bigquery[pandas]==1.25.0
+google-cloud-bigquery==1.25.0
 idna==2.8
 ipython==7.16.1
 lxml==4.3.4
