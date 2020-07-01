@@ -75,6 +75,7 @@ DEFAULT_TIME_SHIFTS: Tuple[int, ...] = (
 	3,
 )
 
+# Named Tuples
 NT_filename_metrics_epa = namedtuple(
 	"NT_filename_metrics_epa",
 	[
@@ -93,6 +94,15 @@ NT_filename_metrics_trends = namedtuple(
 		KEYWORD,
 		IGNORE_ZERO,
 		YEAR,
+	]
+)
+NT_filename_intercity = namedtuple(
+	"NT_filename_intercity",
+	[
+		COMMON_CITY,
+		COMMON_WORD,
+		KEYWORD,
+		CITY,
 	]
 )
 NT_filename_correlation = namedtuple(
@@ -469,9 +479,10 @@ def run_metrics(
 				nt_filename=nt_output_filename,
 				delimiter=HYPHEN,
 				extension=CSV,
+				folder=folder_metrics_output,
 			)
 			df_description.to_csv(
-				f"{folder_metrics_output}{output_filename}",
+				output_filename,
 				index=False,
 			)
 
@@ -1011,8 +1022,20 @@ def run_intercity(
 				df_intercity.insert(2, KEYWORD, nt_filename_trends_stitch_parsed.keyword)
 				df_intercity.insert(3, CITY, city)
 
+				nt_filename_intercity: tuple = NT_filename_intercity(
+					common_city=common_city,
+					common_word=common_word,
+					keyword=nt_filename_trends_stitch_parsed,
+					city=city,
+				)
+				filename_intercity: str = generate_filename(
+					nt_filename=nt_filename_intercity,
+					delimiter=HYPHEN,
+					extension=CSV,
+					folder=folder_stats_intercity,
+				)
 				df_intercity.to_csv(
-					f"{folder_stats_intercity}{common_city}{HYPHEN}{common_word}{HYPHEN}{nt_filename_trends_stitch_parsed.keyword}{HYPHEN}{city}{CSV}",
+					filename_intercity,
 					index=True,
 				)
 			else:
