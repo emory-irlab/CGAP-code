@@ -398,7 +398,7 @@ def main(
 
 	if upload_aggregate_from_folder:
 		upload_aggregate_from_folder_helper(
-			filename_label=upload_aggregate_from_folder.replace("folder_stats", ""),
+			filename_label=upload_aggregate_from_folder.replace("folder_stats_", ""),
 			folder=universal_parameters[upload_aggregate_from_folder],
 		)
 
