@@ -722,8 +722,8 @@ def stitch_and_clean_keyword_df(
 		label_common_word_frequency_relative: str = COMMON_WORD_FREQUENCY_RELATIVE
 		label_keyword_frequency_relative: str = KEYWORD_FREQUENCY_RELATIVE
 		if df_keyword.empty:
-			df_empty[label_common_word_frequency_relative] = np.NAN
-			df_empty[label_keyword_frequency_relative] = np.NAN
+			df_empty[label_common_word_frequency_relative] = np.nan
+			df_empty[label_keyword_frequency_relative] = np.nan
 			error = ERROR_EMPTY
 			return df_empty, error
 
@@ -820,8 +820,8 @@ def stitch_keyword_df(
 			if is_last_month:
 				break
 
-			past_average: pd.DataFrame = df_keyword.iloc[duplicate_first_day_in_month_list[0]: duplicate_last_day_in_month_list[0] + 1].replace(0, np.NaN).mean(axis=0)
-			future_average: pd.DataFrame = df_keyword.iloc[duplicate_first_day_in_month_list[1]: duplicate_last_day_in_month_list[1] + 1].replace(0, np.NaN).mean(axis=0)
+			past_average: pd.DataFrame = df_keyword.iloc[duplicate_first_day_in_month_list[0]: duplicate_last_day_in_month_list[0] + 1].replace(0, np.nan).mean(axis=0)
+			future_average: pd.DataFrame = df_keyword.iloc[duplicate_first_day_in_month_list[1]: duplicate_last_day_in_month_list[1] + 1].replace(0, np.nan).mean(axis=0)
 			past: float = max(1.0, past_average.iloc[0])
 			future: float = max(1.0, future_average.iloc[0])
 			scale = 1.0  # future_avg / past_avg

@@ -426,7 +426,7 @@ def run_metrics(
 		if ignore_zero:
 			df_full.replace(
 				to_replace=0,
-				value=np.NaN,
+				value=np.nan,
 				inplace=True,
 			)
 
@@ -878,7 +878,7 @@ def correlate_for_keyword(
 	trends_column_name_ignore_zero: str = f"{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}"
 	df_merged[trends_column_name_ignore_zero] = df_merged[target_variable_column_name_trends].replace(
 		to_replace=0,
-		value=np.NaN,
+		value=np.nan,
 	)
 
 	trends_column: str
@@ -918,7 +918,11 @@ def correlate_for_keyword(
 	kw_nonzero_threshold_days_count: int = df_kw_nonzero_threshold_days.count()
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_COUNT: kw_nonzero_threshold_days_count})
 
-	kw_non_zero_threshold_days_proportion: float = kw_nonzero_threshold_days_count / threshold_epa_days_count
+	kw_non_zero_threshold_days_proportion: float
+	if threshold_epa_days_count > 0:
+		kw_non_zero_threshold_days_proportion = kw_nonzero_threshold_days_count / threshold_epa_days_count
+	else:
+		threshold_epa_days_count = np.nan
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: kw_non_zero_threshold_days_proportion})
 
 	# noinspection PyArgumentList
