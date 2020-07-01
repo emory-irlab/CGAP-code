@@ -771,7 +771,7 @@ def run_correlations(
 												target_statistic=target_statistic,
 												ignore_zero=str(bool_ignore_zero),
 												threshold=generate_numeric_for_filename_output(threshold),
-												threshold_percentile=threshold_percentile,
+												threshold_percentile=str(threshold_percentile),
 												threshold_side=above_or_below_threshold,
 												time_shift=generate_numeric_for_filename_output(time_shift),
 											)
