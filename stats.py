@@ -209,7 +209,7 @@ def main(
 		)
 		if filename_upload:
 			upload_to_bigquery(
-				filename=filename_upload,
+				filename=f"{folder}{filename_upload}",
 				table_name=filename_label,
 			)
 		write_errors_to_disk(overwrite=False)
