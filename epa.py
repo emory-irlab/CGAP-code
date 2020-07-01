@@ -50,6 +50,7 @@ def main(
 	with open(f"{EPA}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 		json_data = json.load(json_file)
 		aggregate: bool
+		aggregate_and_upload: bool
 		download: bool
 		download_data_type: str
 		only_download_missing: bool
@@ -60,6 +61,7 @@ def main(
 		list_years: Tuple[int, ...]
 		if called_from_main:
 			aggregate = json_data[AGGREGATE]
+			aggregate_and_upload = json_data[PARAM_AGGREGATE_AND_UPLOAD]
 			download = json_data[DOWNLOAD]
 			download_data_type = json_data[PARAM_DOWNLOAD_DATA_TYPE]
 			only_download_missing = json_data[PARAM_ONLY_DOWNLOAD_MISSING]
@@ -81,6 +83,7 @@ def main(
 			list_years = parameters[YEAR]
 		else:
 			aggregate = False
+			aggregate_and_upload = False
 			download = False
 			download_data_type = ""
 			only_download_missing = True
@@ -141,6 +144,7 @@ def main(
 				folder_input=FOLDER_EPA_STITCH,
 				folder_output_aggregate=FOLDER_EPA_AGGREGATE,
 				list_cities=list_cities,
+				upload=aggregate_and_upload,
 			)
 		write_errors_to_disk()
 

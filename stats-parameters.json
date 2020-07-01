@@ -11,6 +11,7 @@
     "only_correlate_missing": true,
     "aggregate_correlations": false,
     "aggregate_already_aggregated_cities": false,
+    "aggregate_and_upload": false,
     "baseline": false,
     "only_baseline_missing": true,
     "run_intercity": false,

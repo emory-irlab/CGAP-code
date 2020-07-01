@@ -76,6 +76,7 @@ ERROR_PARTITION: str = "Not available with multi-partitioning. Running on partit
 ERROR_EMPTY: str = "empty_data_frame"
 
 # JSON PARAMETERS
+PARAM_AGGREGATE_AND_UPLOAD: str = "aggregate_and_upload"
 PARAM_BDATE: str = "bdate"
 PARAM_EDATE: str = "edate"
 PARAM_CREDENTIALS: str = "credentials"

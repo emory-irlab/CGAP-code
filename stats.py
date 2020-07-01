@@ -143,6 +143,7 @@ def main(
 			bool_only_compare_missing: bool = json_data[PARAM_ONLY_BASELINE_MISSING]
 			bool_aggregate_correlations: bool = json_data[PARAM_AGGREGATE_CORRELATIONS]
 			bool_aggregate_already_aggregated_cities: bool = json_data[PARAM_AGGREGATE_ALREADY_AGGREGATED_CITIES]
+			bool_aggregate_and_upload: bool = json_data[PARAM_AGGREGATE_AND_UPLOAD]
 			bool_run_intercity: bool = json_data[PARAM_INTERCITY]
 			bool_aggregate_intercity: bool = json_data[PARAM_AGGREGATE_INTERCITY]
 
@@ -232,6 +233,7 @@ def main(
 				folder_input=FOLDER_EPA_METRICS_RAW,
 				folder_output_aggregate=FOLDER_EPA_METRICS_AGGREGATE,
 				list_cities=list_partitioned_cities,
+				upload=bool_aggregate_and_upload,
 			)
 		write_errors_to_disk()
 
@@ -265,6 +267,7 @@ def main(
 				folder_input=FOLDER_TRENDS_METRICS_RAW,
 				folder_output_aggregate=FOLDER_TRENDS_METRICS_AGGREGATE,
 				list_cities=list_partitioned_cities,
+				upload=bool_aggregate_and_upload,
 			)
 		write_errors_to_disk()
 
@@ -302,6 +305,7 @@ def main(
 					folder_input=folder_stats_correlations_aggregate,
 					folder_output_aggregate=folder_stats_correlations_aggregate,
 					list_cities=list_partitioned_cities,
+					upload=bool_aggregate_and_upload,
 				)
 			else:
 				aggregate_data_in_folder(
@@ -309,6 +313,7 @@ def main(
 					folder_input=folder_stats_correlations_raw,
 					folder_output_aggregate=folder_stats_correlations_aggregate,
 					list_cities=list_partitioned_cities,
+					upload=bool_aggregate_and_upload,
 				)
 		write_errors_to_disk(overwrite=(not bool_aggregate_already_aggregated_cities))
 
@@ -342,6 +347,7 @@ def main(
 				folder_input=FOLDER_STATS_INTERCITY_RAW,
 				folder_output_aggregate=FOLDER_STATS_INTERCITY_AGGREGATE,
 				list_cities=list_partitioned_cities,
+				upload=bool_aggregate_and_upload,
 			)
 		write_errors_to_disk()
 

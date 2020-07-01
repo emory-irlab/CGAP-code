@@ -66,6 +66,7 @@ def main(
 	with open(f"{TRENDS}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 		json_data = json.load(json_file)
 		aggregate: bool
+		aggregate_and_upload: bool
 		download: bool
 		validate_download: bool
 		stitch: bool
@@ -75,6 +76,7 @@ def main(
 		list_source_folders_to_download: List[str] = json_data[PARAM_SOURCE_FOLDERS_TO_DOWNLOAD]
 		if called_from_main:
 			aggregate = json_data[AGGREGATE]
+			aggregate_and_upload = json_data[PARAM_AGGREGATE_AND_UPLOAD]
 			download = json_data[DOWNLOAD]
 			validate_download = json_data[PARAM_VALIDATE_DOWNLOAD]
 			stitch = json_data[STITCH]
@@ -91,6 +93,7 @@ def main(
 			)
 		else:
 			aggregate = False
+			aggregate_and_upload = False
 			download = False
 			validate_download = False
 			stitch = True
@@ -155,6 +158,7 @@ def main(
 				folder_input=FOLDER_TRENDS_STITCH,
 				folder_output_aggregate=FOLDER_TRENDS_AGGREGATE,
 				list_cities=list_cities,
+				upload=aggregate_and_upload,
 			)
 		write_errors_to_disk()
 
