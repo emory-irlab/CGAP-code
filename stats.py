@@ -1,5 +1,7 @@
 import sys
 
+import numpy as np
+
 import epa
 import trends
 from universal import *
