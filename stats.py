@@ -243,7 +243,6 @@ def main(
 				folder_metrics_input=FOLDER_EPA_STITCH,
 				folder_metrics_output=FOLDER_EPA_METRICS_RAW,
 			)
-		del city
 		write_errors_to_disk()
 
 	if bool_aggregate_metrics_epa:
@@ -276,8 +275,6 @@ def main(
 					folder_metrics_input=FOLDER_TRENDS_STITCH,
 					folder_metrics_output=FOLDER_TRENDS_METRICS_RAW,
 				)
-		del city
-		del ignore_zero
 		write_errors_to_disk()
 
 	if bool_aggregate_metrics_trends:
@@ -866,8 +863,6 @@ def correlate_for_keyword(
 		right_on=DATE,
 		how="left",
 	)
-	del df_epa
-	del df_trends
 
 	trends_column_name_ignore_zero: str = f"{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}"
 	df_merged[trends_column_name_ignore_zero] = df_merged[target_variable_column_name_trends].replace(
@@ -876,10 +871,10 @@ def correlate_for_keyword(
 	)
 	df_length: int = len(df_merged.index)
 
-	kw_count: int = df_merged[trends_column_name_ignore_zero].count()
-	dict_cor_row.update({KW_NONZERO_COUNT: kw_count})
+	kw_nonzero_count: int = df_merged[trends_column_name_ignore_zero].count()
+	dict_cor_row.update({KW_NONZERO_COUNT: kw_nonzero_count})
 
-	kw_proportion: float = kw_count / df_length
+	kw_proportion: float = kw_nonzero_count / df_length
 	dict_cor_row.update({KW_NONZERO_PROPORTION: kw_proportion})
 
 	if threshold >= 0:
