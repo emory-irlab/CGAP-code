@@ -922,7 +922,7 @@ def correlate_for_keyword(
 	if threshold_epa_days_count > 0:
 		kw_non_zero_threshold_days_proportion = kw_nonzero_threshold_days_count / threshold_epa_days_count
 	else:
-		threshold_epa_days_count = np.nan
+		kw_non_zero_threshold_days_proportion = np.nan
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: kw_non_zero_threshold_days_proportion})
 
 	# noinspection PyArgumentList
