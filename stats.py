@@ -203,25 +203,15 @@ def main(
 			folder: str,
 	) -> None:
 		set_error_task_origin(task_origin=UPLOAD)
-		nt_filename_aggregate = NT_filename_aggregate(
-			aggregate=AGGREGATE,
-			filename_label=filename_label,
-		)
-		filename_upload: str = generate_filename(
-			nt_filename=nt_filename_aggregate,
-			delimiter=HYPHEN,
-			extension=CSV,
+		filename_upload = import_single_file(
 			folder=folder,
+			list_filename_filter_conditions=(AGGREGATE, CSV),
 		)
-		if not os.path.exists(filename_upload):
-			filename_upload = import_single_file(
-				folder=folder,
-				list_filename_filter_conditions=(AGGREGATE, CSV),
+		if filename_upload:
+			upload_to_bigquery(
+				filename=filename_upload,
+				table_name=filename_label,
 			)
-		upload_to_bigquery(
-			filename=filename_upload,
-			table_name=filename_label,
-		)
 		write_errors_to_disk(overwrite=False)
 
 	if bool_stitch_epa:
