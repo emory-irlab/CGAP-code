@@ -680,6 +680,11 @@ def run_correlations(
 		list_paths_filter_conditions=(city, CSV),
 	)
 
+	list_filenames_epa: List[str] = import_paths_from_folder(
+		folder=folder_epa_stitch,
+		list_paths_filter_conditions=(CSV,),
+	)
+
 	pollutant: str
 	for pollutant in list_pollutants:
 		target_statistic: str
@@ -690,10 +695,15 @@ def run_correlations(
 			df_epa: pd.DataFrame = pd.DataFrame()
 			epa_set: bool = False
 
-			filename_epa: str = import_single_file(
-				folder=folder_epa_stitch,
-				list_filename_filter_conditions=(city, pollutant, target_statistic, CSV)
+			list_potential_filename_epa: List[str] = filter_list_strings(
+				list_strings=list_filenames_epa,
+				list_string_filter_conditions=(city, pollutant, target_statistic, CSV),
 			)
+			if is_single_item(list_potential_filename_epa):
+				filename_epa: str = list_potential_filename_epa[0]
+			else:
+				break
+
 			if not filename_epa:
 				log_error(error=f"file_missing{HYPHEN}{EPA}{HYPHEN}{city}{HYPHEN}{pollutant}{HYPHEN}{target_statistic}")
 				continue
