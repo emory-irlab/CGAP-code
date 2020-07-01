@@ -4,6 +4,7 @@
     "only_download_missing": true,
     "stitch": false,
     "aggregate": false,
+    "aggregate_and_upload": false,
     "epa": {
         "city": [
             "atlanta",
