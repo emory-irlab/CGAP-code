@@ -789,6 +789,7 @@ def run_correlations(
 													if filename_epa:
 														df_epa = pd.read_csv(
 															f"{folder_epa_stitch}{filename_epa}",
+															usecols=[DATE, target_variable_column_name_epa],
 															parse_dates=[DATE],
 														)
 														epa_set = True
@@ -809,6 +810,7 @@ def run_correlations(
 												if not trends_set:
 													df_trends = pd.read_csv(
 														f"{folder_trends_stitch}{filename_trends}",
+														usecols=[DATE,target_variable_column_name_trends],
 														parse_dates=[DATE],
 													)
 													trends_set = True
