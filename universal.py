@@ -607,6 +607,23 @@ def parse_api_credentials(
 		return {}
 
 
+def is_single_item(
+		list_items: List[Any],
+) -> Any:
+	if len(list_items) > 0:
+		item, *list_rest = list_items
+		if len(list_rest) != 0:
+			print(
+				f"Multiple item candidates; using the first candidate: {item}. These are the rest: {list_rest}."
+			)
+			extra_candidate: str
+			for extra_candidate in list_rest:
+				log_error(error=f"filter_single_item{HYPHEN}extra_candidate{HYPHEN}{extra_candidate}")
+		return item
+	else:
+		return None
+
+
 def import_single_file(
 		folder: str,
 		list_filename_filter_conditions: Tuple[str, ...],
@@ -617,20 +634,12 @@ def import_single_file(
 		folder=folder,
 		list_paths_filter_conditions=list_filename_filter_conditions,
 	)
-	if len(list_filenames) > 0:
-		filename, *list_rest = list_filenames
-		if len(list_rest) != 0:
-			print(
-				f"Multiple filename candidates; using the first candidate: {filename}. These are the rest: {list_rest}."
-			)
-			filename_extra_candidate: str
-			for filename_extra_candidate in list_rest:
-				log_error(error=f"parse_filename{HYPHEN}extra_candidate{HYPHEN}{filename_extra_candidate}")
-		return filename
-
-	else:
+	single_file: str = is_single_item(list_filenames)
+	if not single_file:
 		log_error(error=f"parse_filename{HYPHEN}{'_'.join(list_filename_filter_conditions)}")
 		return ""
+	else:
+		return single_file
 
 
 def import_paths_from_folder(
