@@ -213,6 +213,11 @@ def main(
 			extension=CSV,
 			folder=folder,
 		)
+		if not os.path.exists(filename_upload):
+			filename_upload = import_single_file(
+				folder=folder,
+				list_filename_filter_conditions=(AGGREGATE, CSV),
+			)
 		upload_to_bigquery(
 			filename=filename_upload,
 			table_name=filename_label,
