@@ -229,7 +229,7 @@ def main(
 		)
 		if is_valid_for_aggregation:
 			aggregate_data_in_folder(
-				filename_label=PARAM_AGGREGATE_METRICS_EPA,
+				filename_label=PARAM_METRICS_EPA,
 				folder_input=FOLDER_EPA_METRICS_RAW,
 				folder_output_aggregate=FOLDER_EPA_METRICS_AGGREGATE,
 				list_cities=list_partitioned_cities,
@@ -263,7 +263,7 @@ def main(
 		)
 		if is_valid_for_aggregation:
 			aggregate_data_in_folder(
-				filename_label=PARAM_AGGREGATE_METRICS_TRENDS,
+				filename_label=PARAM_METRICS_TRENDS,
 				folder_input=FOLDER_TRENDS_METRICS_RAW,
 				folder_output_aggregate=FOLDER_TRENDS_METRICS_AGGREGATE,
 				list_cities=list_partitioned_cities,

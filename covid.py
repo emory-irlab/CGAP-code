@@ -64,6 +64,7 @@ def main(
 	)
 	nt_filename_aggregate = NT_filename_aggregate(
 		aggregate=AGGREGATE,
+		filename_label=COVID,
 	)
 	filename_covid_stitch: str = generate_filename(
 		nt_filename=nt_filename_aggregate,

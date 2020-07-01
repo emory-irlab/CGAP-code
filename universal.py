@@ -3,7 +3,6 @@ import itertools
 import json
 import os
 import re
-import scipy
 from collections import namedtuple
 from typing import Any
 from typing import Callable
@@ -14,7 +13,6 @@ from typing import NamedTuple
 from typing import Pattern
 from typing import Tuple
 
-import numpy as np
 import pandas as pd
 
 # STATIC VARIABLES
@@ -130,10 +128,6 @@ SO2: str = "SO2"
 
 # DEFAULT VARIABLES
 DEFAULT_COMMON_WORD: str = "pins"
-DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS: Tuple[str, str] = (
-	AGGREGATE,
-	CSV,
-)
 DEFAULT_TARGET_STATISTICS: Tuple[str, str, str] = (
 	MAX,
 	MEAN,
@@ -209,11 +203,10 @@ DEFAULT_CITIES: Dict[str, dict] = {
 		CITY_AB:         "IAD",
 		DMA:             511,
 		STATE_NAME:      "DC",
-		GOOGLE_GEO_CODE: "1014895"
-
+		GOOGLE_GEO_CODE: "1014895",
 	},
 	USA:          {
-		GOOGLE_GEO_CODE: "2840"
+		GOOGLE_GEO_CODE: "2840",
 	},
 }
 
@@ -286,6 +279,7 @@ NT_filename_aggregate = namedtuple(
 	"NT_filename_aggregate",
 	[
 		AGGREGATE,
+		"filename_label",
 	]
 )
 NT_filename_city_aggregate = namedtuple(
@@ -495,8 +489,17 @@ def aggregate_data_in_folder(
 				sort=True,
 			)
 			del list_parsed_dfs_per_city
+			nt_filename_city_aggregate: tuple = NT_filename_city_aggregate(
+				city=city,
+			)
+			filename_city_aggregate: str = generate_filename(
+				nt_filename=nt_filename_city_aggregate,
+				delimiter=HYPHEN,
+				extension=CSV,
+				folder=folder_output_aggregate,
+			)
 			concatenated_data_per_city.to_csv(
-				f"{folder_output_aggregate}{city}{filename_label}{CSV}",
+				filename_city_aggregate,
 				index=False,
 			)
 			list_data_dfs_for_all_cities.append(concatenated_data_per_city)
@@ -509,7 +512,16 @@ def aggregate_data_in_folder(
 		sort=True,
 	)
 	del list_data_dfs_for_all_cities
-	filename_aggregate: str = f"{folder_output_aggregate}{AGGREGATE}{filename_label}{CSV}"
+	nt_filename_aggregate: tuple = NT_filename_aggregate(
+		aggregate=AGGREGATE,
+		filename_label=filename_label,
+	)
+	filename_aggregate: str = generate_filename(
+		nt_filename=nt_filename_aggregate,
+		delimiter=HYPHEN,
+		extension=CSV,
+		folder=folder_output_aggregate,
+	)
 	df_aggregate.to_csv(
 		filename_aggregate,
 		index=False,
@@ -596,7 +608,7 @@ def parse_api_credentials(
 
 def import_single_file(
 		folder: str,
-		list_filename_filter_conditions: Tuple[str, ...] = DEFAULT_AGGREGATE_FILENAME_FILTER_CONDITIONS,
+		list_filename_filter_conditions: Tuple[str, ...],
 ) -> str:
 	filename: str
 	list_rest: List[str]
