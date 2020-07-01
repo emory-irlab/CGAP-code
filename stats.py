@@ -46,6 +46,7 @@ PARAM_METRICS_EPA: str = f"{PARAM_METRICS}{UNDERSCORE}{EPA}"
 PARAM_METRICS_TRENDS: str = f"{PARAM_METRICS}{UNDERSCORE}{TRENDS}"
 PARAM_STITCH_EPA: str = f"{STITCH}{UNDERSCORE}{EPA}"
 PARAM_STITCH_TRENDS: str = f"{STITCH}{UNDERSCORE}{TRENDS}"
+PARAM_UPLOAD_AGGREGATE_FROM_FOLDER: str = "upload_aggregate_from_folder"
 
 # DEFAULT
 DEFAULT_COMMON_CITY: str = USA
@@ -158,6 +159,7 @@ def main(
 			bool_aggregate_and_upload: bool = json_data[PARAM_AGGREGATE_AND_UPLOAD]
 			bool_run_intercity: bool = json_data[PARAM_INTERCITY]
 			bool_aggregate_intercity: bool = json_data[PARAM_AGGREGATE_INTERCITY]
+			upload_aggregate_from_folder: str = json_data[PARAM_UPLOAD_AGGREGATE_FROM_FOLDER]
 
 			common_city: str = json_data[COMMON_CITY]
 			common_word: str = json_data[COMMON_WORD]
@@ -177,10 +179,6 @@ def main(
 			dict_correlations_comparison_pivot_values: Dict[str, Any] = json_data[
 				PARAM_CORRELATIONS_COMPARISON_PIVOT_VALUES
 			]
-
-			folder_stats_correlations_raw: str = json_data[PARAM_FOLDER_STATS_CORRELATIONS_RAW]
-			folder_stats_correlations_aggregate: str = json_data[PARAM_FOLDER_STATS_CORRELATIONS_AGGREGATE]
-			folder_stats_correlations_comparison: str = json_data[PARAM_FOLDER_STATS_CORRELATIONS_COMPARISON]
 		json_file.close()
 
 	list_threshold_sides: List[str] = []
@@ -199,6 +197,27 @@ def main(
 			partition_total=get_partition_total(),
 		)
 	)
+
+	def upload_aggregate_from_folder_helper(
+			filename_label: str,
+			folder: str,
+	) -> None:
+		set_error_task_origin(task_origin=UPLOAD)
+		nt_filename_aggregate = NT_filename_aggregate(
+			aggregate=AGGREGATE,
+			filename_label=filename_label,
+		)
+		filename_upload: str = generate_filename(
+			nt_filename=nt_filename_aggregate,
+			delimiter=HYPHEN,
+			extension=CSV,
+			folder=folder,
+		)
+		upload_to_bigquery(
+			filename=filename_upload,
+			table_name=filename_label,
+		)
+		write_errors_to_disk(overwrite=False)
 
 	if bool_stitch_epa:
 		print("Calling stitch epa from stats.")
@@ -287,7 +306,7 @@ def main(
 		for city in list_partitioned_cities:
 			run_correlations(
 				city=city,
-				folder_stats_correlations=folder_stats_correlations_raw,
+				folder_stats_correlations=FOLDER_STATS_CORRELATIONS_RAW,
 				only_correlate_missing=bool_only_correlate_missing,
 				start_date=start_date,
 				end_date=end_date,
@@ -314,16 +333,16 @@ def main(
 			if bool_aggregate_already_aggregated_cities:
 				aggregate_data_in_folder(
 					filename_label=CORRELATIONS,
-					folder_input=folder_stats_correlations_aggregate,
-					folder_output_aggregate=folder_stats_correlations_aggregate,
+					folder_input=FOLDER_STATS_CORRELATIONS_AGGREGATE,
+					folder_output_aggregate=FOLDER_STATS_CORRELATIONS_AGGREGATE,
 					list_cities=list_partitioned_cities,
 					upload=bool_aggregate_and_upload,
 				)
 			else:
 				aggregate_data_in_folder(
 					filename_label=CORRELATIONS,
-					folder_input=folder_stats_correlations_raw,
-					folder_output_aggregate=folder_stats_correlations_aggregate,
+					folder_input=FOLDER_STATS_CORRELATIONS_RAW,
+					folder_output_aggregate=FOLDER_STATS_CORRELATIONS_AGGREGATE,
 					list_cities=list_partitioned_cities,
 					upload=bool_aggregate_and_upload,
 				)
@@ -370,8 +389,8 @@ def main(
 			baseline(
 				city=city,
 				dict_pivot_values=dict_correlations_comparison_pivot_values,
-				folder_stats_correlations=folder_stats_correlations_raw,
-				folder_stats_correlations_comparison=folder_stats_correlations_comparison,
+				folder_stats_correlations=FOLDER_STATS_CORRELATIONS_RAW,
+				folder_stats_correlations_comparison=FOLDER_STATS_CORRELATIONS_COMPARISON,
 				only_compare_missing=bool_only_compare_missing,
 				list_bool_ignore_zero=DEFAULT_IGNORE_ZERO_TRENDS,
 				list_pollutants=tuple(list_pollutants),
@@ -381,6 +400,12 @@ def main(
 				list_time_shifts=tuple(list_time_shifts),
 			)
 			write_errors_to_disk(overwrite=False)
+
+	if upload_aggregate_from_folder:
+		upload_aggregate_from_folder_helper(
+			filename_label=upload_aggregate_from_folder.replace("folder_stats", ""),
+			folder=universal_parameters[upload_aggregate_from_folder],
+		)
 
 
 def run_metrics(
