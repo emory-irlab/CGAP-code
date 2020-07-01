@@ -5,6 +5,7 @@
     "stitch": false,
     "aggregate": false,
     "aggregate_and_upload": false,
+    "upload": false,
     "epa": {
         "city": [
             "atlanta",

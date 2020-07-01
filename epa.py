@@ -55,6 +55,7 @@ def main(
 		download_data_type: str
 		only_download_missing: bool
 		stitch: bool
+		upload: bool
 		list_partitioned_cities: Tuple[str, ...]
 		list_pollutants: Tuple[str, ...]
 		list_target_statistics: Tuple[str, ...]
@@ -66,6 +67,7 @@ def main(
 			download_data_type = json_data[PARAM_DOWNLOAD_DATA_TYPE]
 			only_download_missing = json_data[PARAM_ONLY_DOWNLOAD_MISSING]
 			stitch = json_data[STITCH]
+			upload = json_data[UPLOAD]
 			credentials: str = json_data[PARAM_CREDENTIALS]
 			parameters: dict = json_data[EPA]
 			api: dict = json_data[API]
@@ -88,6 +90,7 @@ def main(
 			download_data_type = ""
 			only_download_missing = True
 			stitch = True
+			upload = False
 			list_partitioned_cities = list_cities
 			list_pollutants = ()
 			list_years = ()
@@ -131,22 +134,43 @@ def main(
 				)
 		write_errors_to_disk()
 
-	if aggregate:
-		set_error_task_origin(task_origin=AGGREGATE)
-		is_valid_for_aggregation: bool = check_partition_valid_for_aggregation(
-			error_label=EPA,
-			partition_group=get_partition_group(),
-			partition_total=get_partition_total(),
-		)
-		if is_valid_for_aggregation:
-			aggregate_data_in_folder(
-				filename_label=EPA,
-				folder_input=FOLDER_EPA_STITCH,
-				folder_output_aggregate=FOLDER_EPA_AGGREGATE,
-				list_cities=list_cities,
-				upload=aggregate_and_upload,
+	if upload or aggregate:
+		filename_label: str = EPA
+		folder_output_aggregate: str = FOLDER_EPA_AGGREGATE
+		if aggregate:
+			set_error_task_origin(task_origin=AGGREGATE)
+			is_valid_for_aggregation: bool = check_partition_valid_for_aggregation(
+				error_label=EPA,
+				partition_group=get_partition_group(),
+				partition_total=get_partition_total(),
 			)
-		write_errors_to_disk()
+			if is_valid_for_aggregation:
+				aggregate_data_in_folder(
+					filename_label=filename_label,
+					folder_input=FOLDER_EPA_STITCH,
+					folder_output_aggregate=folder_output_aggregate,
+					list_cities=list_cities,
+					upload=aggregate_and_upload,
+				)
+			write_errors_to_disk()
+
+		if upload:
+			set_error_task_origin(task_origin=UPLOAD)
+			nt_filename_aggregate = NT_filename_aggregate(
+				aggregate=AGGREGATE,
+				filename_label=filename_label,
+			)
+			filename_upload: str = generate_filename(
+				nt_filename=nt_filename_aggregate,
+				delimiter=HYPHEN,
+				extension=CSV,
+				folder=folder_output_aggregate,
+			)
+			upload_to_bigquery(
+				filename=filename_upload,
+				table_name=filename_label,
+			)
+			write_errors_to_disk()
 
 
 def generate_api_parameters(

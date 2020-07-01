@@ -6,6 +6,7 @@
     "only_stitch_missing": true,
     "aggregate": false,
     "aggregate_and_upload": false,
+    "upload": false,
     "source_folders_to_download": [
         "common",
         "cgap",

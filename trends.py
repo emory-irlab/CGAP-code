@@ -72,6 +72,7 @@ def main(
 		validate_download: bool
 		stitch: bool
 		only_stitch_missing: bool
+		upload: bool
 		list_partitioned_cities: Tuple[str, ...]
 		list_source_folders: List[str] = json_data[PARAM_SOURCE_FOLDERS]
 		list_source_folders_to_download: List[str] = json_data[PARAM_SOURCE_FOLDERS_TO_DOWNLOAD]
@@ -82,6 +83,7 @@ def main(
 			validate_download = json_data[PARAM_VALIDATE_DOWNLOAD]
 			stitch = json_data[STITCH]
 			only_stitch_missing = json_data[PARAM_ONLY_STITCH_MISSING]
+			upload = json_data[UPLOAD]
 			parameters: dict = json_data[TRENDS]
 			list_input_cities: List[str] = parameters[CITY]
 			list_input_cities.sort()
@@ -99,6 +101,7 @@ def main(
 			validate_download = False
 			stitch = True
 			only_stitch_missing = True
+			upload: False
 			list_partitioned_cities = list_cities
 		bool_download_with_common_word: bool = json_data[PARAM_DOWNLOAD_WITH_COMMON_WORD]
 	json_file.close()
@@ -146,22 +149,43 @@ def main(
 			)
 			write_errors_to_disk(clear_task_origin=False, overwrite=(not only_stitch_missing))
 
-	if aggregate:
-		set_error_task_origin(task_origin=AGGREGATE)
-		is_valid_for_aggregation: bool = check_partition_valid_for_aggregation(
-			error_label=TRENDS,
-			partition_group=get_partition_group(),
-			partition_total=get_partition_total(),
-		)
-		if is_valid_for_aggregation:
-			aggregate_data_in_folder(
-				filename_label=TRENDS,
-				folder_input=FOLDER_TRENDS_STITCH,
-				folder_output_aggregate=FOLDER_TRENDS_AGGREGATE,
-				list_cities=list_cities,
-				upload=aggregate_and_upload,
+	if upload or aggregate:
+		filename_label: str = TRENDS
+		folder_output_aggregate: str = FOLDER_TRENDS_AGGREGATE
+		if aggregate:
+			set_error_task_origin(task_origin=AGGREGATE)
+			is_valid_for_aggregation: bool = check_partition_valid_for_aggregation(
+				error_label=TRENDS,
+				partition_group=get_partition_group(),
+				partition_total=get_partition_total(),
 			)
-		write_errors_to_disk()
+			if is_valid_for_aggregation:
+				aggregate_data_in_folder(
+					filename_label=filename_label,
+					folder_input=FOLDER_TRENDS_STITCH,
+					folder_output_aggregate=folder_output_aggregate,
+					list_cities=list_cities,
+					upload=aggregate_and_upload,
+				)
+			write_errors_to_disk()
+
+		if upload:
+			set_error_task_origin(task_origin=UPLOAD)
+			nt_filename_aggregate = NT_filename_aggregate(
+				aggregate=AGGREGATE,
+				filename_label=filename_label,
+			)
+			filename_upload: str = generate_filename(
+				nt_filename=nt_filename_aggregate,
+				delimiter=HYPHEN,
+				extension=CSV,
+				folder=folder_output_aggregate,
+			)
+			upload_to_bigquery(
+				filename=filename_upload,
+				table_name=filename_label,
+			)
+			write_errors_to_disk()
 
 
 def generate_keywords_to_download_dict(
