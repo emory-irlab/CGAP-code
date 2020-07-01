@@ -769,7 +769,7 @@ def run_correlations(
 												keyword=nt_filename_trends_stitch_parsed.keyword,
 												pollutant=pollutant,
 												target_statistic=target_statistic,
-												ignore_zero=bool_ignore_zero,
+												ignore_zero=str(bool_ignore_zero),
 												threshold=generate_numeric_for_filename_output(threshold),
 												threshold_percentile=threshold_percentile,
 												threshold_side=above_or_below_threshold,
