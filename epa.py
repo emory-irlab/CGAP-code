@@ -139,6 +139,7 @@ def main(
 		folder_output_aggregate: str = FOLDER_EPA_AGGREGATE
 		if aggregate:
 			set_error_task_origin(task_origin=AGGREGATE)
+			write_errors_to_disk(clear_task_origin=False)
 			is_valid_for_aggregation: bool = check_partition_valid_for_aggregation(
 				error_label=EPA,
 				partition_group=get_partition_group(),
@@ -152,7 +153,7 @@ def main(
 					list_cities=list_cities,
 					upload=aggregate_and_upload,
 				)
-			write_errors_to_disk()
+			write_errors_to_disk(overwrite=False)
 
 		if upload:
 			set_error_task_origin(task_origin=UPLOAD)
