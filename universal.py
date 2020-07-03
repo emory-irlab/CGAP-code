@@ -638,7 +638,10 @@ def import_single_file(
 		log_error(error=f"parse_filename{HYPHEN}{'_'.join(list_filename_filter_conditions)}")
 		return ""
 	else:
-		return single_file
+		first_file: str
+		rest_of_files: List[str]
+		first_file, *rest_of_files = list_filenames
+		return first_file
 
 
 def import_paths_from_folder(
