@@ -633,7 +633,7 @@ def import_single_file(
 		folder=folder,
 		list_paths_filter_conditions=list_filename_filter_conditions,
 	)
-	single_file: str = is_single_item(list_filenames)
+	single_file: bool = is_single_item(list_filenames)
 	if not single_file:
 		log_error(error=f"parse_filename{HYPHEN}{'_'.join(list_filename_filter_conditions)}")
 		return ""
