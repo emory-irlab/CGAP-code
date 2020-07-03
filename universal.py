@@ -461,10 +461,6 @@ def aggregate_data_in_folder(
 	generate_sub_paths_for_folder(
 		folder=folder_output_aggregate,
 	)
-	if filename_label:
-		filename_label: str = f"{filename_label}"
-	else:
-		filename_label = ""
 	list_data_dfs_for_all_cities: List[pd.DataFrame] = []
 	city: str
 	for city in list_cities:
