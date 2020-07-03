@@ -8,11 +8,9 @@ from universal import *
 
 # STATIC VARIABLES
 COMMON_CITY: str = "common_city"
-CORRELATIONS: str = "correlations"
 CORRELATIONS_COMPARISON: str = "correlations_comparison"
 CORRELATE_ABOVE_THRESHOLD: str = "above_threshold"
 CORRELATE_BELOW_THRESHOLD: str = "below_threshold"
-INTERCITY: str = "intercity"
 KW_NONZERO_COUNT: str = "kw_nonzero_count"
 KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
 KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
