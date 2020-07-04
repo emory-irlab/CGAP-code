@@ -900,6 +900,7 @@ def correlate_for_keyword(
 	threshold_epa_days_proportion: float = threshold_epa_days_count / total_epa_days_count
 	dict_cor_row.update({THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion})
 
+	# noinspection PyTypeChecker
 	df_kw_nonzero_threshold_days: pd.DataFrame = (df_merged[trends_column_name_ignore_zero] > 0) & df_epa_target_variable_above_or_below_threshold
 	kw_nonzero_threshold_days_count: int = df_kw_nonzero_threshold_days.count()
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_COUNT: kw_nonzero_threshold_days_count})
