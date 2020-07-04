@@ -575,6 +575,7 @@ def baseline(
 		)
 		if is_pivot_table and is_pivot_table_in_constraints:
 			pivot_table_set: bool = False
+			# noinspection PyUnusedLocal
 			df_pivot_table: pd.DataFrame = pd.DataFrame()
 
 			list_pivot_table_filename_filter_conditions: Tuple[str, ...] = tuple(
