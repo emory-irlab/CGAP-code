@@ -691,7 +691,6 @@ def run_correlations(
 			log_error(f"{CORRELATIONS} : {city} : {pollutant} : {target_statistic}", log=True)
 
 			df_epa: pd.DataFrame = pd.DataFrame()
-			epa_set: bool = False
 
 			list_potential_filename_epa: List[str] = filter_list_strings(
 				list_strings=list_filenames_epa,
@@ -705,6 +704,23 @@ def run_correlations(
 			if not filename_epa:
 				log_error(error=f"file_missing{HYPHEN}{EPA}{HYPHEN}{city}{HYPHEN}{pollutant}{HYPHEN}{target_statistic}")
 				continue
+			else:
+				df_epa = pd.read_csv(
+					f"{folder_epa_stitch}{filename_epa}",
+					usecols=[DATE, target_variable_column_name_epa],
+					parse_dates=[DATE],
+				)
+				if df_epa.empty:
+					log_error(error=f"df_empty{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
+
+				if start_date and end_date:
+					df_epa = filter_date_for_df(
+						df=df_epa,
+						date_column_is_index=False,
+						date_column=DATE,
+						start_date=start_date,
+						end_date=end_date,
+					)
 
 			# noinspection PyTypeChecker
 			nt_filename_epa_stitch_parsed: NamedTuple = parse_filename(
@@ -725,9 +741,6 @@ def run_correlations(
 				continue
 
 			def correlate_trends() -> None:
-				nonlocal df_epa
-				nonlocal epa_set
-
 				filename_trends: str
 				for filename_trends in list_filenames_trends:
 					df_trends: pd.DataFrame = pd.DataFrame()
@@ -745,11 +758,13 @@ def run_correlations(
 						log_error(error=f"attribute_mismatch{HYPHEN}{TRENDS}{HYPHEN}{CITY}{HYPHEN}{city}")
 						continue
 
-					def correlate_single_trend() -> bool:
-						nonlocal df_epa
-						nonlocal epa_set
+					def correlate_single_trend():
 						nonlocal df_trends
 						nonlocal trends_set
+
+						total_epa_days_count: int = -1
+						kw_nonzero_count: int = -1
+						kw_proportion: float = -1
 
 						threshold_percentile: int
 						for threshold_percentile in list_threshold_percentiles:
@@ -783,49 +798,43 @@ def run_correlations(
 												continue
 											else:
 
-												if not epa_set:
-													if filename_epa:
-														df_epa = pd.read_csv(
-															f"{folder_epa_stitch}{filename_epa}",
-															usecols=[DATE, target_variable_column_name_epa],
-															parse_dates=[DATE],
-														)
-														epa_set = True
-														if df_epa.empty:
-															log_error(error=f"df_empty{HYPHEN}{EPA}{HYPHEN}{filename_epa}")
-
-															return True
-
-														if start_date and end_date:
-															df_epa = filter_date_for_df(
-																df=df_epa,
-																date_column_is_index=False,
-																date_column=DATE,
-																start_date=start_date,
-																end_date=end_date,
-															)
-
 												if not trends_set:
 													df_trends = pd.read_csv(
 														f"{folder_trends_stitch}{filename_trends}",
-														usecols=[DATE,target_variable_column_name_trends],
+														usecols=[DATE, target_variable_column_name_trends],
 														parse_dates=[DATE],
 													)
 													trends_set = True
 													if df_trends.empty:
 														log_error(error=f"df_empty{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
+														return
 
-														return False
+													trends_column_name_ignore_zero: str = f"{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}"
+													df_trends[trends_column_name_ignore_zero] = df_trends[target_variable_column_name_trends].replace(
+														to_replace=0,
+														value=np.nan,
+													)
+
+													trends_column: str
+													if bool_ignore_zero:
+														trends_column = trends_column_name_ignore_zero
+													else:
+														trends_column = target_variable_column_name_trends
+													total_epa_days_count = df_epa[target_variable_column_name_epa].count()
+													kw_nonzero_count = df_trends[trends_column_name_ignore_zero].count()
+													kw_proportion = kw_nonzero_count / df_trends[target_variable_column_name_trends].count()
 
 												dict_cor_row: dict = correlate_for_keyword(
 													df_epa=df_epa,
 													target_variable_column_name_epa=target_variable_column_name_epa,
 													df_trends=df_trends,
-													target_variable_column_name_trends=target_variable_column_name_trends,
 													threshold=threshold,
 													above_or_below_threshold=above_or_below_threshold,
 													time_shift=time_shift,
-													bool_ignore_zero=bool_ignore_zero,
+													trends_column=trends_column,
+													trends_column_name_ignore_zero=trends_column_name_ignore_zero,
+													total_epa_days_count=total_epa_days_count,
+
 												)
 												dict_cor_row.update(
 													{
@@ -837,6 +846,10 @@ def run_correlations(
 														THRESHOLD_SIDE:       above_or_below_threshold,
 														THRESHOLD_PERCENTILE: threshold_percentile,
 														TIME_SHIFT:           time_shift,
+														IGNORE_ZERO: bool_ignore_zero,
+														TOTAL_EPA_DAYS_COUNT: total_epa_days_count,
+														KW_NONZERO_COUNT: kw_nonzero_count,
+														KW_NONZERO_PROPORTION: kw_proportion,
 													},
 												)
 
@@ -847,11 +860,8 @@ def run_correlations(
 													f"{folder_stats_correlations}{filename_correlation}",
 													index=False,
 												)
-						return False
 
-					break_epa_loop: bool = correlate_single_trend()
-					if break_epa_loop:
-						break
+					correlate_single_trend()
 
 			correlate_trends()
 			write_errors_to_disk(bool_suppress_print=True, overwrite=False)
@@ -861,11 +871,12 @@ def correlate_for_keyword(
 		df_epa: pd.DataFrame,
 		df_trends: pd.DataFrame,
 		target_variable_column_name_epa: str,
-		target_variable_column_name_trends: str,
 		threshold: float,
 		above_or_below_threshold: str,
 		time_shift: int,
-		bool_ignore_zero: bool,
+		trends_column: str,
+		trends_column_name_ignore_zero: str,
+		total_epa_days_count: int,
 ) -> dict:
 	dict_cor_row: dict = {}
 	df_merged: pd.DataFrame = df_epa.merge(
@@ -874,32 +885,6 @@ def correlate_for_keyword(
 		right_on=DATE,
 		how="left",
 	)
-
-	trends_column_name_ignore_zero: str = f"{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}"
-	df_merged[trends_column_name_ignore_zero] = df_merged[target_variable_column_name_trends].replace(
-		to_replace=0,
-		value=np.nan,
-	)
-
-	trends_column: str
-	if bool_ignore_zero:
-		trends_column = trends_column_name_ignore_zero
-	else:
-		trends_column = target_variable_column_name_trends
-	dict_cor_row.update({IGNORE_ZERO: bool_ignore_zero})
-
-	# need to multiply time shift by -1 to keep intuitive logic
-	# shift of 1 is tomorrow's search correlating with today's pollution
-	df_trends_with_time_shift: pd.DataFrame = df_merged[trends_column].shift(periods=(-1 * time_shift))
-
-	total_epa_days_count: int = df_merged[target_variable_column_name_epa].count()
-	dict_cor_row.update({TOTAL_EPA_DAYS_COUNT: total_epa_days_count})
-
-	kw_nonzero_count: int = df_merged[trends_column_name_ignore_zero].count()
-	dict_cor_row.update({KW_NONZERO_COUNT: kw_nonzero_count})
-
-	kw_proportion: float = kw_nonzero_count / df_merged[target_variable_column_name_trends].count()
-	dict_cor_row.update({KW_NONZERO_PROPORTION: kw_proportion})
 
 	if above_or_below_threshold == CORRELATE_ABOVE_THRESHOLD:
 		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_merged[target_variable_column_name_epa].mask(df_merged[target_variable_column_name_epa] < threshold)
@@ -924,6 +909,10 @@ def correlate_for_keyword(
 	else:
 		kw_non_zero_threshold_days_proportion = np.nan
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: kw_non_zero_threshold_days_proportion})
+
+	# need to multiply time shift by -1 to keep intuitive logic
+	# shift of 1 is tomorrow's search correlating with today's pollution
+	df_trends_with_time_shift: pd.DataFrame = df_merged[trends_column].shift(periods=(-1 * time_shift))
 
 	# noinspection PyArgumentList
 	# noinspection PyTypeChecker
