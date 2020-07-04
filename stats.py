@@ -765,6 +765,8 @@ def run_correlations(
 						total_epa_days_count: int = -1
 						kw_nonzero_count: int = -1
 						kw_proportion: float = -1
+						trends_column: str = ""
+						trends_column_name_ignore_zero: str = ""
 
 						threshold_percentile: int
 						for threshold_percentile in list_threshold_percentiles:
@@ -815,7 +817,6 @@ def run_correlations(
 														value=np.nan,
 													)
 
-													trends_column: str
 													if bool_ignore_zero:
 														trends_column = trends_column_name_ignore_zero
 													else:
