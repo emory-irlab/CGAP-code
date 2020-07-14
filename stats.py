@@ -824,9 +824,9 @@ def run_correlations(
 											else:
 												trends_column = target_variable_column_name_trends
 
-											df_epa_target_variable_above_or_below_threshold: pd.DataFrame = dict_epa_stats_helper.get(threshold, {}).get(above_or_below_threshold, {}).get(DATA_FRAME, pd.DataFrame())
-											threshold_epa_days_count: int = dict_epa_stats_helper.get(threshold, {}).get(above_or_below_threshold, {}).get(THRESHOLD_EPA_DAYS_COUNT, -1)
-											threshold_epa_days_proportion: float = dict_epa_stats_helper.get(threshold, {}).get(above_or_below_threshold, {}).get(THRESHOLD_EPA_DAYS_PROPORTION, -1)
+											df_epa_target_variable_above_or_below_threshold: pd.DataFrame = dict_epa_stats_helper[threshold][above_or_below_threshold][DATA_FRAME]
+											threshold_epa_days_count: int = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_EPA_DAYS_COUNT]
+											threshold_epa_days_proportion: float = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_EPA_DAYS_PROPORTION]
 
 											dict_cor_row: dict = correlate_for_keyword(
 												df_trends=df_trends,
@@ -879,7 +879,9 @@ def dp_epa_variations_dict(
 ) -> Dict[float, Dict[str, Dict[str, Any]]]:
 	dict_epa_stats_helper: Dict[float, Dict[str, Dict[str, Any]]] = {}
 	for threshold in list_thresholds:
+		dict_epa_stats_helper.update({threshold: {}})
 		for threshold_side in list_threshold_sides:
+			dict_epa_stats_helper[threshold].update({threshold_side: {}})
 			if threshold_side == CORRELATE_ABOVE_THRESHOLD:
 				df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_epa[target_variable_column_name_epa].mask(df_epa[target_variable_column_name_epa] < threshold)
 			elif threshold_side == CORRELATE_BELOW_THRESHOLD:
@@ -890,14 +892,10 @@ def dp_epa_variations_dict(
 			threshold_epa_days_count: int = df_epa_target_variable_above_or_below_threshold.count()
 			threshold_epa_days_proportion: float = threshold_epa_days_count / total_epa_days_count
 
-			dict_epa_stats_helper.update({
-				threshold: {
-					threshold_side: {
-						DATA_FRAME:               df_epa_target_variable_above_or_below_threshold,
-						THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count,
-						THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
-					}
-				}
+			dict_epa_stats_helper[threshold][threshold_side].update({
+				DATA_FRAME:                    df_epa_target_variable_above_or_below_threshold,
+				THRESHOLD_EPA_DAYS_COUNT:      threshold_epa_days_count,
+				THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
 			})
 
 	return dict_epa_stats_helper
