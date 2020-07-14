@@ -758,7 +758,6 @@ def run_correlations(
 						total_epa_days_count: int = -1
 						kw_nonzero_count: int = -1
 						kw_proportion: float = -1
-						trends_column: str = ""
 						trends_column_name_ignore_zero: str = ""
 
 						threshold: float
@@ -806,14 +805,14 @@ def run_correlations(
 													value=np.nan,
 												)
 
-												if bool_ignore_zero:
-													trends_column = trends_column_name_ignore_zero
-												else:
-													trends_column = target_variable_column_name_trends
 												total_epa_days_count = df_epa[target_variable_column_name_epa].count()
 												kw_nonzero_count = df_trends[trends_column_name_ignore_zero].count()
 												kw_proportion = kw_nonzero_count / df_trends[target_variable_column_name_trends].count()
 
+											if bool_ignore_zero:
+												trends_column = trends_column_name_ignore_zero
+											else:
+												trends_column = target_variable_column_name_trends
 											dict_cor_row: dict = correlate_for_keyword(
 												df_epa=df_epa,
 												target_variable_column_name_epa=target_variable_column_name_epa,
