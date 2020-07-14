@@ -683,6 +683,7 @@ def run_correlations(
 			set_error_task_origin(task_origin=PARAM_CORRELATE)
 			log_error(f"{CORRELATIONS} : {city} : {pollutant} : {target_statistic}", log=True)
 
+			total_epa_days_count: int = -1
 			df_epa: pd.DataFrame = pd.DataFrame()
 
 			list_potential_filename_epa: List[str] = filter_list_strings(
@@ -714,6 +715,8 @@ def run_correlations(
 						start_date=start_date,
 						end_date=end_date,
 					)
+
+				total_epa_days_count = df_epa[target_variable_column_name_epa].count()
 
 			# noinspection PyTypeChecker
 			nt_filename_epa_stitch_parsed: NamedTuple = parse_filename(
@@ -755,19 +758,18 @@ def run_correlations(
 						nonlocal df_trends
 						nonlocal trends_set
 
-						total_epa_days_count: int = -1
 						kw_nonzero_count: int = -1
 						kw_proportion: float = -1
 						trends_column_name_ignore_zero: str = ""
 
 						threshold: float
 						for threshold in DEFAULT_POLLUTANTS[pollutant][THRESHOLD]:
-							time_shift: int
-							for time_shift in list_time_shifts:
+							above_or_below_threshold: str
+							for above_or_below_threshold in list_threshold_sides:
 								bool_ignore_zero: bool
 								for bool_ignore_zero in list_bool_ignore_zero:
-									above_or_below_threshold: str
-									for above_or_below_threshold in list_threshold_sides:
+									time_shift: int
+									for time_shift in list_time_shifts:
 										nt_filename_correlation = NT_filename_correlation(
 											city=city,
 											keyword=nt_filename_trends_stitch_parsed.keyword,
@@ -805,7 +807,6 @@ def run_correlations(
 													value=np.nan,
 												)
 
-												total_epa_days_count = df_epa[target_variable_column_name_epa].count()
 												kw_nonzero_count = df_trends[trends_column_name_ignore_zero].count()
 												kw_proportion = kw_nonzero_count / df_trends[target_variable_column_name_trends].count()
 
@@ -813,6 +814,7 @@ def run_correlations(
 												trends_column = trends_column_name_ignore_zero
 											else:
 												trends_column = target_variable_column_name_trends
+
 											dict_cor_row: dict = correlate_for_keyword(
 												df_epa=df_epa,
 												target_variable_column_name_epa=target_variable_column_name_epa,
