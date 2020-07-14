@@ -119,9 +119,9 @@ NT_filename_correlation = namedtuple(
 	]
 )
 DT_filename_correlation = {
-	IGNORE_ZERO:          "bool",
-	THRESHOLD:            (lambda x: parse_filename_numeric(numeric=x, cast_type="float")),
-	TIME_SHIFT:           "int",
+	IGNORE_ZERO: "bool",
+	THRESHOLD:   (lambda x: parse_filename_numeric(numeric=x, cast_type="float")),
+	TIME_SHIFT:  "int",
 }
 
 
@@ -511,11 +511,11 @@ def baseline(
 		list_time_shifts: Tuple[int, ...] = DEFAULT_TIME_SHIFTS,
 ) -> None:
 	dict_comparison_constraints: Dict[str, Tuple[any, ...]] = {
-		IGNORE_ZERO:          list_bool_ignore_zero,
-		POLLUTANT:            list_pollutants,
-		TARGET_STATISTIC:     list_target_statistics,
-		THRESHOLD_SIDE:       list_threshold_sides,
-		TIME_SHIFT:           list_time_shifts,
+		IGNORE_ZERO:      list_bool_ignore_zero,
+		POLLUTANT:        list_pollutants,
+		TARGET_STATISTIC: list_target_statistics,
+		THRESHOLD_SIDE:   list_threshold_sides,
+		TIME_SHIFT:       list_time_shifts,
 	}
 	list_filenames_correlations: List[str] = import_paths_from_folder(
 		folder=folder_stats_correlations,
@@ -830,16 +830,16 @@ def run_correlations(
 											)
 											dict_cor_row.update(
 												{
-													CITY:                 city,
-													KEYWORD:              nt_filename_trends_stitch_parsed.keyword,
-													POLLUTANT:            pollutant,
-													TARGET_STATISTIC:     target_statistic,
-													THRESHOLD:            threshold,
-													THRESHOLD_SIDE:       above_or_below_threshold,
-													TIME_SHIFT:           time_shift,
-													IGNORE_ZERO: bool_ignore_zero,
-													TOTAL_EPA_DAYS_COUNT: total_epa_days_count,
-													KW_NONZERO_COUNT: kw_nonzero_count,
+													CITY:                  city,
+													KEYWORD:               nt_filename_trends_stitch_parsed.keyword,
+													POLLUTANT:             pollutant,
+													TARGET_STATISTIC:      target_statistic,
+													THRESHOLD:             threshold,
+													THRESHOLD_SIDE:        above_or_below_threshold,
+													TIME_SHIFT:            time_shift,
+													IGNORE_ZERO:           bool_ignore_zero,
+													TOTAL_EPA_DAYS_COUNT:  total_epa_days_count,
+													KW_NONZERO_COUNT:      kw_nonzero_count,
 													KW_NONZERO_PROPORTION: kw_proportion,
 												},
 											)
