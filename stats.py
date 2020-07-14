@@ -885,7 +885,7 @@ def dp_epa_variations_dict(
 			elif threshold_side == CORRELATE_BELOW_THRESHOLD:
 				df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_epa[target_variable_column_name_epa].mask(df_epa[target_variable_column_name_epa] >= threshold)
 			else:
-				df_epa_target_variable_above_or_below_threshold: pd.DataFrame = pd.DataFrame()
+				continue
 
 			threshold_epa_days_count: int = df_epa_target_variable_above_or_below_threshold.count()
 			threshold_epa_days_proportion: float = threshold_epa_days_count / total_epa_days_count
