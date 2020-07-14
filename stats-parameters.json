@@ -40,9 +40,6 @@
             "mean",
             "median"
         ],
-        "threshold_percentile": [
-            100
-        ],
         "time_shift": [
             -1,
             0,

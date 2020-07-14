@@ -114,7 +114,6 @@ NT_filename_correlation = namedtuple(
 		TARGET_STATISTIC,
 		IGNORE_ZERO,
 		THRESHOLD,
-		THRESHOLD_PERCENTILE,
 		THRESHOLD_SIDE,
 		TIME_SHIFT,
 	]
@@ -122,7 +121,6 @@ NT_filename_correlation = namedtuple(
 DT_filename_correlation = {
 	IGNORE_ZERO:          "bool",
 	THRESHOLD:            (lambda x: parse_filename_numeric(numeric=x, cast_type="float")),
-	THRESHOLD_PERCENTILE: "int",
 	TIME_SHIFT:           "int",
 }
 
@@ -171,7 +169,6 @@ def main(
 			list_input_cities: List[str] = parameters[CITY]
 			list_pollutants: List[str] = parameters[POLLUTANT]
 			list_target_statistics: List[str] = parameters[TARGET_STATISTIC]
-			list_threshold_percentiles: List[int] = parameters[THRESHOLD_PERCENTILE]
 			list_time_shifts: List[int] = parameters[TIME_SHIFT]
 			DEFAULT_POLLUTANTS.update(parameters[POLLUTANT])
 
@@ -308,7 +305,6 @@ def main(
 				list_bool_ignore_zero=DEFAULT_IGNORE_ZERO_TRENDS,
 				list_pollutants=tuple(list_pollutants),
 				list_target_statistics=tuple(list_target_statistics),
-				list_threshold_percentiles=tuple(list_threshold_percentiles),
 				list_threshold_sides=tuple(list_threshold_sides),
 				list_time_shifts=tuple(list_time_shifts),
 			)
@@ -386,7 +382,6 @@ def main(
 				list_bool_ignore_zero=DEFAULT_IGNORE_ZERO_TRENDS,
 				list_pollutants=tuple(list_pollutants),
 				list_target_statistics=tuple(list_target_statistics),
-				list_threshold_percentiles=tuple(list_threshold_percentiles),
 				list_threshold_sides=tuple(list_threshold_sides),
 				list_time_shifts=tuple(list_time_shifts),
 			)
@@ -512,7 +507,6 @@ def baseline(
 		list_bool_ignore_zero: Tuple[bool, ...] = DEFAULT_IGNORE_ZERO_TRENDS,
 		list_pollutants: Tuple[str, ...] = tuple(DEFAULT_POLLUTANTS),
 		list_target_statistics: Tuple[str, ...] = DEFAULT_TARGET_STATISTICS,
-		list_threshold_percentiles: Tuple[int, ...] = DEFAULT_THRESHOLD_PERCENTILES,
 		list_threshold_sides: Tuple[str, ...] = DEFAULT_THRESHOLD_SIDES,
 		list_time_shifts: Tuple[int, ...] = DEFAULT_TIME_SHIFTS,
 ) -> None:
@@ -520,7 +514,6 @@ def baseline(
 		IGNORE_ZERO:          list_bool_ignore_zero,
 		POLLUTANT:            list_pollutants,
 		TARGET_STATISTIC:     list_target_statistics,
-		THRESHOLD_PERCENTILE: list_threshold_percentiles,
 		THRESHOLD_SIDE:       list_threshold_sides,
 		TIME_SHIFT:           list_time_shifts,
 	}
@@ -662,7 +655,6 @@ def run_correlations(
 		list_bool_ignore_zero: Tuple[bool, ...] = DEFAULT_IGNORE_ZERO_TRENDS,
 		list_pollutants: Tuple[str, ...] = tuple(DEFAULT_POLLUTANTS),
 		list_target_statistics: Tuple[str, ...] = DEFAULT_TARGET_STATISTICS,
-		list_threshold_percentiles: Tuple[int, ...] = DEFAULT_THRESHOLD_PERCENTILES,
 		list_threshold_sides: Tuple[str, ...] = DEFAULT_THRESHOLD_SIDES,
 		list_time_shifts: Tuple[int, ...] = DEFAULT_TIME_SHIFTS,
 ) -> None:
@@ -769,99 +761,94 @@ def run_correlations(
 						trends_column: str = ""
 						trends_column_name_ignore_zero: str = ""
 
-						threshold_percentile: int
-						for threshold_percentile in list_threshold_percentiles:
-							threshold: float
-							for threshold in DEFAULT_POLLUTANTS[pollutant][THRESHOLD]:
-								threshold = threshold * (threshold_percentile / 100)
-								time_shift: int
-								for time_shift in list_time_shifts:
-									bool_ignore_zero: bool
-									for bool_ignore_zero in list_bool_ignore_zero:
-										above_or_below_threshold: str
-										for above_or_below_threshold in list_threshold_sides:
-											nt_filename_correlation = NT_filename_correlation(
-												city=city,
-												keyword=nt_filename_trends_stitch_parsed.keyword,
-												pollutant=pollutant,
-												target_statistic=target_statistic,
-												ignore_zero=str(bool_ignore_zero),
-												threshold=generate_numeric_for_filename_output(threshold),
-												threshold_percentile=str(threshold_percentile),
-												threshold_side=above_or_below_threshold,
-												time_shift=generate_numeric_for_filename_output(time_shift),
+						threshold: float
+						for threshold in DEFAULT_POLLUTANTS[pollutant][THRESHOLD]:
+							time_shift: int
+							for time_shift in list_time_shifts:
+								bool_ignore_zero: bool
+								for bool_ignore_zero in list_bool_ignore_zero:
+									above_or_below_threshold: str
+									for above_or_below_threshold in list_threshold_sides:
+										nt_filename_correlation = NT_filename_correlation(
+											city=city,
+											keyword=nt_filename_trends_stitch_parsed.keyword,
+											pollutant=pollutant,
+											target_statistic=target_statistic,
+											ignore_zero=str(bool_ignore_zero),
+											threshold=generate_numeric_for_filename_output(threshold),
+											threshold_side=above_or_below_threshold,
+											time_shift=generate_numeric_for_filename_output(time_shift),
+										)
+										filename_correlation: str = generate_filename(
+											nt_filename=nt_filename_correlation,
+											delimiter=HYPHEN,
+											extension=CSV,
+										)
+
+										if only_correlate_missing and filename_correlation in list_filenames_correlations:
+											continue
+										else:
+
+											if not trends_set:
+												df_trends = pd.read_csv(
+													f"{folder_trends_stitch}{filename_trends}",
+													usecols=[DATE, target_variable_column_name_trends],
+													parse_dates=[DATE],
+												)
+												trends_set = True
+												if df_trends.empty:
+													log_error(error=f"df_empty{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
+													return
+
+												trends_column_name_ignore_zero: str = f"{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}"
+												df_trends[trends_column_name_ignore_zero] = df_trends[target_variable_column_name_trends].replace(
+													to_replace=0,
+													value=np.nan,
+												)
+
+												if bool_ignore_zero:
+													trends_column = trends_column_name_ignore_zero
+												else:
+													trends_column = target_variable_column_name_trends
+												total_epa_days_count = df_epa[target_variable_column_name_epa].count()
+												kw_nonzero_count = df_trends[trends_column_name_ignore_zero].count()
+												kw_proportion = kw_nonzero_count / df_trends[target_variable_column_name_trends].count()
+
+											dict_cor_row: dict = correlate_for_keyword(
+												df_epa=df_epa,
+												target_variable_column_name_epa=target_variable_column_name_epa,
+												df_trends=df_trends,
+												threshold=threshold,
+												above_or_below_threshold=above_or_below_threshold,
+												time_shift=time_shift,
+												trends_column=trends_column,
+												trends_column_name_ignore_zero=trends_column_name_ignore_zero,
+												total_epa_days_count=total_epa_days_count,
+
 											)
-											filename_correlation: str = generate_filename(
-												nt_filename=nt_filename_correlation,
-												delimiter=HYPHEN,
-												extension=CSV,
+											dict_cor_row.update(
+												{
+													CITY:                 city,
+													KEYWORD:              nt_filename_trends_stitch_parsed.keyword,
+													POLLUTANT:            pollutant,
+													TARGET_STATISTIC:     target_statistic,
+													THRESHOLD:            threshold,
+													THRESHOLD_SIDE:       above_or_below_threshold,
+													TIME_SHIFT:           time_shift,
+													IGNORE_ZERO: bool_ignore_zero,
+													TOTAL_EPA_DAYS_COUNT: total_epa_days_count,
+													KW_NONZERO_COUNT: kw_nonzero_count,
+													KW_NONZERO_PROPORTION: kw_proportion,
+												},
 											)
 
-											if only_correlate_missing and filename_correlation in list_filenames_correlations:
-												continue
-											else:
-
-												if not trends_set:
-													df_trends = pd.read_csv(
-														f"{folder_trends_stitch}{filename_trends}",
-														usecols=[DATE, target_variable_column_name_trends],
-														parse_dates=[DATE],
-													)
-													trends_set = True
-													if df_trends.empty:
-														log_error(error=f"df_empty{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
-														return
-
-													trends_column_name_ignore_zero: str = f"{target_variable_column_name_trends}{HYPHEN}{IGNORE_ZERO}"
-													df_trends[trends_column_name_ignore_zero] = df_trends[target_variable_column_name_trends].replace(
-														to_replace=0,
-														value=np.nan,
-													)
-
-													if bool_ignore_zero:
-														trends_column = trends_column_name_ignore_zero
-													else:
-														trends_column = target_variable_column_name_trends
-													total_epa_days_count = df_epa[target_variable_column_name_epa].count()
-													kw_nonzero_count = df_trends[trends_column_name_ignore_zero].count()
-													kw_proportion = kw_nonzero_count / df_trends[target_variable_column_name_trends].count()
-
-												dict_cor_row: dict = correlate_for_keyword(
-													df_epa=df_epa,
-													target_variable_column_name_epa=target_variable_column_name_epa,
-													df_trends=df_trends,
-													threshold=threshold,
-													above_or_below_threshold=above_or_below_threshold,
-													time_shift=time_shift,
-													trends_column=trends_column,
-													trends_column_name_ignore_zero=trends_column_name_ignore_zero,
-													total_epa_days_count=total_epa_days_count,
-
-												)
-												dict_cor_row.update(
-													{
-														CITY:                 city,
-														KEYWORD:              nt_filename_trends_stitch_parsed.keyword,
-														POLLUTANT:            pollutant,
-														TARGET_STATISTIC:     target_statistic,
-														THRESHOLD:            threshold,
-														THRESHOLD_SIDE:       above_or_below_threshold,
-														THRESHOLD_PERCENTILE: threshold_percentile,
-														TIME_SHIFT:           time_shift,
-														IGNORE_ZERO: bool_ignore_zero,
-														TOTAL_EPA_DAYS_COUNT: total_epa_days_count,
-														KW_NONZERO_COUNT: kw_nonzero_count,
-														KW_NONZERO_PROPORTION: kw_proportion,
-													},
-												)
-
-												pd.DataFrame(
-													dict_cor_row,
-													index=[0],
-												).to_csv(
-													f"{folder_stats_correlations}{filename_correlation}",
-													index=False,
-												)
+											pd.DataFrame(
+												dict_cor_row,
+												index=[0],
+											).to_csv(
+												f"{folder_stats_correlations}{filename_correlation}",
+												index=False,
+											)
 
 					correlate_single_trend()
 
