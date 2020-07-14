@@ -11,6 +11,7 @@ COMMON_CITY: str = "common_city"
 CORRELATIONS_COMPARISON: str = "correlations_comparison"
 CORRELATE_ABOVE_THRESHOLD: str = "above_threshold"
 CORRELATE_BELOW_THRESHOLD: str = "below_threshold"
+DATA_FRAME: str = "data_frame"
 KW_NONZERO_COUNT: str = "kw_nonzero_count"
 KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
 KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
@@ -685,7 +686,6 @@ def run_correlations(
 			log_error(f"{CORRELATIONS} : {city} : {pollutant} : {target_statistic}", log=True)
 
 			total_epa_days_count: int = -1
-			df_epa: pd.DataFrame = pd.DataFrame()
 
 			list_potential_filename_epa: List[str] = filter_list_strings(
 				list_strings=list_filenames_epa,
@@ -736,6 +736,13 @@ def run_correlations(
 			if nt_filename_epa_stitch_parsed.target_statistic != target_statistic:
 				log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{TARGET_STATISTIC}{HYPHEN}{target_statistic}")
 				continue
+
+			dict_epa_stats_helper: Dict[float, Dict[str, Dict[str, Any]]] = dp_epa_variations_dict(
+				df_epa=df_epa,
+				list_thresholds=tuple(list_thresholds),
+				list_threshold_sides=list_threshold_sides,
+				total_epa_days_count=total_epa_days_count,
+			)
 
 			def correlate_trends() -> None:
 				filename_trends: str
@@ -797,6 +804,7 @@ def run_correlations(
 													usecols=[DATE, target_variable_column_name_trends],
 													parse_dates=[DATE],
 												)
+												df_trends.set_index(DATE, inplace=True)
 												trends_set = True
 												if df_trends.empty:
 													log_error(error=f"df_empty{HYPHEN}{TRENDS}{HYPHEN}{filename_trends}")
@@ -816,18 +824,21 @@ def run_correlations(
 											else:
 												trends_column = target_variable_column_name_trends
 
+											df_epa_target_variable_above_or_below_threshold: pd.DataFrame = dict_epa_stats_helper.get(threshold, {}).get(above_or_below_threshold, {}).get(DATA_FRAME, pd.DataFrame())
+											threshold_epa_days_count: int = dict_epa_stats_helper.get(threshold, {}).get(above_or_below_threshold, {}).get(THRESHOLD_EPA_DAYS_COUNT, -1)
+											threshold_epa_days_proportion: float = dict_epa_stats_helper.get(threshold, {}).get(above_or_below_threshold, {}).get(THRESHOLD_EPA_DAYS_PROPORTION, -1)
+
 											dict_cor_row: dict = correlate_for_keyword(
-												df_epa=df_epa,
-												target_variable_column_name_epa=target_variable_column_name_epa,
 												df_trends=df_trends,
-												threshold=threshold,
-												above_or_below_threshold=above_or_below_threshold,
+												df_epa_target_variable_above_or_below_threshold=df_epa_target_variable_above_or_below_threshold,
 												time_shift=time_shift,
 												trends_column=trends_column,
 												trends_column_name_ignore_zero=trends_column_name_ignore_zero,
-												total_epa_days_count=total_epa_days_count,
-
+												threshold_epa_days_count=threshold_epa_days_count,
 											)
+
+											dict_cor_row.update({THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count})
+											dict_cor_row.update({THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion})
 											dict_cor_row.update(
 												{
 													CITY:                  city,
@@ -858,40 +869,52 @@ def run_correlations(
 			write_errors_to_disk(bool_suppress_print=True, overwrite=False)
 
 
-def correlate_for_keyword(
+# dynamic programming
+def dp_epa_variations_dict(
 		df_epa: pd.DataFrame,
+		total_epa_days_count: int,
+		list_thresholds: Tuple[float, ...],
+		list_threshold_sides: Tuple[str, ...] = DEFAULT_THRESHOLD_SIDES,
+		target_variable_column_name_epa: str = POLLUTION_LEVEL,
+) -> Dict[float, Dict[str, Dict[str, Any]]]:
+	dict_epa_stats_helper: Dict[float, Dict[str, Dict[str, Any]]] = {}
+	for threshold in list_thresholds:
+		for threshold_side in list_threshold_sides:
+			if threshold_side == CORRELATE_ABOVE_THRESHOLD:
+				df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_epa[target_variable_column_name_epa].mask(df_epa[target_variable_column_name_epa] < threshold)
+			elif threshold_side == CORRELATE_BELOW_THRESHOLD:
+				df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_epa[target_variable_column_name_epa].mask(df_epa[target_variable_column_name_epa] >= threshold)
+			else:
+				df_epa_target_variable_above_or_below_threshold: pd.DataFrame = pd.DataFrame()
+
+			threshold_epa_days_count: int = df_epa_target_variable_above_or_below_threshold.count()
+			threshold_epa_days_proportion: float = threshold_epa_days_count / total_epa_days_count
+
+			dict_epa_stats_helper.update({
+				threshold: {
+					threshold_side: {
+						DATA_FRAME:               df_epa_target_variable_above_or_below_threshold,
+						THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count,
+						THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
+					}
+				}
+			})
+
+	return dict_epa_stats_helper
+
+
+def correlate_for_keyword(
 		df_trends: pd.DataFrame,
-		target_variable_column_name_epa: str,
-		threshold: float,
-		above_or_below_threshold: str,
+		df_epa_target_variable_above_or_below_threshold: pd.DataFrame,
 		time_shift: int,
 		trends_column: str,
 		trends_column_name_ignore_zero: str,
-		total_epa_days_count: int,
+		threshold_epa_days_count: int,
 ) -> dict:
 	dict_cor_row: dict = {}
-	df_merged: pd.DataFrame = df_epa.merge(
-		right=df_trends,
-		left_on=DATE,
-		right_on=DATE,
-		how="left",
-	)
-
-	if above_or_below_threshold == CORRELATE_ABOVE_THRESHOLD:
-		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_merged[target_variable_column_name_epa].mask(df_merged[target_variable_column_name_epa] < threshold)
-	elif above_or_below_threshold == CORRELATE_BELOW_THRESHOLD:
-		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_merged[target_variable_column_name_epa].mask(df_merged[target_variable_column_name_epa] >= threshold)
-	else:
-		df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_merged[target_variable_column_name_epa]
-
-	threshold_epa_days_count: int = df_epa_target_variable_above_or_below_threshold.count()
-	dict_cor_row.update({THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count})
-
-	threshold_epa_days_proportion: float = threshold_epa_days_count / total_epa_days_count
-	dict_cor_row.update({THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion})
 
 	# noinspection PyTypeChecker
-	df_kw_nonzero_threshold_days: pd.DataFrame = (df_merged[trends_column_name_ignore_zero] > 0) & df_epa_target_variable_above_or_below_threshold
+	df_kw_nonzero_threshold_days: pd.DataFrame = (df_trends[trends_column_name_ignore_zero] > 0) & df_epa_target_variable_above_or_below_threshold
 	kw_nonzero_threshold_days_count: int = df_kw_nonzero_threshold_days.count()
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_COUNT: kw_nonzero_threshold_days_count})
 
@@ -904,7 +927,7 @@ def correlate_for_keyword(
 
 	# need to multiply time shift by -1 to keep intuitive logic
 	# shift of 1 is tomorrow's search correlating with today's pollution
-	df_trends_with_time_shift: pd.DataFrame = df_merged[trends_column].shift(periods=(-1 * time_shift))
+	df_trends_with_time_shift: pd.DataFrame = df_trends[trends_column].shift(periods=(-1 * time_shift))
 
 	# noinspection PyArgumentList
 	# noinspection PyTypeChecker
