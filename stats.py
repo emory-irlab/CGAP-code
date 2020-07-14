@@ -678,6 +678,7 @@ def run_correlations(
 
 	pollutant: str
 	for pollutant in list_pollutants:
+		list_thresholds: List[float] = DEFAULT_POLLUTANTS[pollutant][THRESHOLD]
 		target_statistic: str
 		for target_statistic in list_target_statistics:
 			set_error_task_origin(task_origin=PARAM_CORRELATE)
@@ -763,7 +764,7 @@ def run_correlations(
 						trends_column_name_ignore_zero: str = ""
 
 						threshold: float
-						for threshold in DEFAULT_POLLUTANTS[pollutant][THRESHOLD]:
+						for threshold in list_thresholds:
 							above_or_below_threshold: str
 							for above_or_below_threshold in list_threshold_sides:
 								bool_ignore_zero: bool
