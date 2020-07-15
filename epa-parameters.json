@@ -1,8 +1,8 @@
 {
-    "download": true,
+    "download": false,
     "download_data_type": "CBSA",
     "only_download_missing": true,
-    "stitch": false,
+    "stitch": true,
     "aggregate": false,
     "aggregate_and_upload": false,
     "upload": false,
@@ -45,7 +45,6 @@
         ],
         "target_statistic": [
             "mean",
-            "median",
             "max"
         ]
     },
