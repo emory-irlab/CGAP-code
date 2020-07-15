@@ -839,22 +839,6 @@ def stitch_keyword_df(
 		return pd.DataFrame(), ERROR_EMPTY
 
 
-def generate_empty_time_series_df(
-		start_date: str,
-		end_date: str,
-		date_format: str = DATE_FORMAT,
-) -> pd.DataFrame:
-	s_dt: datetime = datetime.datetime.strptime(start_date, date_format)
-	e_dt: datetime = datetime.datetime.strptime(end_date, date_format)
-	delta: datetime.timedelta = e_dt - s_dt
-	dates_list: List[str] = [
-		(s_dt + datetime.timedelta(days=x)).strftime(date_format)
-		for x in range(delta.days + 1)
-	]
-
-	return pd.DataFrame({DATE: dates_list})
-
-
 def generate_source_dict_from_keywords_dict(
 		dict_keywords: dict,
 		list_source_folders_to_download: Tuple[str, ...] = (),

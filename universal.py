@@ -134,10 +134,9 @@ SO2: str = "SO2"
 
 # DEFAULT VARIABLES
 DEFAULT_COMMON_WORD: str = "pins"
-DEFAULT_TARGET_STATISTICS: Tuple[str, str, str] = (
+DEFAULT_TARGET_STATISTICS: Tuple[str, ...] = (
 	MAX,
 	MEAN,
-	MEDIAN,
 )
 
 DEFAULT_CITIES: Dict[str, dict] = {
@@ -352,6 +351,22 @@ def generate_date_pair_for_full_series(
 	last_start_date, last_end_date = list_date_pairs[-1]
 
 	return NT_date_pair(start_date=first_start_date, end_date=last_end_date)
+
+
+def generate_empty_time_series_df(
+		start_date: str,
+		end_date: str,
+		date_format: str = DATE_FORMAT,
+) -> pd.DataFrame:
+	s_dt: datetime = datetime.datetime.strptime(start_date, date_format)
+	e_dt: datetime = datetime.datetime.strptime(end_date, date_format)
+	delta: datetime.timedelta = e_dt - s_dt
+	dates_list: List[str] = [
+		(s_dt + datetime.timedelta(days=x)).strftime(date_format)
+		for x in range(delta.days + 1)
+	]
+
+	return pd.DataFrame({DATE: dates_list})
 
 
 def filter_date_for_df(

@@ -31,6 +31,7 @@ NT_filename_epa_stitch = namedtuple(
 		CITY,
 		POLLUTANT,
 		TARGET_STATISTIC,
+		EPA_COLUMN_SITE_NUMBER,
 		START_DATE,
 		END_DATE,
 	]
@@ -317,35 +318,62 @@ def stitch_epa(
 		list_dfs,
 		ignore_index=True,
 	)
-	df_stitched = df_stitched.groupby([EPA_COLUMN_DATE_LOCAL, EPA_COLUMN_SITE_NUMBER]).agg('mean')
+	df_stitched.rename(
+		columns={
+			EPA_API_DATE: DATE,
+		},
+		inplace=True,
+	)
+	df_stitched = df_stitched.groupby([DATE, EPA_COLUMN_SITE_NUMBER]).agg('mean')
+	df_stitched.reset_index(
+		inplace=True,
+		drop=False,
+	)
 
-	for target_statistic in list_target_statistics:
-		log_error(f"{STITCH} : {city} : {pollutant} : {target_statistic}", log=True)
-		try:
-			df_target_statistic = df_stitched.groupby([EPA_COLUMN_DATE_LOCAL]).agg(target_statistic)
-		except AttributeError:
-			log_error(error=f"not_valid_group_by_function{HYPHEN}{target_statistic}")
-			continue
+	df_empty: pd.DataFrame = generate_empty_time_series_df(
+		start_date=first_date.replace(UNDERSCORE, HYPHEN),
+		end_date=end_date.replace(UNDERSCORE, HYPHEN),
+	)
 
-		df_target_statistic.insert(1, TARGET_STATISTIC, target_statistic)
-		df_target_statistic.insert(1, POLLUTANT, pollutant)
-		df_target_statistic.insert(1, CITY, city)
-		df_target_statistic.reset_index(
-			drop=False,
-			inplace=True,
-		)
+	df: pd.DataFrame = pd.DataFrame({
+		DATE: pd.to_datetime(df_empty[DATE]),
+	})
+	df.set_index(
+		DATE,
+		inplace=True,
+		drop=True,
+	)
+
+	def clean_epa_df(
+			df_cleaned: pd.DataFrame,
+			target_statistic: str,
+			site_number: str,
+	) -> None:
+		epa_column: str
+		if target_statistic == MAX:
+			epa_column = EPA_COLUMN_FIRST_MAX_VALUE
+		elif target_statistic == MEAN:
+			epa_column = EPA_COLUMN_ARITHMETIC_MEAN
+		else:
+			epa_column = EPA_COLUMN_ARITHMETIC_MEAN
+
+		df_target_statistic = pd.DataFrame(df_cleaned[epa_column])
 		df_target_statistic.rename(
 			columns={
-				EPA_COLUMN_ARITHMETIC_MEAN: POLLUTION_LEVEL,
-				EPA_API_DATE: DATE,
+				epa_column: POLLUTION_LEVEL,
 			},
 			inplace=True,
 		)
+		df_target_statistic.insert(1, EPA_COLUMN_SITE_NUMBER, site_number)
+		df_target_statistic.insert(1, TARGET_STATISTIC, target_statistic)
+		df_target_statistic.insert(1, POLLUTANT, pollutant)
+		df_target_statistic.insert(1, CITY, city)
 
 		nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
 			city=city,
 			pollutant=pollutant,
 			target_statistic=target_statistic,
+			site_number=site_number,
 			start_date=first_date,
 			end_date=end_date,
 		)
@@ -356,8 +384,53 @@ def stitch_epa(
 		)
 		df_target_statistic.to_csv(
 			f"{folder_epa_stitch}{filename_epa_stitch}",
-			index=False,
+			index=True,
 		)
+
+	for site_number, group in df_stitched.groupby([EPA_COLUMN_SITE_NUMBER]):
+		df_group_full_timeline: pd.DataFrame = df.merge(
+			right=group,
+			how="left",
+			left_index=True,
+			right_on=DATE,
+		)
+		df_group_full_timeline.set_index(
+			DATE,
+			inplace=True,
+			drop=True,
+		)
+
+		target_statistic: str
+		for target_statistic in list_target_statistics:
+			log_error(f"{STITCH} : {city} : {pollutant} : {site_number} : {target_statistic}", log=True)
+			clean_epa_df(
+				df_cleaned=df_group_full_timeline,
+				target_statistic=target_statistic,
+				site_number=site_number,
+			)
+
+
+def citywide_epa(
+		df: pd.DataFrame,
+) -> pd.DataFrame:
+	log_error(f"{STITCH} : {city} : {pollutant} : all", log=True)
+	df
+	try:
+		df_target_statistic = df_stitched.groupby([EPA_COLUMN_DATE_LOCAL]).agg(target_statistic)
+	except AttributeError:
+		log_error(error=f"not_valid_group_by_function{HYPHEN}{target_statistic}")
+		continue
+
+	df_arithmetic_mean = df_stitched[EPA_COLUMN_ARITHMETIC_MEAN]
+	df_arithmetic_mean[TARGET_STATISTIC] = MEAN
+
+	df_max_value = df_stitched[EPA_COLUMN_FIRST_MAX_VALUE]
+	df_max_value[TARGET_STATISTIC] = MAX
+
+	clean_epa_df(df_arithmetic_mean, MEAN)
+	clean_epa_df(df_max_value, MAX)
+
+	exit()  # todo
 
 
 def filter_epa(
