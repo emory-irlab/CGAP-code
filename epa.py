@@ -11,6 +11,11 @@ EPA_API_DATE: str = "date_local"
 EPA_API_DATE_FORMAT: str = "%Y%m%d"
 EPA_API_START_DATE: str = "bdate"
 EPA_API_END_DATE: str = "edate"
+CITY_WIDE_AGGREGATION_SITE_NUMBER: int = -1
+MEAN_OF_DAILY_MEANS: str = "mean_of_daily_means"
+MAX_OF_DAILY_MEANS: str = "max_of_daily_means"
+MAX_OF_DAILY_MAXES: str = "max_of_daily_maxes"
+MEAN_OF_DAILY_MAXES: str = "mean_of_daily_maxes"
 
 # PARAMS
 PARAM_DOWNLOAD_DATA_TYPE: str = "download_data_type"
@@ -297,18 +302,18 @@ def stitch_epa(
 		list_dates.append(nt_filename_epa_raw_parsed.start_date)
 		list_dates.append(nt_filename_epa_raw_parsed.end_date)
 
-		df: pd.DataFrame = pd.read_csv(
+		df_empty_full_timeline: pd.DataFrame = pd.read_csv(
 			f"{folder_epa_raw}{filename}",
 			parse_dates=[EPA_COLUMN_DATE_LOCAL],
 			infer_datetime_format=True,
 		)
 		filter_conditions: dict = DEFAULT_POLLUTANTS.get(pollutant, {}).get(EPA_FILTER, {})
-		df = filter_epa(
-			df=df,
+		df_empty_full_timeline = filter_epa(
+			df=df_empty_full_timeline,
 			filter_conditions=filter_conditions,
 		)
-		df = df[EPA_COLUMNS]
-		list_dfs.append(df)
+		df_empty_full_timeline = df_empty_full_timeline[EPA_COLUMNS]
+		list_dfs.append(df_empty_full_timeline)
 
 	list_dates.sort()
 	first_date: str = list_dates[0]
@@ -330,107 +335,125 @@ def stitch_epa(
 		drop=False,
 	)
 
-	df_empty: pd.DataFrame = generate_empty_time_series_df(
+	df_empty_full_timeline: pd.DataFrame = generate_empty_time_series_df(
 		start_date=first_date.replace(UNDERSCORE, HYPHEN),
 		end_date=end_date.replace(UNDERSCORE, HYPHEN),
 	)
-
-	df: pd.DataFrame = pd.DataFrame({
-		DATE: pd.to_datetime(df_empty[DATE]),
+	df_empty_full_timeline: pd.DataFrame = pd.DataFrame({
+		DATE: pd.to_datetime(df_empty_full_timeline[DATE]),
 	})
-	df.set_index(
+	df_empty_full_timeline.set_index(
 		DATE,
 		inplace=True,
 		drop=True,
 	)
 
-	def clean_epa_df(
-			df_cleaned: pd.DataFrame,
-			target_statistic: str,
-			site_number: str,
-	) -> None:
-		epa_column: str
-		if target_statistic == MAX:
-			epa_column = EPA_COLUMN_FIRST_MAX_VALUE
-		elif target_statistic == MEAN:
-			epa_column = EPA_COLUMN_ARITHMETIC_MEAN
-		else:
-			epa_column = EPA_COLUMN_ARITHMETIC_MEAN
-
-		df_target_statistic = pd.DataFrame(df_cleaned[epa_column])
-		df_target_statistic.rename(
-			columns={
-				epa_column: POLLUTION_LEVEL,
-			},
-			inplace=True,
-		)
-		df_target_statistic.insert(1, EPA_COLUMN_SITE_NUMBER, site_number)
-		df_target_statistic.insert(1, TARGET_STATISTIC, target_statistic)
-		df_target_statistic.insert(1, POLLUTANT, pollutant)
-		df_target_statistic.insert(1, CITY, city)
-
-		nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
-			city=city,
-			pollutant=pollutant,
-			target_statistic=target_statistic,
-			site_number=site_number,
-			start_date=first_date,
-			end_date=end_date,
-		)
-		filename_epa_stitch: str = generate_filename(
-			nt_filename=nt_filename_epa_stitch,
-			extension=CSV,
-			delimiter=HYPHEN,
-		)
-		df_target_statistic.to_csv(
-			f"{folder_epa_stitch}{filename_epa_stitch}",
-			index=True,
-		)
-
 	for site_number, group in df_stitched.groupby([EPA_COLUMN_SITE_NUMBER]):
-		df_group_full_timeline: pd.DataFrame = df.merge(
-			right=group,
-			how="left",
-			left_index=True,
-			right_on=DATE,
-		)
-		df_group_full_timeline.set_index(
-			DATE,
-			inplace=True,
-			drop=True,
-		)
-
 		target_statistic: str
 		for target_statistic in list_target_statistics:
 			log_error(f"{STITCH} : {city} : {pollutant} : {site_number} : {target_statistic}", log=True)
 			clean_epa_df(
-				df_cleaned=df_group_full_timeline,
+				df_to_clean=group.set_index(
+					DATE,
+					drop=True,
+				),
+				df_empty_full_timeline=df_empty_full_timeline,
+				city=city,
+				pollutant=pollutant,
 				target_statistic=target_statistic,
-				site_number=site_number,
+				site_number=int(site_number),
+				first_date=first_date,
+				end_date=end_date,
+				folder_epa_stitch=folder_epa_stitch,
 			)
+
+		df_city_wide: pd.DataFrame
+		for df_city_wide, target_statistic in citywide_epa(
+				df=df_stitched,
+		):
+			log_error(f"{STITCH} : {city} : {pollutant} : all : {target_statistic}", log=True)
+			clean_epa_df(
+				df_to_clean=df_city_wide.to_frame(),
+				df_empty_full_timeline=df_empty_full_timeline,
+				city=city,
+				pollutant=pollutant,
+				target_statistic=target_statistic,
+				site_number=CITY_WIDE_AGGREGATION_SITE_NUMBER,
+				first_date=first_date,
+				end_date=end_date,
+				folder_epa_stitch=folder_epa_stitch,
+			)
+
+
+def clean_epa_df(
+		df_to_clean: pd.DataFrame,
+		df_empty_full_timeline: pd.DataFrame,
+		city: str,
+		pollutant: str,
+		target_statistic: str,
+		site_number: int,
+		first_date: str,
+		end_date: str,
+		folder_epa_stitch: str,
+) -> None:
+	if site_number == CITY_WIDE_AGGREGATION_SITE_NUMBER:
+		df_target_statistic = df_to_clean
+	else:
+		if target_statistic == MAX:
+			df_target_statistic = pd.DataFrame(df_to_clean[EPA_COLUMN_FIRST_MAX_VALUE])
+		elif target_statistic == MEAN:
+			df_target_statistic = pd.DataFrame(df_to_clean[EPA_COLUMN_ARITHMETIC_MEAN])
+		else:
+			log_error(error=f"unrecognized_{TARGET_STATISTIC}{HYPHEN}{target_statistic}")
+			return
+
+	df_target_statistic.rename(
+		columns={
+			df_target_statistic.columns[0]: POLLUTION_LEVEL,
+		},
+		inplace=True,
+	)
+
+	df: pd.DataFrame = df_empty_full_timeline.merge(
+		right=df_target_statistic,
+		how="left",
+		left_index=True,
+		right_on=DATE,
+	)
+	df.insert(1, EPA_COLUMN_SITE_NUMBER, site_number)
+	df.insert(1, TARGET_STATISTIC, target_statistic)
+	df.insert(1, POLLUTANT, pollutant)
+	df.insert(1, CITY, city)
+
+	nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
+		city=city,
+		pollutant=pollutant,
+		target_statistic=target_statistic,
+		site_number=generate_numeric_for_filename_output(site_number),
+		start_date=first_date,
+		end_date=end_date,
+	)
+	filename_epa_stitch: str = generate_filename(
+		nt_filename=nt_filename_epa_stitch,
+		extension=CSV,
+		delimiter=HYPHEN,
+	)
+	df.to_csv(
+		f"{folder_epa_stitch}{filename_epa_stitch}",
+		index=True,
+	)
 
 
 def citywide_epa(
 		df: pd.DataFrame,
-) -> pd.DataFrame:
-	log_error(f"{STITCH} : {city} : {pollutant} : all", log=True)
-	df
-	try:
-		df_target_statistic = df_stitched.groupby([EPA_COLUMN_DATE_LOCAL]).agg(target_statistic)
-	except AttributeError:
-		log_error(error=f"not_valid_group_by_function{HYPHEN}{target_statistic}")
-		continue
-
-	df_arithmetic_mean = df_stitched[EPA_COLUMN_ARITHMETIC_MEAN]
-	df_arithmetic_mean[TARGET_STATISTIC] = MEAN
-
-	df_max_value = df_stitched[EPA_COLUMN_FIRST_MAX_VALUE]
-	df_max_value[TARGET_STATISTIC] = MAX
-
-	clean_epa_df(df_arithmetic_mean, MEAN)
-	clean_epa_df(df_max_value, MAX)
-
-	exit()  # todo
+) -> Generator[Tuple[pd.DataFrame, str], None, None]:
+	df_grouped: pd.DataFrameGroupBy = df.groupby([DATE])
+	df_grouped_daily_mean: pd.DataFrame = df_grouped[EPA_COLUMN_ARITHMETIC_MEAN]
+	df_grouped_daily_max: pd.DataFrame = df_grouped[EPA_COLUMN_FIRST_MAX_VALUE]
+	yield df_grouped_daily_mean.agg(MEAN), MEAN_OF_DAILY_MEANS
+	yield df_grouped_daily_mean.agg(MAX), MAX_OF_DAILY_MEANS
+	yield df_grouped_daily_max.agg(MEAN), MEAN_OF_DAILY_MAXES
+	yield df_grouped_daily_max.agg(MAX), MAX_OF_DAILY_MAXES
 
 
 def filter_epa(

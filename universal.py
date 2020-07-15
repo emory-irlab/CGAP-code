@@ -7,12 +7,12 @@ from collections import namedtuple
 from typing import Any
 from typing import Callable
 from typing import Dict
+from typing import Generator
 from typing import Iterator
 from typing import List
 from typing import NamedTuple
 from typing import Pattern
 from typing import Tuple
-
 import pandas as pd
 
 # Data Frame + BigQuery Static Variables
