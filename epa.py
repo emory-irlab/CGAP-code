@@ -18,6 +18,7 @@ MEAN_OF_DAILY_MEANS: str = "mean_of_daily_means"
 MAX_OF_DAILY_MAXES: str = "max_of_daily_maxes"
 MEDIAN_OF_DAILY_MAXES: str = "median_of_daily_maxes"
 MEAN_OF_DAILY_MAXES: str = "mean_of_daily_maxes"
+SITE_COUNT: str = "site_count"
 
 # PARAMS
 PARAM_DOWNLOAD_DATA_TYPE: str = "download_data_type"
@@ -360,6 +361,7 @@ def stitch_epa(
 					drop=True,
 				),
 				df_empty_full_timeline=df_empty_full_timeline,
+				df_site_count=pd.Series(),
 				city=city,
 				pollutant=pollutant,
 				target_statistic=target_statistic,
@@ -369,14 +371,17 @@ def stitch_epa(
 				folder_epa_stitch=folder_epa_stitch,
 			)
 
+	df_grouped: pd.DataFrameGroupBy = df_stitched.groupby([DATE])
+	df_site_count: pd.Series = df_grouped.size()
 	df_city_wide: pd.DataFrame
 	for df_city_wide, target_statistic in citywide_epa(
-			df=df_stitched,
+			df_grouped=df_grouped,
 	):
 		log_error(f"{STITCH} : {city} : {pollutant} : all : {target_statistic}", log=True)
 		clean_epa_df(
 			df_to_clean=df_city_wide.to_frame(),
 			df_empty_full_timeline=df_empty_full_timeline,
+			df_site_count=df_site_count,
 			city=city,
 			pollutant=pollutant,
 			target_statistic=target_statistic,
@@ -390,6 +395,7 @@ def stitch_epa(
 def clean_epa_df(
 		df_to_clean: pd.DataFrame,
 		df_empty_full_timeline: pd.DataFrame,
+		df_site_count: pd.Series,
 		city: str,
 		pollutant: str,
 		target_statistic: str,
@@ -422,6 +428,11 @@ def clean_epa_df(
 		left_index=True,
 		right_on=DATE,
 	)
+	if not df_site_count.empty:
+		df[SITE_COUNT] = df_site_count
+	else:
+		df[SITE_COUNT] = 1
+
 	df.insert(1, EPA_COLUMN_SITE_NUMBER, site_number)
 	df.insert(1, TARGET_STATISTIC, target_statistic)
 	df.insert(1, POLLUTANT, pollutant)
@@ -447,9 +458,8 @@ def clean_epa_df(
 
 
 def citywide_epa(
-		df: pd.DataFrame,
+		df_grouped,
 ) -> Generator[Tuple[pd.DataFrame, str], None, None]:
-	df_grouped: pd.DataFrameGroupBy = df.groupby([DATE])
 	df_grouped_daily_mean: pd.DataFrame = df_grouped[EPA_COLUMN_ARITHMETIC_MEAN]
 	df_grouped_daily_max: pd.DataFrame = df_grouped[EPA_COLUMN_FIRST_MAX_VALUE]
 	yield df_grouped_daily_mean.agg(MAX), MAX_OF_DAILY_MEANS
