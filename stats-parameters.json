@@ -38,7 +38,13 @@
         "target_statistic": [
             "max",
             "mean",
-            "median"
+            "median",
+            "max_of_daily_means",
+            "median_of_daily_means",
+            "mean_of_daily_means",
+            "max_of_daily_maxes",
+            "median_of_daily_maxes",
+            "mean_of_daily_maxes"
         ],
         "time_shift": [
             -1,
