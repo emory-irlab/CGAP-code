@@ -12,9 +12,11 @@ EPA_API_DATE_FORMAT: str = "%Y%m%d"
 EPA_API_START_DATE: str = "bdate"
 EPA_API_END_DATE: str = "edate"
 CITY_WIDE_AGGREGATION_SITE_NUMBER: int = -1
-MEAN_OF_DAILY_MEANS: str = "mean_of_daily_means"
 MAX_OF_DAILY_MEANS: str = "max_of_daily_means"
+MEDIAN_OF_DAILY_MEANS: str = "median_of_daily_means"
+MEAN_OF_DAILY_MEANS: str = "mean_of_daily_means"
 MAX_OF_DAILY_MAXES: str = "max_of_daily_maxes"
+MEDIAN_OF_DAILY_MAXES: str = "median_of_daily_maxes"
 MEAN_OF_DAILY_MAXES: str = "mean_of_daily_maxes"
 
 # PARAMS
@@ -450,10 +452,12 @@ def citywide_epa(
 	df_grouped: pd.DataFrameGroupBy = df.groupby([DATE])
 	df_grouped_daily_mean: pd.DataFrame = df_grouped[EPA_COLUMN_ARITHMETIC_MEAN]
 	df_grouped_daily_max: pd.DataFrame = df_grouped[EPA_COLUMN_FIRST_MAX_VALUE]
-	yield df_grouped_daily_mean.agg(MEAN), MEAN_OF_DAILY_MEANS
 	yield df_grouped_daily_mean.agg(MAX), MAX_OF_DAILY_MEANS
-	yield df_grouped_daily_max.agg(MEAN), MEAN_OF_DAILY_MAXES
+	yield df_grouped_daily_mean.agg(MEDIAN), MEDIAN_OF_DAILY_MEANS
+	yield df_grouped_daily_mean.agg(MEAN), MEAN_OF_DAILY_MEANS
 	yield df_grouped_daily_max.agg(MAX), MAX_OF_DAILY_MAXES
+	yield df_grouped_daily_max.agg(MEDIAN), MEDIAN_OF_DAILY_MAXES
+	yield df_grouped_daily_max.agg(MEAN), MEAN_OF_DAILY_MAXES
 
 
 def filter_epa(
