@@ -442,7 +442,7 @@ def clean_epa_df(
 	)
 	df.to_csv(
 		f"{folder_epa_stitch}{filename_epa_stitch}",
-		index=True,
+		index=False,
 	)
 
 
