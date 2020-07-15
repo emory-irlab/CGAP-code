@@ -369,22 +369,22 @@ def stitch_epa(
 				folder_epa_stitch=folder_epa_stitch,
 			)
 
-		df_city_wide: pd.DataFrame
-		for df_city_wide, target_statistic in citywide_epa(
-				df=df_stitched,
-		):
-			log_error(f"{STITCH} : {city} : {pollutant} : all : {target_statistic}", log=True)
-			clean_epa_df(
-				df_to_clean=df_city_wide.to_frame(),
-				df_empty_full_timeline=df_empty_full_timeline,
-				city=city,
-				pollutant=pollutant,
-				target_statistic=target_statistic,
-				site_number=CITY_WIDE_AGGREGATION_SITE_NUMBER,
-				first_date=first_date,
-				end_date=end_date,
-				folder_epa_stitch=folder_epa_stitch,
-			)
+	df_city_wide: pd.DataFrame
+	for df_city_wide, target_statistic in citywide_epa(
+			df=df_stitched,
+	):
+		log_error(f"{STITCH} : {city} : {pollutant} : all : {target_statistic}", log=True)
+		clean_epa_df(
+			df_to_clean=df_city_wide.to_frame(),
+			df_empty_full_timeline=df_empty_full_timeline,
+			city=city,
+			pollutant=pollutant,
+			target_statistic=target_statistic,
+			site_number=CITY_WIDE_AGGREGATION_SITE_NUMBER,
+			first_date=first_date,
+			end_date=end_date,
+			folder_epa_stitch=folder_epa_stitch,
+		)
 
 
 def clean_epa_df(
