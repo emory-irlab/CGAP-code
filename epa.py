@@ -159,7 +159,7 @@ def main(
 					filename_label=filename_label,
 					folder_input=FOLDER_EPA_STITCH,
 					folder_output_aggregate=folder_output_aggregate,
-					list_cities=list_cities,
+					list_cities=list_partitioned_cities,
 					upload=aggregate_and_upload,
 				)
 			write_errors_to_disk(overwrite=False)
