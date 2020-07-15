@@ -18,7 +18,6 @@ MEAN_OF_DAILY_MEANS: str = "mean_of_daily_means"
 MAX_OF_DAILY_MAXES: str = "max_of_daily_maxes"
 MEDIAN_OF_DAILY_MAXES: str = "median_of_daily_maxes"
 MEAN_OF_DAILY_MAXES: str = "mean_of_daily_maxes"
-SITE_COUNT: str = "site_count"
 
 # PARAMS
 PARAM_DOWNLOAD_DATA_TYPE: str = "download_data_type"
