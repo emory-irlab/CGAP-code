@@ -662,20 +662,24 @@ def run_correlations(
 	generate_sub_paths_for_folder(
 		folder=folder_stats_correlations,
 	)
-	list_filenames_trends: List[str] = import_paths_from_folder(
-		folder=folder_trends_stitch,
-		list_paths_filter_conditions=(city, CSV),
-	)
-
-	list_filenames_correlations: List[str] = import_paths_from_folder(
-		folder=folder_stats_correlations,
-		list_paths_filter_conditions=(city, CSV),
-	)
 
 	list_filenames_epa: List[str] = import_paths_from_folder(
 		folder=folder_epa_stitch,
 		list_paths_filter_conditions=(CSV,),
 	)
+
+	list_filenames_trends: List[str] = import_paths_from_folder(
+		folder=folder_trends_stitch,
+		list_paths_filter_conditions=(city, CSV),
+	)
+
+	list_filenames_correlations: List[str] = []
+	if only_correlate_missing:
+		list_filenames_correlations = import_paths_from_folder(
+			folder=folder_stats_correlations,
+			list_paths_filter_conditions=(city, CSV),
+		)
+
 
 	pollutant: str
 	for pollutant in list_pollutants:
