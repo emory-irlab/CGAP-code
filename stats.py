@@ -726,7 +726,11 @@ def run_correlations(
 
 				df_epa = pd.read_csv(
 					f"{folder_epa_stitch}{filename_epa}",
-					usecols=[DATE, target_variable_column_name_epa],
+					usecols=[
+						DATE,
+						target_variable_column_name_epa,
+						SITE_COUNT,
+					],
 					parse_dates=[DATE],
 				)
 				if df_epa.empty:
