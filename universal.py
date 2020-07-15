@@ -554,10 +554,12 @@ def upload_to_bigquery(
 		filename: str,
 		table_name: str,
 ) -> None:
+	log_error(f"Attempting upload to bigquery", log=True)
 	from google.cloud import bigquery
 
 	client = bigquery.Client.from_service_account_json(CREDENTIALS_BIGQUERY)
 	table_id = '.'.join([BIGQUERY_PROJECT, BIGQUERY_DATASET, table_name])
+	log_error(f"bigquery : {table_id}", log=True)
 	job_config = bigquery.LoadJobConfig()
 
 	# WRITE_EMPTY    : Writes the data only if the table is empty.
