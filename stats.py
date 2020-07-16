@@ -16,6 +16,8 @@ KW_NONZERO_COUNT: str = "kw_nonzero_count"
 KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
 KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
 KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: str = "kw_nonzero_threshold_days_proportion"
+THRESHOLD_SITE_COUNT_AVG: str = "kw_site_count_avg"
+THRESHOLD_SITE_COUNT_STD: str = "kw_site_count_std"
 METRICS: str = "metrics"
 PEARSON_CORRELATION: str = "pearson_correlation"
 SPARSITY: str = "sparsity"
@@ -840,6 +842,8 @@ def run_correlations(
 												df_epa_target_variable_above_or_below_threshold: pd.DataFrame = dict_epa_stats_helper[threshold][above_or_below_threshold][DATA_FRAME]
 												threshold_epa_days_count: int = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_EPA_DAYS_COUNT]
 												threshold_epa_days_proportion: float = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_EPA_DAYS_PROPORTION]
+												threshold_site_count_avg: float = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_SITE_COUNT_AVG]
+												threshold_site_count_std: float = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_SITE_COUNT_STD]
 
 												dict_cor_row: dict = correlate_for_keyword(
 													df_trends=df_trends,
@@ -866,6 +870,8 @@ def run_correlations(
 														TOTAL_EPA_DAYS_COUNT:              total_epa_days_count,
 														THRESHOLD_EPA_DAYS_COUNT:          threshold_epa_days_count,
 														THRESHOLD_EPA_DAYS_PROPORTION:     threshold_epa_days_proportion,
+														THRESHOLD_SITE_COUNT_AVG:          threshold_site_count_avg,
+														THRESHOLD_SITE_COUNT_STD:          threshold_site_count_std,
 														KW_NONZERO_COUNT:                  kw_nonzero_count,
 														KW_NONZERO_PROPORTION:             kw_proportion,
 													},
@@ -882,7 +888,7 @@ def run_correlations(
 						correlate_single_trend()
 
 				correlate_trends()
-				write_errors_to_disk(bool_suppress_print=True, overwrite=False)
+			write_errors_to_disk(bool_suppress_print=True, overwrite=False)
 
 
 # dynamic programming
@@ -906,12 +912,21 @@ def dp_epa_variations_dict(
 				continue
 
 			threshold_epa_days_count: int = df_epa_target_variable_above_or_below_threshold.count()
-			threshold_epa_days_proportion: float = threshold_epa_days_count / total_epa_days_count
+			threshold_epa_days_proportion: float
+			if total_epa_days_count > 0:
+				threshold_epa_days_proportion = threshold_epa_days_count / total_epa_days_count
+			else:
+				threshold_epa_days_proportion = -1
+
+			kw_site_count_avg = df_epa.where(df_epa_target_variable_above_or_below_threshold)[SITE_COUNT].mean()
+			kw_site_count_std = df_epa.where(df_epa_target_variable_above_or_below_threshold)[SITE_COUNT].std()
 
 			dict_epa_stats_helper[threshold][threshold_side].update({
 				DATA_FRAME:                    df_epa_target_variable_above_or_below_threshold,
 				THRESHOLD_EPA_DAYS_COUNT:      threshold_epa_days_count,
 				THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
+				THRESHOLD_SITE_COUNT_AVG:      kw_site_count_avg,
+				THRESHOLD_SITE_COUNT_STD:      kw_site_count_std,
 			})
 
 	return dict_epa_stats_helper
