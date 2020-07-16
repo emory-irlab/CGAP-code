@@ -913,7 +913,7 @@ def dp_epa_variations_dict(
 
 			threshold_epa_days_count: int = df_epa_target_variable_above_or_below_threshold.count()
 			threshold_epa_days_proportion: float
-			if total_epa_days_count > 0:
+			if total_epa_days_count > 0 and threshold_epa_days_count > 0:
 				threshold_epa_days_proportion = threshold_epa_days_count / total_epa_days_count
 			else:
 				threshold_epa_days_proportion = -1
