@@ -918,8 +918,8 @@ def dp_epa_variations_dict(
 			else:
 				threshold_epa_days_proportion = -1
 
-			kw_site_count_avg = df_epa.where(df_epa_target_variable_above_or_below_threshold)[SITE_COUNT].mean()
-			kw_site_count_std = df_epa.where(df_epa_target_variable_above_or_below_threshold)[SITE_COUNT].std()
+			kw_site_count_avg = df_epa.where(df_epa_target_variable_above_or_below_threshold.notna())[SITE_COUNT].mean()
+			kw_site_count_std = df_epa.where(df_epa_target_variable_above_or_below_threshold.notna())[SITE_COUNT].std()
 
 			dict_epa_stats_helper[threshold][threshold_side].update({
 				DATA_FRAME:                    df_epa_target_variable_above_or_below_threshold,
