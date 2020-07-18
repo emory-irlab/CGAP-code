@@ -712,13 +712,16 @@ def run_correlations(
 				)
 
 				if nt_filename_epa_stitch_parsed.city != city:
-					log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{CITY}{HYPHEN}{city}")
+					log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{CITY}{HYPHEN}{nt_filename_epa_stitch_parsed.city}")
+					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
 				if nt_filename_epa_stitch_parsed.pollutant != pollutant:
-					log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{POLLUTANT}{HYPHEN}{pollutant}")
+					log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{POLLUTANT}{HYPHEN}{nt_filename_epa_stitch_parsed.pollutant}")
+					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
 				if nt_filename_epa_stitch_parsed.target_statistic != target_statistic:
-					log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{TARGET_STATISTIC}{HYPHEN}{target_statistic}")
+					log_error(error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{TARGET_STATISTIC}{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}")
+					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
 
 				site_number: int = parse_filename_numeric(
