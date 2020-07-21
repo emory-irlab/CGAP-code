@@ -163,7 +163,7 @@ def main(
 				)
 			write_errors_to_disk(overwrite=False)
 
-		if upload:
+		if upload and not (aggregate and aggregate_and_upload):
 			set_error_task_origin(task_origin=UPLOAD)
 			nt_filename_aggregate = NT_filename_aggregate(
 				aggregate=AGGREGATE,
