@@ -417,10 +417,14 @@ def run_metrics(
 			folder=folder_metrics_input,
 			list_paths_filter_conditions=(city, CSV),
 	):
-		df_full: pd.DataFrame = pd.read_csv(
-			f"{folder_metrics_input}{filename}",
-			parse_dates=[DATE],
-		)
+		try:
+			df_full: pd.DataFrame = pd.read_csv(
+				f"{folder_metrics_input}{filename}",
+				parse_dates=[DATE],
+			)
+		except ValueError:
+			log_error(error=f"value_error{HYPHEN}{filename}")
+			continue
 		if ignore_zero:
 			df_full.replace(
 				to_replace=0,
