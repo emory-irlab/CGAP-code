@@ -498,6 +498,15 @@ def run_metrics(
 			if nt_filename_epa_or_trends_parsed.city != city:
 				log_error(error=f"city_mismatch{HYPHEN}{city}{HYPHEN}{filename}")
 				continue
+
+			df_description.rename(
+				columns={
+					"25%": "quantile_25",
+					"50%": "quantile_50",
+					"75%": "quantile_75",
+				},
+				inplace=True,
+			)
 			output_filename = generate_filename(
 				nt_filename=nt_output_filename,
 				delimiter=HYPHEN,
