@@ -17,8 +17,10 @@ KW_NONZERO_COUNT: str = "kw_nonzero_count"
 KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
 KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
 KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: str = "kw_nonzero_threshold_days_proportion"
-THRESHOLD_SITE_COUNT_AVG: str = "kw_site_count_avg"
-THRESHOLD_SITE_COUNT_STD: str = "kw_site_count_std"
+KW_THRESHOLD_SITE_COUNT_AVG: str = "kw_site_count_avg"
+KW_THRESHOLD_SITE_COUNT_STD: str = "kw_site_count_std"
+THRESHOLD_SITE_COUNT_AVG: str = "threshold_site_count_avg"
+THRESHOLD_SITE_COUNT_STD: str = "threshold_site_count_std"
 METRICS: str = "metrics"
 PEARSON_CORRELATION: str = "pearson_correlation"
 SPARSITY: str = "sparsity"
@@ -762,14 +764,13 @@ def run_correlations(
 					)
 
 				total_epa_days_count = df_epa[target_variable_column_name_epa].count()
-				epa_site_count_avg = df_epa[SITE_COUNT].mean()
-				epa_site_count_std = df_epa[SITE_COUNT].std()
 
 				dict_epa_stats_helper: Dict[float, Dict[str, Dict[str, Any]]] = dp_epa_variations_dict(
 					df_epa=df_epa,
+					total_epa_days_count=total_epa_days_count,
 					list_thresholds=tuple(dict_thresholds.keys()),
 					list_threshold_sides=list_threshold_sides,
-					total_epa_days_count=total_epa_days_count,
+					target_variable_column_name_epa=target_variable_column_name_epa,
 				)
 
 				def correlate_trends() -> None:
@@ -853,7 +854,7 @@ def run_correlations(
 												else:
 													trends_column = target_variable_column_name_trends
 
-												df_epa_target_variable_above_or_below_threshold: pd.DataFrame = dict_epa_stats_helper[threshold][above_or_below_threshold][DATA_FRAME]
+												df_epa_above_or_below_threshold: pd.DataFrame = dict_epa_stats_helper[threshold][above_or_below_threshold][DATA_FRAME]
 												threshold_epa_days_count: int = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_EPA_DAYS_COUNT]
 												threshold_epa_days_proportion: float = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_EPA_DAYS_PROPORTION]
 												threshold_site_count_avg: float = dict_epa_stats_helper[threshold][above_or_below_threshold][THRESHOLD_SITE_COUNT_AVG]
@@ -861,7 +862,8 @@ def run_correlations(
 
 												dict_cor_row: dict = correlate_for_keyword(
 													df_trends=df_trends,
-													df_epa_target_variable_above_or_below_threshold=df_epa_target_variable_above_or_below_threshold,
+													df_epa_above_or_below_threshold=df_epa_above_or_below_threshold,
+													target_variable_column_name_epa=target_variable_column_name_epa,
 													time_shift=time_shift,
 													trends_column=trends_column,
 													trends_column_name_ignore_zero=trends_column_name_ignore_zero,
@@ -870,25 +872,23 @@ def run_correlations(
 
 												dict_cor_row.update(
 													{
-														CITY:                              city,
-														KEYWORD:                           nt_filename_trends_stitch_parsed.keyword,
-														POLLUTANT:                         pollutant,
-														EPA_COLUMN_SITE_NUMBER:            site_number,
-														TARGET_STATISTIC:                  target_statistic,
-														THRESHOLD:                         threshold,
-														THRESHOLD_SIDE:                    above_or_below_threshold,
-														THRESHOLD_SOURCE:                  dict_thresholds.get(threshold, ""),
-														TIME_SHIFT:                        time_shift,
-														IGNORE_ZERO:                       bool_ignore_zero,
-														f"{SITE_COUNT}{UNDERSCORE}{MEAN}": epa_site_count_avg,
-														f"{SITE_COUNT}{UNDERSCORE}{STD}":    epa_site_count_std,
-														TOTAL_EPA_DAYS_COUNT:              total_epa_days_count,
-														THRESHOLD_EPA_DAYS_COUNT:          threshold_epa_days_count,
-														THRESHOLD_EPA_DAYS_PROPORTION:     threshold_epa_days_proportion,
-														THRESHOLD_SITE_COUNT_AVG:          threshold_site_count_avg,
-														THRESHOLD_SITE_COUNT_STD:          threshold_site_count_std,
-														KW_NONZERO_COUNT:                  kw_nonzero_count,
-														KW_NONZERO_PROPORTION:             kw_proportion,
+														CITY:                          city,
+														KEYWORD:                       nt_filename_trends_stitch_parsed.keyword,
+														POLLUTANT:                     pollutant,
+														EPA_COLUMN_SITE_NUMBER:        site_number,
+														TARGET_STATISTIC:              target_statistic,
+														THRESHOLD:                     threshold,
+														THRESHOLD_SIDE:                above_or_below_threshold,
+														THRESHOLD_SOURCE:              dict_thresholds.get(threshold, ""),
+														TIME_SHIFT:                    time_shift,
+														IGNORE_ZERO:                   bool_ignore_zero,
+														TOTAL_EPA_DAYS_COUNT:          total_epa_days_count,
+														THRESHOLD_EPA_DAYS_COUNT:      threshold_epa_days_count,
+														THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
+														THRESHOLD_SITE_COUNT_AVG:      threshold_site_count_avg,
+														THRESHOLD_SITE_COUNT_STD:      threshold_site_count_std,
+														KW_NONZERO_COUNT:              kw_nonzero_count,
+														KW_NONZERO_PROPORTION:         kw_proportion,
 													},
 												)
 
@@ -920,28 +920,28 @@ def dp_epa_variations_dict(
 		for threshold_side in list_threshold_sides:
 			dict_epa_stats_helper[threshold].update({threshold_side: {}})
 			if threshold_side == CORRELATE_ABOVE_THRESHOLD:
-				df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_epa[target_variable_column_name_epa].mask(df_epa[target_variable_column_name_epa] < threshold)
+				df_epa_above_or_below_threshold: pd.DataFrame = df_epa.mask(df_epa[target_variable_column_name_epa] < threshold)
 			elif threshold_side == CORRELATE_BELOW_THRESHOLD:
-				df_epa_target_variable_above_or_below_threshold: pd.DataFrame = df_epa[target_variable_column_name_epa].mask(df_epa[target_variable_column_name_epa] >= threshold)
+				df_epa_above_or_below_threshold: pd.DataFrame = df_epa.mask(df_epa[target_variable_column_name_epa] >= threshold)
 			else:
 				continue
 
-			threshold_epa_days_count: int = df_epa_target_variable_above_or_below_threshold.count()
+			threshold_site_count_avg = df_epa_above_or_below_threshold[SITE_COUNT].mean()
+			threshold_site_count_std = df_epa_above_or_below_threshold[SITE_COUNT].std()
+
+			threshold_epa_days_count: int = df_epa_above_or_below_threshold[target_variable_column_name_epa].count()
 			threshold_epa_days_proportion: float
 			if total_epa_days_count > 0 and threshold_epa_days_count > 0:
 				threshold_epa_days_proportion = threshold_epa_days_count / total_epa_days_count
 			else:
 				threshold_epa_days_proportion = -1
 
-			kw_site_count_avg = df_epa.where(df_epa_target_variable_above_or_below_threshold.notna())[SITE_COUNT].mean()
-			kw_site_count_std = df_epa.where(df_epa_target_variable_above_or_below_threshold.notna())[SITE_COUNT].std()
-
 			dict_epa_stats_helper[threshold][threshold_side].update({
-				DATA_FRAME:                    df_epa_target_variable_above_or_below_threshold,
+				DATA_FRAME:                    df_epa_above_or_below_threshold,
 				THRESHOLD_EPA_DAYS_COUNT:      threshold_epa_days_count,
 				THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
-				THRESHOLD_SITE_COUNT_AVG:      kw_site_count_avg,
-				THRESHOLD_SITE_COUNT_STD:      kw_site_count_std,
+				THRESHOLD_SITE_COUNT_AVG:      threshold_site_count_avg,
+				THRESHOLD_SITE_COUNT_STD:      threshold_site_count_std,
 			})
 
 	return dict_epa_stats_helper
@@ -949,7 +949,8 @@ def dp_epa_variations_dict(
 
 def correlate_for_keyword(
 		df_trends: pd.DataFrame,
-		df_epa_target_variable_above_or_below_threshold: pd.DataFrame,
+		df_epa_above_or_below_threshold: pd.DataFrame,
+		target_variable_column_name_epa: str,
 		time_shift: int,
 		trends_column: str,
 		trends_column_name_ignore_zero: str,
@@ -958,9 +959,14 @@ def correlate_for_keyword(
 	dict_cor_row: dict = {}
 
 	# noinspection PyTypeChecker
-	df_kw_nonzero_threshold_days: pd.DataFrame = (df_trends[trends_column_name_ignore_zero] > 0) & df_epa_target_variable_above_or_below_threshold
+	df_kw_nonzero_threshold_days: pd.DataFrame = (df_trends[trends_column_name_ignore_zero] > 0) & df_epa_above_or_below_threshold[target_variable_column_name_epa]
 	kw_nonzero_threshold_days_count: int = df_kw_nonzero_threshold_days.count()
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_COUNT: kw_nonzero_threshold_days_count})
+
+	kw_threshold_site_count_avg = df_epa_above_or_below_threshold[SITE_COUNT].mean()
+	dict_cor_row.update({KW_THRESHOLD_SITE_COUNT_AVG: kw_threshold_site_count_avg})
+	kw_threshold_site_count_std = df_epa_above_or_below_threshold[SITE_COUNT].std()
+	dict_cor_row.update({KW_THRESHOLD_SITE_COUNT_STD: kw_threshold_site_count_std})
 
 	kw_non_zero_threshold_days_proportion: float
 	if threshold_epa_days_count > 0:
@@ -976,7 +982,7 @@ def correlate_for_keyword(
 	# noinspection PyArgumentList
 	# noinspection PyTypeChecker
 	pearson_correlation: float = df_trends_with_time_shift.corr(
-		df_epa_target_variable_above_or_below_threshold,
+		df_epa_above_or_below_threshold[target_variable_column_name_epa],
 		method="pearson",
 	)
 	dict_cor_row.update({PEARSON_CORRELATION: pearson_correlation})
@@ -984,7 +990,7 @@ def correlate_for_keyword(
 	# noinspection PyArgumentList
 	# noinspection PyTypeChecker
 	spearman_correlation: float = df_trends_with_time_shift.corr(
-		df_epa_target_variable_above_or_below_threshold,
+		df_epa_above_or_below_threshold[target_variable_column_name_epa],
 		method="spearman",
 	)
 	dict_cor_row.update({SPEARMAN_CORRELATION: spearman_correlation})
