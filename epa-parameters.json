@@ -1,11 +1,11 @@
 {
-    "download": true,
+    "download": false,
     "download_data_type": "CBSA",
     "only_download_missing": true,
     "stitch": false,
     "aggregate": false,
     "aggregate_and_upload": false,
-    "upload": false,
+    "upload": true,
     "epa": {
         "city": [
             "atlanta",
