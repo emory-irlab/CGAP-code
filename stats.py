@@ -395,7 +395,7 @@ def main(
 	if upload_aggregate_from_folder:
 		split_folder_name: List[str] = upload_aggregate_from_folder.split(UNDERSCORE)
 		upload_aggregate_from_folder_helper(
-			filename_label=UNDERSCORE.join(split_folder_name[1:]),
+			filename_label=UNDERSCORE.join(split_folder_name[1:]).replace(f"{UNDERSCORE}{AGGREGATE}", ""),
 			folder=universal_parameters[upload_aggregate_from_folder],
 		)
 
