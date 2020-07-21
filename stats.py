@@ -7,6 +7,7 @@ import trends
 from universal import *
 
 # STATIC VARIABLES
+CGAP: str = "cgap"
 COMMON_CITY: str = "common_city"
 CORRELATIONS_COMPARISON: str = "correlations_comparison"
 CORRELATE_ABOVE_THRESHOLD: str = "above_threshold"
@@ -685,7 +686,12 @@ def run_correlations(
 
 	pollutant: str
 	for pollutant in list_pollutants:
-		list_thresholds: List[float] = DEFAULT_POLLUTANTS[pollutant][THRESHOLD]
+		dict_thresholds: Dict[float, str] = {
+			threshold: threshold_source
+			for threshold_source, threshold_list in DEFAULT_POLLUTANTS[pollutant][THRESHOLD].items()
+			if (threshold_source in [CGAP, EPA]) or (city in threshold_source)
+			for threshold in threshold_list
+		}
 		target_statistic: str
 		for target_statistic in list_target_statistics:
 			set_error_task_origin(task_origin=PARAM_CORRELATE)
@@ -756,7 +762,7 @@ def run_correlations(
 
 				dict_epa_stats_helper: Dict[float, Dict[str, Dict[str, Any]]] = dp_epa_variations_dict(
 					df_epa=df_epa,
-					list_thresholds=tuple(list_thresholds),
+					list_thresholds=tuple(dict_thresholds.keys()),
 					list_threshold_sides=list_threshold_sides,
 					total_epa_days_count=total_epa_days_count,
 				)
@@ -788,7 +794,7 @@ def run_correlations(
 							trends_column_name_ignore_zero: str = ""
 
 							threshold: float
-							for threshold in list_thresholds:
+							for threshold in tuple(dict_thresholds.keys()):
 								above_or_below_threshold: str
 								for above_or_below_threshold in list_threshold_sides:
 									bool_ignore_zero: bool
@@ -866,10 +872,11 @@ def run_correlations(
 														TARGET_STATISTIC:                  target_statistic,
 														THRESHOLD:                         threshold,
 														THRESHOLD_SIDE:                    above_or_below_threshold,
+														THRESHOLD_SOURCE:                  dict_thresholds.get(threshold, ""),
 														TIME_SHIFT:                        time_shift,
 														IGNORE_ZERO:                       bool_ignore_zero,
 														f"{SITE_COUNT}{UNDERSCORE}{MEAN}": epa_site_count_avg,
-														f"{SITE_COUNT}{UNDERSCORE}STD":    epa_site_count_std,
+														f"{SITE_COUNT}{UNDERSCORE}{STD}":    epa_site_count_std,
 														TOTAL_EPA_DAYS_COUNT:              total_epa_days_count,
 														THRESHOLD_EPA_DAYS_COUNT:          threshold_epa_days_count,
 														THRESHOLD_EPA_DAYS_PROPORTION:     threshold_epa_days_proportion,
