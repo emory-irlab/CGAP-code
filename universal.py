@@ -561,7 +561,9 @@ def upload_to_bigquery(
 	from google.cloud import bigquery
 
 	client = bigquery.Client.from_service_account_json(CREDENTIALS_BIGQUERY)
-	table_id = '.'.join([BIGQUERY_PROJECT, BIGQUERY_DATASET, table_name])
+
+	cleaned_table_name: str = UNDERSCORE.join(table_name.split(UNDERSCORE)[1:])
+	table_id = '.'.join([BIGQUERY_PROJECT, BIGQUERY_DATASET, cleaned_table_name])
 	log_error(f"bigquery : {table_id}", log=True)
 	job_config = bigquery.LoadJobConfig()
 
