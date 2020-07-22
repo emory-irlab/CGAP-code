@@ -1,6 +1,6 @@
 {
     "aggregate_and_upload": false,
-    "upload_aggregate_from_folder": "folder_epa_metrics_aggregate",
+    "upload_aggregate_from_folder": "",
     "stitch_epa": false,
     "stitch_trends": false,
     "run_epa_metrics": false,
