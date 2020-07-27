@@ -13,8 +13,6 @@
     "only_correlate_missing": true,
     "aggregate_correlations": false,
     "aggregate_already_aggregated_cities": false,
-    "baseline": false,
-    "only_baseline_missing": true,
     "run_intercity": false,
     "common_city": "usa",
     "common_word": "pins",
@@ -161,17 +159,6 @@
                 }
             }
         }
-    },
-    "correlations_comparison_pivot_values": {
-        "city": "",
-        "keyword": "",
-        "pollutant": "",
-        "target_statistic": "",
-        "time_shift": null,
-        "ignore_zero": null,
-        "threshold": -1,
-        "threshold_percentile": null,
-        "threshold_side": ""
     },
     "target_variable_column_name_epa": "pollution_level",
     "target_variable_column_name_trends": "keyword_frequency"

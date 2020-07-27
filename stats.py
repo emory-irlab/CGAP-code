@@ -37,13 +37,10 @@ PARAM_AGGREGATE_INTERCITY: str = "aggregate_intercity"
 PARAM_AGGREGATE_METRICS_EPA: str = f"{AGGREGATE}{UNDERSCORE}{EPA}{UNDERSCORE}{METRICS}"
 PARAM_AGGREGATE_METRICS_TRENDS = f"{AGGREGATE}{UNDERSCORE}{TRENDS}{UNDERSCORE}{METRICS}"
 PARAM_AGGREGATE_ALREADY_AGGREGATED_CITIES: str = "aggregate_already_aggregated_cities"
-PARAM_BASELINE: str = "baseline"
 PARAM_CORRELATE: str = "correlate"
 PARAM_CORRELATE_ABOVE_THRESHOLD: str = "correlate_above_threshold"
 PARAM_CORRELATE_BELOW_THRESHOLD: str = "correlate_below_threshold"
-PARAM_CORRELATIONS_COMPARISON_PIVOT_VALUES: str = "correlations_comparison_pivot_values"
 PARAM_INTERCITY: str = "run_intercity"
-PARAM_ONLY_BASELINE_MISSING: str = "only_baseline_missing"
 PARAM_ONLY_CORRELATE_MISSING: str = "only_correlate_missing"
 PARAM_METRICS_EPA: str = f"run{UNDERSCORE}{EPA}{UNDERSCORE}{METRICS}"
 PARAM_METRICS_TRENDS: str = f"run{UNDERSCORE}{TRENDS}{UNDERSCORE}{METRICS}"
@@ -56,14 +53,9 @@ DEFAULT_COMMON_CITY: str = USA
 DEFAULT_IGNORE_ZERO_EPA: bool = False
 DEFAULT_ONLY_CORRELATE_MISSING: bool = True
 DEFAULT_ONLY_COMPARE_MISSING: bool = True
-DEFAULT_SPLIT_STATS_CORRELATION_FILENAME_LENGTH: int = 9
 DEFAULT_IGNORE_ZERO_TRENDS: Tuple[bool, ...] = (
 	True,
 	False,
-)
-
-DEFAULT_THRESHOLD_PERCENTILES: Tuple[int, ...] = (
-	100,
 )
 
 DEFAULT_THRESHOLD_SIDES: Tuple[str, ...] = (
@@ -154,8 +146,6 @@ def main(
 			bool_correlate_above_threshold: bool = json_data[PARAM_CORRELATE_ABOVE_THRESHOLD]
 			bool_correlate_below_threshold: bool = json_data[PARAM_CORRELATE_BELOW_THRESHOLD]
 			bool_only_correlate_missing: bool = json_data[PARAM_ONLY_CORRELATE_MISSING]
-			bool_run_correlations_comparison: bool = json_data[PARAM_BASELINE]
-			bool_only_compare_missing: bool = json_data[PARAM_ONLY_BASELINE_MISSING]
 			bool_aggregate_correlations: bool = json_data[PARAM_AGGREGATE_CORRELATIONS]
 			bool_aggregate_already_aggregated_cities: bool = json_data[PARAM_AGGREGATE_ALREADY_AGGREGATED_CITIES]
 			bool_aggregate_and_upload: bool = json_data[PARAM_AGGREGATE_AND_UPLOAD]
@@ -177,9 +167,6 @@ def main(
 			list_time_shifts: List[int] = parameters[TIME_SHIFT]
 			DEFAULT_POLLUTANTS.update(parameters[POLLUTANT])
 
-			dict_correlations_comparison_pivot_values: Dict[str, Any] = json_data[
-				PARAM_CORRELATIONS_COMPARISON_PIVOT_VALUES
-			]
 		json_file.close()
 
 	list_threshold_sides: List[str] = []
@@ -374,24 +361,6 @@ def main(
 			)
 		write_errors_to_disk()
 
-	if bool_run_correlations_comparison:
-		for city in list_partitioned_cities:
-			set_error_task_origin(task_origin=PARAM_BASELINE)
-			log_error(f"{CORRELATIONS_COMPARISON} : {city}", log=True)
-			baseline(
-				city=city,
-				dict_pivot_values=dict_correlations_comparison_pivot_values,
-				folder_stats_correlations=FOLDER_STATS_CORRELATIONS_RAW,
-				folder_stats_correlations_comparison=FOLDER_STATS_CORRELATIONS_COMPARISON,
-				only_compare_missing=bool_only_compare_missing,
-				list_bool_ignore_zero=DEFAULT_IGNORE_ZERO_TRENDS,
-				list_pollutants=tuple(list_pollutants),
-				list_target_statistics=tuple(list_target_statistics),
-				list_threshold_sides=tuple(list_threshold_sides),
-				list_time_shifts=tuple(list_time_shifts),
-			)
-			write_errors_to_disk(overwrite=False)
-
 	if upload_aggregate_from_folder:
 		upload_aggregate_from_folder_helper(
 			filename_label=upload_aggregate_from_folder.replace(f"{UNDERSCORE}{AGGREGATE}", ""),
@@ -514,133 +483,6 @@ def run_metrics(
 				output_filename,
 				index=False,
 			)
-
-
-def baseline(
-		city: str,
-		dict_pivot_values: Dict[str, Any],
-		folder_stats_correlations: str,
-		folder_stats_correlations_comparison: str,
-		only_compare_missing: bool = DEFAULT_ONLY_COMPARE_MISSING,
-		list_bool_ignore_zero: Tuple[bool, ...] = DEFAULT_IGNORE_ZERO_TRENDS,
-		list_pollutants: Tuple[str, ...] = tuple(DEFAULT_POLLUTANTS),
-		list_target_statistics: Tuple[str, ...] = DEFAULT_TARGET_STATISTICS,
-		list_threshold_sides: Tuple[str, ...] = DEFAULT_THRESHOLD_SIDES,
-		list_time_shifts: Tuple[int, ...] = DEFAULT_TIME_SHIFTS,
-) -> None:
-	dict_comparison_constraints: Dict[str, Tuple[any, ...]] = {
-		IGNORE_ZERO:      list_bool_ignore_zero,
-		POLLUTANT:        list_pollutants,
-		TARGET_STATISTIC: list_target_statistics,
-		THRESHOLD_SIDE:   list_threshold_sides,
-		TIME_SHIFT:       list_time_shifts,
-	}
-	list_filenames_correlations: List[str] = import_paths_from_folder(
-		folder=folder_stats_correlations,
-		list_paths_filter_conditions=(city, CSV),
-	)
-
-	folder_comparison_tables: str = generate_correlations_comparison_folder_name(
-		folder_correlations_comparison=folder_stats_correlations_comparison,
-		dict_correlations_comparison_pivot_values=dict_pivot_values,
-	)
-	list_comparison_tables_filenames: List[str] = import_paths_from_folder(
-		folder=folder_comparison_tables,
-		list_paths_filter_conditions=(city, CSV),
-	)
-
-	list_null_pivot_keys: List[str, Any] = [
-		key
-		for (key, value) in dict_pivot_values.items()
-		if not value
-	]
-
-	dict_pivot_table_info_non_null: Dict[str, Any] = {
-		key: value
-		for (key, value) in dict_pivot_values.items()
-		if value
-	}
-
-	filename_trends: str
-	for filename_correlation in list_filenames_correlations:
-		# noinspection PyTypeChecker
-		nt_filename_correlation_parsed: NamedTuple = parse_filename(
-			filename=filename_correlation,
-			delimiter=HYPHEN,
-			extension=CSV,
-			named_tuple=NT_filename_correlation,
-		)
-
-		dict_pivot_table_info: Dict[str, Any] = dict(nt_filename_correlation_parsed)
-		is_pivot_table: bool = all(
-			[
-				dict_pivot_table_info.get(pivot_column, None) == pivot_value
-				for pivot_column, pivot_value in dict_pivot_table_info_non_null.items()
-			]
-		)
-		is_pivot_table_in_constraints: bool = all(
-			[
-				dict_pivot_table_info.get(constraint_key, None) in constraint_value
-				for constraint_key, constraint_value in dict_comparison_constraints.items()
-			]
-		)
-		if is_pivot_table and is_pivot_table_in_constraints:
-			pivot_table_set: bool = False
-			# noinspection PyUnusedLocal
-			df_pivot_table: pd.DataFrame = pd.DataFrame()
-
-			list_pivot_table_filename_filter_conditions: Tuple[str, ...] = tuple(
-				[
-					str(dict_pivot_table_info.get(null_pivot_key, ""))
-					for null_pivot_key in list_null_pivot_keys
-				]
-			)
-
-			filename_comparison_table: str
-			for filename_comparison_table in filter_list_strings(
-					list_strings=list_filenames_correlations,
-					list_string_filter_conditions=list_pivot_table_filename_filter_conditions,
-			):
-				if only_compare_missing and filename_comparison_table in list_comparison_tables_filenames:
-					continue
-
-				# noinspection PyTypeChecker
-				nt_filename_comparison_table: NamedTuple = parse_filename(
-					filename=filename_comparison_table,
-					delimiter=HYPHEN,
-					extension=CSV,
-					named_tuple=NT_filename_correlation,
-				)
-				dict_comparison_table_info_stripped: Dict[str, Any] = {
-					key: value
-					for key, value in dict(nt_filename_comparison_table).items()
-					if key in list_null_pivot_keys
-				}
-				dict_pivot_table_info_stripped: Dict[str, Any] = {
-					key: value
-					for key, value in dict_pivot_table_info
-					if key in list_null_pivot_keys
-				}
-				if dict_comparison_table_info_stripped == dict_pivot_table_info_stripped:
-
-					if not pivot_table_set:
-						df_pivot_table = pd.read_csv(
-							f"{folder_stats_correlations}{filename_correlation}",
-						)
-						pivot_table_set = True
-
-						if df_pivot_table.empty:
-							log_error(error=f"df_empty{HYPHEN}{CORRELATIONS_COMPARISON}{HYPHEN}{filename_correlation}")
-							continue
-
-						df_comparison_table: pd.DataFrame = pd.read_csv(
-							f"{folder_stats_correlations}{filename_comparison_table}",
-						)
-
-						df_correlation_comparison: pd.DataFrame = df_pivot_table - df_comparison_table
-						df_correlation_comparison.to_csv(
-							f"{folder_comparison_tables}{filename_comparison_table}"
-						)
 
 
 def generate_correlations_comparison_folder_name(
