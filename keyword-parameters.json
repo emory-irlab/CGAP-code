@@ -1,7 +1,8 @@
 {
     "customer_id": "7981360996",
-    "download": true,
+    "download": false,
     "only_download_missing": true,
+    "count_expansion_parents": false,
     "aggregate": false,
     "source_priority_order": [
         "common",

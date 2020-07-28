@@ -1,3 +1,4 @@
+import csv
 import sys
 import time
 
@@ -12,6 +13,7 @@ AVG_MONTHLY_SEARCH: str = "avg_monthly_search"
 COMPETITION_VALUE: str = "competition_value"
 CUSTOMER_ID: str = "customer_id"
 EXPANSION: str = "expansion"
+FREQUENCY: str = "frequency"
 
 # DEFAULT
 DEFAULT_LANGUAGE_ID_ENGLISH: str = "1000"
@@ -20,6 +22,7 @@ DEFAULT_SOURCE_PRIORITY_ORDER: Tuple[str, ...] = (
 )
 
 # PARAMETERS
+PARAM_COUNT_EXPANSION_PARENTS: str = "count_expansion_parents"
 PARAM_SOURCE_PRIORITY_ORDER: str = "source_priority_order"
 
 # NAMED TUPLES
@@ -56,6 +59,7 @@ def main(
 	set_partition_total(partition_total)
 	with open(f"{KEYWORD}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 		json_data: dict = json.load(json_file)
+		count_expansion_parents: bool
 		download: bool
 		only_download_missing: bool
 		aggregate: bool
@@ -67,6 +71,7 @@ def main(
 			download = json_data[DOWNLOAD]
 			only_download_missing = json_data[PARAM_ONLY_DOWNLOAD_MISSING]
 			aggregate = json_data[AGGREGATE]
+			count_expansion_parents = json_data[PARAM_COUNT_EXPANSION_PARENTS]
 			credentials = json_data[PARAM_CREDENTIALS]
 			customer_id = json_data[CUSTOMER_ID]
 			parameters: dict = json_data[KEYWORD]
@@ -81,13 +86,15 @@ def main(
 				)
 			)
 		else:
-			list_partitioned_cities = list_cities
-			only_download_missing = True
+
 			download = False
+			only_download_missing = True
 			aggregate = False
-			customer_id = ""
+			count_expansion_parents = False
 			credentials = ""
+			customer_id = ""
 			list_source_priority_order = []
+			list_partitioned_cities = list_cities
 	json_file.close()
 
 	google_ads_client: GoogleAdsClient = GoogleAdsClient.load_from_storage(credentials)
@@ -107,6 +114,32 @@ def main(
 				list_source_priority_order=tuple(list_source_priority_order),
 			)
 			write_errors_to_disk(overwrite=False)
+
+	if count_expansion_parents:
+		set_error_task_origin(task_origin=FREQUENCY)
+		list_parent_file_names: List[str] = import_paths_from_folder(
+			folder=FOLDER_EXPANSION_PARENTS,
+		)
+		dict_expansion_frequency: dict = {}
+		parent_filename: str
+		for parent_file_name in list_parent_file_names:
+			with open(f"{FOLDER_EXPANSION_PARENTS}{parent_file_name}", 'r') as parent_file:
+				expansion_cleaned: str
+				for expansion_cleaned in (expansion.rstrip('\n').split(HYPHEN)[1] for expansion in parent_file):
+					frequency: int = dict_expansion_frequency.get(expansion_cleaned, 0)
+					dict_expansion_frequency.update({expansion_cleaned: frequency + 1})
+
+		dict_expansion_frequency = dict(sorted(dict_expansion_frequency.items(), key=lambda x: x[1], reverse=True))
+		try:
+			with open(f"{FOLDER_KEYWORDS}parent_frequency.csv", 'w') as parent_frequency_file:
+				writer = csv.writer(parent_frequency_file)
+				writer.writerow(["expanded_keyword", "frequency"])
+				for key, value in dict_expansion_frequency.items():
+					writer.writerow([key, value])
+
+		except IOError:
+			log_error(error="I/O error")
+		write_errors_to_disk()
 
 	if aggregate:
 		set_error_task_origin(task_origin=AGGREGATE)
