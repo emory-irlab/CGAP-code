@@ -117,26 +117,41 @@ def main(
 
 	if count_expansion_parents:
 		set_error_task_origin(task_origin=FREQUENCY)
+		dict_keywords: dict = trends.generate_keywords(
+			folder_keywords=FOLDER_KEYWORDS,
+		)
+		already_downloaded_keywords: List[str] = list(
+			set(
+				(
+					keyword
+					for sub_dict_keywords in dict_keywords.values()
+					for keyword in sub_dict_keywords.keys()
+				)
+			)
+		)
+
 		list_parent_file_names: List[str] = import_paths_from_folder(
 			folder=FOLDER_EXPANSION_PARENTS,
 		)
 		dict_expansion_frequency: dict = {}
+
 		parent_filename: str
 		for parent_file_name in list_parent_file_names:
-			with open(f"{FOLDER_EXPANSION_PARENTS}{parent_file_name}", 'r') as parent_file:
-				expansion_cleaned: str
-				for expansion_cleaned in (expansion.rstrip('\n').split(HYPHEN)[1] for expansion in parent_file):
-					frequency: int = dict_expansion_frequency.get(expansion_cleaned, 0)
-					dict_expansion_frequency.update({expansion_cleaned: frequency + 1})
+			frequency = 0
+			for _ in open(f"{FOLDER_EXPANSION_PARENTS}{parent_file_name}"):
+				frequency += 1
+			expansion_word: str = parent_file_name.rstrip(TXT)
+			if expansion_word in dict_expansion_frequency:
+				log_error(error=f"duplicate_expansion_word{HYPHEN}{expansion_word}")
+			dict_expansion_frequency.update({expansion_word: frequency})
 
 		dict_expansion_frequency = dict(sorted(dict_expansion_frequency.items(), key=lambda x: x[1], reverse=True))
 		try:
 			with open(f"{FOLDER_KEYWORDS}parent_frequency.csv", 'w') as parent_frequency_file:
 				writer = csv.writer(parent_frequency_file)
-				writer.writerow(["expanded_keyword", "frequency"])
+				writer.writerow(["expanded_keyword", "frequency", "already_downloaded"])
 				for key, value in dict_expansion_frequency.items():
-					writer.writerow([key, value])
-
+					writer.writerow([key, value, (key in already_downloaded_keywords)])
 		except IOError:
 			log_error(error="I/O error")
 		write_errors_to_disk()
