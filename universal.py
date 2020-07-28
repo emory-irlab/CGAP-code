@@ -570,7 +570,7 @@ def upload_to_bigquery(
 	# WRITE_EMPTY    : Writes the data only if the table is empty.
 	# WRITE_APPEND   : Appends the data to the end of the table.
 	# WRITE_TRUNCATE : Erases all existing data in a table before writing the new data.
-	job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
+	job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
 
 	job_config.source_format = bigquery.SourceFormat.CSV
 	# job_config.skip_leading_rows = 1
