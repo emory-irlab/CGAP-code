@@ -12,7 +12,6 @@ AVG_MONTHLY_SEARCH: str = "avg_monthly_search"
 COMPETITION_VALUE: str = "competition_value"
 CUSTOMER_ID: str = "customer_id"
 EXPANSION: str = "expansion"
-EXPANDED_FROM: str = "expanded_from"
 
 # DEFAULT
 DEFAULT_LANGUAGE_ID_ENGLISH: str = "1000"
