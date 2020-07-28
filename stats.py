@@ -432,7 +432,11 @@ def run_metrics(
 				)
 				df_description.insert(0, POLLUTANT, nt_filename_epa_or_trends_parsed.pollutant)
 				df_description.insert(1, TARGET_STATISTIC, nt_filename_epa_or_trends_parsed.target_statistic)
-				df_description.insert(2, EPA_COLUMN_SITE_NUMBER, nt_filename_epa_or_trends_parsed.site_number)
+				df_description.insert(
+					2,
+					EPA_COLUMN_SITE_NUMBER,
+					parse_filename_numeric(numeric=nt_filename_epa_or_trends_parsed.site_number, cast_type="int"),
+				)
 
 				nt_output_filename = NT_filename_metrics_epa(
 					city=city,
