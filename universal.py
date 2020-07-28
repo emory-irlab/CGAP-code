@@ -412,7 +412,7 @@ def generate_numeric_for_filename_output(
 
 def parse_filename_numeric(
 		numeric: str,
-		cast_type: str = "str",
+		cast_type: str = "int",
 ) -> Any:
 	return cast(
 		cast_object=numeric.replace(TIME_SHIFT_NEGATIVE_SYMBOL, HYPHEN),
