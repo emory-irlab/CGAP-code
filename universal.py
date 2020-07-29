@@ -597,6 +597,7 @@ def upload_to_bigquery(
 
 	if file_or_folder == FILE:
 		job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
+		job_config.skip_leading_rows = 0
 		job_config.autodetect = True
 		with open(path, "rb") as source_file:
 			job = client.load_table_from_file(source_file, table_id, job_config=job_config)
@@ -604,6 +605,7 @@ def upload_to_bigquery(
 		log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
 	elif file_or_folder == FOLDER:
 		job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
+		job_config.skip_leading_rows = 1
 		job_config.schema = [
 			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_COUNT, GCP_INTEGER),
 			bigquery.SchemaField(KW_SITE_COUNT_AVG, GCP_FLOAT),
@@ -630,18 +632,11 @@ def upload_to_bigquery(
 			bigquery.SchemaField(KW_NONZERO_PROPORTION, GCP_FLOAT),
 		]
 
-		first: bool = True
 		file: str
 		for file in import_paths_from_folder(
 				folder=path,
 				check_paths=True,
 		):
-			if first:
-				job_config.skip_leading_rows = 0
-				first = False
-			else:
-				job_config.skip_leading_rows = 1
-
 			with open(f"{path}{file}", "rb") as source_file:
 				job = client.load_table_from_file(source_file, table_id, job_config=job_config)
 			job.result()
