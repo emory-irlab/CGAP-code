@@ -830,9 +830,9 @@ def correlate_for_keyword(
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_COUNT: kw_nonzero_threshold_days_count})
 
 	kw_threshold_site_count_avg = df_epa_above_or_below_threshold[SITE_COUNT].mean()
-	dict_cor_row.update({KW_THRESHOLD_SITE_COUNT_AVG: kw_threshold_site_count_avg})
+	dict_cor_row.update({KW_SITE_COUNT_AVG: kw_threshold_site_count_avg})
 	kw_threshold_site_count_std = df_epa_above_or_below_threshold[SITE_COUNT].std()
-	dict_cor_row.update({KW_THRESHOLD_SITE_COUNT_STD: kw_threshold_site_count_std})
+	dict_cor_row.update({KW_SITE_COUNT_STD: kw_threshold_site_count_std})
 
 	kw_non_zero_threshold_days_proportion: float
 	if threshold_epa_days_count > 0:

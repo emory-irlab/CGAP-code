@@ -42,8 +42,8 @@ KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
 KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
 KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: str = "kw_nonzero_threshold_days_proportion"
 # todo - rename site_count
-KW_THRESHOLD_SITE_COUNT_AVG: str = "kw_site_count_avg"
-KW_THRESHOLD_SITE_COUNT_STD: str = "kw_site_count_std"
+KW_SITE_COUNT_AVG: str = "kw_site_count_avg"
+KW_SITE_COUNT_STD: str = "kw_site_count_std"
 PEARSON_CORRELATION: str = "pearson_correlation"
 SPEARMAN_CORRELATION: str = "spearman_correlation"
 THRESHOLD_SITE_COUNT_AVG: str = "threshold_site_count_avg"
@@ -613,8 +613,8 @@ def upload_to_bigquery(
 			bigquery.SchemaField(KW_NONZERO_PROPORTION, GCP_FLOAT),
 			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_COUNT, GCP_INTEGER),
 			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION, GCP_FLOAT),
-			bigquery.SchemaField(KW_THRESHOLD_SITE_COUNT_AVG, GCP_FLOAT),
-			bigquery.SchemaField(KW_THRESHOLD_SITE_COUNT_STD, GCP_FLOAT),
+			bigquery.SchemaField(KW_SITE_COUNT_AVG, GCP_FLOAT),
+			bigquery.SchemaField(KW_SITE_COUNT_STD, GCP_FLOAT),
 			bigquery.SchemaField(PEARSON_CORRELATION, GCP_FLOAT),
 			bigquery.SchemaField(POLLUTANT, GCP_STRING),
 			bigquery.SchemaField(EPA_COLUMN_SITE_NUMBER, GCP_INTEGER),
