@@ -456,7 +456,7 @@ def run_metrics(
 				nt_output_filename = NT_filename_metrics_epa(
 					city=city,
 					pollutant=nt_filename_epa_or_trends_parsed.pollutant,
-					site_number=site_number,
+					site_number=generate_numeric_for_filename_output(site_number),
 					target_statistic=nt_filename_epa_or_trends_parsed.target_statistic,
 					ignore_zero=str(ignore_zero),
 					year=str(year),
