@@ -597,7 +597,6 @@ def upload_to_bigquery(
 
 	if file_or_folder == FILE:
 		job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
-		job_config.skip_leading_rows = 0
 		job_config.autodetect = True
 		with open(path, "rb") as source_file:
 			job = client.load_table_from_file(source_file, table_id, job_config=job_config)
