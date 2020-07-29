@@ -7,6 +7,7 @@ from collections import namedtuple
 from typing import Any
 from typing import Callable
 from typing import Dict
+from typing import Generator
 from typing import Iterator
 from typing import List
 from typing import NamedTuple
@@ -740,55 +741,49 @@ def import_paths_from_folder(
 		include_files: bool = True,
 		include_folders: bool = False,
 		ignore_hidden: bool = True,
-) -> List[str]:
+) -> Generator[str, None, List[str]]:
 	if os.path.exists(folder):
-		list_paths: List[str] = os.listdir(folder)
 		if len(list_paths_filter_conditions) > 0:
 			filter_all_conditions_function: Callable[[str], bool] = lambda x: all(
 				str(condition.lower()) in x
 				for condition in list_paths_filter_conditions
 			)
-			list_paths = list(
-				itertools.compress(
-					list_paths,
-					map(
-						filter_all_conditions_function,
-						(
-							path.lower()
-							for path in list_paths
-						)
-					)
-				)
-			)
-		list_paths.sort()
+			is_file_function: Callable[[str], bool] = lambda x: os.path.isfile(f"{folder}{x}")
+			is_folder_function: Callable[[str], bool] = lambda x: os.path.isdir(f"{folder}{x}")
+			pattern_to_ignore: Pattern[str] = re.compile(r"\.[A-Za-z]")
+			is_hidden_file_function: Callable[[str], bool] = lambda x: bool(re.match(pattern_to_ignore, x))
 
-		if check_paths:
-			if include_files:
-				list_paths = [
-					path
-					for path in list_paths
-					if os.path.isfile(f"{folder}{path}")
-				]
-			if include_folders:
-				list_paths = [
-					path
-					for path in list_paths
-					if os.path.isdir(f"{folder}{path}")
-				]
-			if ignore_hidden:
-				pattern_hidden_path: Pattern[str] = re.compile(r"\.[A-Za-z]")
-				list_paths = [
-					path
-					for path in list_paths
-					if not re.match(pattern_hidden_path, path)
-				]
+			path: str
+			for path in os.listdir(folder):
+				if filter_all_conditions_function(path.lower()):
+					if check_paths:
+						if ignore_hidden:
+							if is_hidden_file_function(path):
+								continue
 
-		return list_paths
+						if include_files:
+							if not is_file_function(path) and not include_folders:
+								continue
+
+						if include_folders:
+							is_folder = is_folder_function(path)
+							if not is_folder and not include_files:
+								log_error(error=f"neither_folder_nor_file{HYPHEN}{path}")
+								continue
+							elif not is_folder:
+								continue
+
+						yield path
+					else:
+						yield path
+		else:
+			return os.listdir(folder)
 
 	else:
 		generate_sub_paths_for_folder(
 			folder=folder,
 		)
+		yield
 		return []
 
 

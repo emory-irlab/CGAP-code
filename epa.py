@@ -1,7 +1,5 @@
-import sys
-from typing import Generator
-
 import requests
+import sys
 
 from universal import *
 
