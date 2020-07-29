@@ -47,6 +47,7 @@ PARAM_METRICS_TRENDS: str = f"run{UNDERSCORE}{TRENDS}{UNDERSCORE}{METRICS}"
 PARAM_STITCH_EPA: str = f"{STITCH}{UNDERSCORE}{EPA}"
 PARAM_STITCH_TRENDS: str = f"{STITCH}{UNDERSCORE}{TRENDS}"
 PARAM_UPLOAD_AGGREGATE_FROM_FOLDER: str = "upload_aggregate_from_folder"
+PARAM_UPLOAD_FOLDER: str = "upload_folder"
 
 # DEFAULT
 DEFAULT_COMMON_CITY: str = USA
@@ -152,6 +153,7 @@ def main(
 			bool_run_intercity: bool = json_data[PARAM_INTERCITY]
 			bool_aggregate_intercity: bool = json_data[PARAM_AGGREGATE_INTERCITY]
 			str_upload_aggregate_from_folder: str = json_data[PARAM_UPLOAD_AGGREGATE_FROM_FOLDER]
+			str_upload_folder: str = json_data[PARAM_UPLOAD_FOLDER]
 
 			common_city: str = json_data[COMMON_CITY]
 			common_word: str = json_data[COMMON_WORD]
@@ -351,6 +353,26 @@ def main(
 			folder=universal_parameters[str_upload_aggregate_from_folder],
 		)
 
+	if str_upload_folder:
+		upload_folder(
+			filename_label=str_upload_folder.replace(f"{HYPHEN}{STITCH}", ""),
+			folder=universal_parameters[str_upload_folder],
+		)
+
+
+def upload_folder(
+		filename_label: str,
+		folder: str,
+) -> None:
+	set_error_task_origin(task_origin=UPLOAD)
+	if folder:
+		upload_to_bigquery(
+			path=folder,
+			table_name=filename_label,
+			file_or_folder=FOLDER,
+		)
+	write_errors_to_disk(overwrite=False)
+
 
 def upload_aggregate_from_folder(
 		filename_label: str,
@@ -365,6 +387,7 @@ def upload_aggregate_from_folder(
 		upload_to_bigquery(
 			path=f"{folder}{filename_upload}",
 			table_name=filename_label,
+			file_or_folder=FILE,
 		)
 	write_errors_to_disk(overwrite=False)
 
