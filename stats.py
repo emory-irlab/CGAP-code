@@ -151,7 +151,7 @@ def main(
 			bool_aggregate_and_upload: bool = json_data[PARAM_AGGREGATE_AND_UPLOAD]
 			bool_run_intercity: bool = json_data[PARAM_INTERCITY]
 			bool_aggregate_intercity: bool = json_data[PARAM_AGGREGATE_INTERCITY]
-			upload_aggregate_from_folder: str = json_data[PARAM_UPLOAD_AGGREGATE_FROM_FOLDER]
+			bool_upload_aggregate_from_folder: str = json_data[PARAM_UPLOAD_AGGREGATE_FROM_FOLDER]
 
 			common_city: str = json_data[COMMON_CITY]
 			common_word: str = json_data[COMMON_WORD]
@@ -185,22 +185,6 @@ def main(
 			partition_total=get_partition_total(),
 		)
 	)
-
-	def upload_aggregate_from_folder_helper(
-			filename_label: str,
-			folder: str,
-	) -> None:
-		set_error_task_origin(task_origin=UPLOAD)
-		filename_upload = import_single_file(
-			folder=folder,
-			list_filename_filter_conditions=(AGGREGATE, CSV),
-		)
-		if filename_upload:
-			upload_to_bigquery(
-				path=f"{folder}{filename_upload}",
-				table_name=filename_label,
-			)
-		write_errors_to_disk(overwrite=False)
 
 	if bool_stitch_epa:
 		print("Calling stitch epa from stats.")
@@ -361,11 +345,28 @@ def main(
 			)
 		write_errors_to_disk()
 
-	if upload_aggregate_from_folder:
-		upload_aggregate_from_folder_helper(
-			filename_label=upload_aggregate_from_folder.replace(f"{UNDERSCORE}{AGGREGATE}", ""),
-			folder=universal_parameters[upload_aggregate_from_folder],
+	if bool_upload_aggregate_from_folder:
+		upload_aggregate_from_folder(
+			filename_label=bool_upload_aggregate_from_folder.replace(f"{UNDERSCORE}{AGGREGATE}", ""),
+			folder=universal_parameters[bool_upload_aggregate_from_folder],
 		)
+
+
+def upload_aggregate_from_folder(
+		filename_label: str,
+		folder: str,
+) -> None:
+	set_error_task_origin(task_origin=UPLOAD)
+	filename_upload = import_single_file(
+		folder=folder,
+		list_filename_filter_conditions=(AGGREGATE, CSV),
+	)
+	if filename_upload:
+		upload_to_bigquery(
+			path=f"{folder}{filename_upload}",
+			table_name=filename_label,
+		)
+	write_errors_to_disk(overwrite=False)
 
 
 def run_metrics(
