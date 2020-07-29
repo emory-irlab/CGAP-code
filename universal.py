@@ -726,10 +726,10 @@ def import_single_file(
 ) -> str:
 	filename: str
 	list_rest: List[str]
-	list_filenames: List[str] = import_paths_from_folder(
+	list_filenames: List[str] = list(import_paths_from_folder(
 		folder=folder,
 		list_paths_filter_conditions=list_filename_filter_conditions,
-	)
+	))
 	single_file: bool = is_single_item(list_filenames)
 	if not single_file:
 		log_error(error=f"parse_filename{HYPHEN}{'_'.join(list_filename_filter_conditions)}")
