@@ -151,7 +151,7 @@ def main(
 			bool_aggregate_and_upload: bool = json_data[PARAM_AGGREGATE_AND_UPLOAD]
 			bool_run_intercity: bool = json_data[PARAM_INTERCITY]
 			bool_aggregate_intercity: bool = json_data[PARAM_AGGREGATE_INTERCITY]
-			bool_upload_aggregate_from_folder: str = json_data[PARAM_UPLOAD_AGGREGATE_FROM_FOLDER]
+			str_upload_aggregate_from_folder: str = json_data[PARAM_UPLOAD_AGGREGATE_FROM_FOLDER]
 
 			common_city: str = json_data[COMMON_CITY]
 			common_word: str = json_data[COMMON_WORD]
@@ -345,10 +345,10 @@ def main(
 			)
 		write_errors_to_disk()
 
-	if bool_upload_aggregate_from_folder:
+	if str_upload_aggregate_from_folder:
 		upload_aggregate_from_folder(
-			filename_label=bool_upload_aggregate_from_folder.replace(f"{UNDERSCORE}{AGGREGATE}", ""),
-			folder=universal_parameters[bool_upload_aggregate_from_folder],
+			filename_label=str_upload_aggregate_from_folder.replace(f"{UNDERSCORE}{AGGREGATE}", ""),
+			folder=universal_parameters[str_upload_aggregate_from_folder],
 		)
 
 
