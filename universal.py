@@ -604,9 +604,9 @@ def upload_to_bigquery(
 		job.result()
 		log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
 	elif file_or_folder == FOLDER:
-		job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
-		job_config.skip_leading_rows = 1
-		job_config.schema = [
+		# job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
+		# job_config.skip_leading_rows = 1
+		schema = [
 			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_COUNT, GCP_INTEGER),
 			bigquery.SchemaField(KW_SITE_COUNT_AVG, GCP_FLOAT),
 			bigquery.SchemaField(KW_SITE_COUNT_STD, GCP_FLOAT),
@@ -631,15 +631,22 @@ def upload_to_bigquery(
 			bigquery.SchemaField(KW_NONZERO_COUNT, GCP_INTEGER),
 			bigquery.SchemaField(KW_NONZERO_PROPORTION, GCP_FLOAT),
 		]
-
+		table = bigquery.Table(table_id, schema=schema)
+		table = client.create_table(table)  # Make an API request.
+		print(
+			"Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id)
+		)
 		file: str
 		for file in import_paths_from_folder(
 				folder=path,
 				check_paths=True,
 		):
-			with open(f"{path}{file}", "rb") as source_file:
-				job = client.load_table_from_file(source_file, table_id, job_config=job_config)
-			job.result()
+			df = pd.read_csv(f"{path}{file}").to_dict(orient="records")
+			print(df)
+			exit()
+			errors = client.insert_rows(table_id, df)  # Make an API request.
+			if not errors:
+				print("New rows have been added.")
 	else:
 		log_error(f"invalid_file_or_folder_parameter{HYPHEN}{file_or_folder}")
 
