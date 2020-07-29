@@ -196,8 +196,8 @@ def main(
 			list_filename_filter_conditions=(AGGREGATE, CSV),
 		)
 		if filename_upload:
-			upload_file_to_bigquery(
-				filename=f"{folder}{filename_upload}",
+			upload_to_bigquery(
+				path=f"{folder}{filename_upload}",
 				table_name=filename_label,
 			)
 		write_errors_to_disk(overwrite=False)

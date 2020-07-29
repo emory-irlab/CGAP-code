@@ -181,8 +181,8 @@ def main(
 				extension=CSV,
 				folder=folder_output_aggregate,
 			)
-			upload_file_to_bigquery(
-				filename=filename_upload,
+			upload_to_bigquery(
+				path=filename_upload,
 				table_name=filename_label,
 			)
 			write_errors_to_disk()

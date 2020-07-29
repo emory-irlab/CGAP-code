@@ -21,6 +21,8 @@ COMMON_WORD: str = "common_word"
 CORRELATIONS: str = "correlations"
 DATE: str = "date"
 EPA: str = "epa"
+FILE: str = "file"
+FOLDER: str = "folder"
 IGNORE_ZERO: str = "ignore_zero"
 INTERCITY: str = "intercity"
 GROUP_BY: str = "group_by"
@@ -547,15 +549,16 @@ def aggregate_data_in_folder(
 		index=False,
 	)
 	if upload:
-		upload_file_to_bigquery(
-			filename=filename_aggregate,
+		upload_to_bigquery(
+			path=filename_aggregate,
 			table_name=filename_label,
 		)
 
 
-def upload_file_to_bigquery(
-		filename: str,
+def upload_to_bigquery(
+		path: str,
 		table_name: str,
+		file_or_folder: str = FILE,
 ) -> None:
 	log_error(f"Attempting upload to bigquery", log=True)
 	from google.cloud import bigquery
@@ -576,8 +579,13 @@ def upload_file_to_bigquery(
 	# job_config.skip_leading_rows = 1
 	job_config.autodetect = True
 
-	with open(filename, "rb") as source_file:
-		job = client.load_table_from_file(source_file, table_id, job_config=job_config)
+	if file_or_folder == FILE:
+		with open(path, "rb") as source_file:
+			job = client.load_table_from_file(source_file, table_id, job_config=job_config)
+	elif file_or_folder == FOLDER:
+		pass
+	else:
+		log_error(f"invalid_file_or_folder_parameter{HYPHEN}{file_or_folder}")
 
 	job.result()
 	log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
