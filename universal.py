@@ -589,10 +589,7 @@ def upload_to_bigquery(
 		file: str
 		for file in import_paths_from_folder(
 			folder=path,
-			check_paths=False,
-			include_files=True,
-			include_folders=False,
-			ignore_hidden=True,
+			check_paths=True,
 		):
 			if first:
 				job_config.skip_leading_rows = 0
