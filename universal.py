@@ -547,13 +547,13 @@ def aggregate_data_in_folder(
 		index=False,
 	)
 	if upload:
-		upload_to_bigquery(
+		upload_file_to_bigquery(
 			filename=filename_aggregate,
 			table_name=filename_label,
 		)
 
 
-def upload_to_bigquery(
+def upload_file_to_bigquery(
 		filename: str,
 		table_name: str,
 ) -> None:
