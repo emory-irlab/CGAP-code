@@ -37,6 +37,21 @@ THRESHOLD_SOURCE: str = "threshold_source"
 TIME_SHIFT: str = "time_shift"
 TRENDS: str = "trends"
 
+KW_NONZERO_COUNT: str = "kw_nonzero_count"
+KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
+KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
+KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: str = "kw_nonzero_threshold_days_proportion"
+# todo - rename site_count
+KW_THRESHOLD_SITE_COUNT_AVG: str = "kw_site_count_avg"
+KW_THRESHOLD_SITE_COUNT_STD: str = "kw_site_count_std"
+PEARSON_CORRELATION: str = "pearson_correlation"
+SPEARMAN_CORRELATION: str = "spearman_correlation"
+THRESHOLD_SITE_COUNT_AVG: str = "threshold_site_count_avg"
+THRESHOLD_SITE_COUNT_STD: str = "threshold_site_count_std"
+THRESHOLD_EPA_DAYS_COUNT: str = "threshold_epa_days_count"
+THRESHOLD_EPA_DAYS_PROPORTION: str = "threshold_epa_days_proportion"
+TOTAL_EPA_DAYS_COUNT: str = "total_epa_days_count"
+
 # STATIC VARIABLES
 AGGREGATE: str = "aggregate"
 API: str = "api"
@@ -563,6 +578,11 @@ def upload_to_bigquery(
 	log_error(f"Attempting upload to bigquery", log=True)
 	from google.cloud import bigquery
 
+	GCP_BOOLEAN: str = "BOOLEAN"
+	GCP_FLOAT: str = "FLOAT"
+	GCP_INTEGER: str = "INTEGER"
+	GCP_STRING: str = "STRING"
+
 	client = bigquery.Client.from_service_account_json(CREDENTIALS_BIGQUERY)
 
 	cleaned_table_name: str = UNDERSCORE.join(table_name.split(UNDERSCORE)[1:])
@@ -575,16 +595,41 @@ def upload_to_bigquery(
 	# WRITE_TRUNCATE : Erases all existing data in a table before writing the new data.
 
 	job_config.source_format = bigquery.SourceFormat.CSV
-	job_config.autodetect = True
 
 	if file_or_folder == FILE:
 		job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
+		job_config.autodetect = True
 		with open(path, "rb") as source_file:
 			job = client.load_table_from_file(source_file, table_id, job_config=job_config)
 		job.result()
 		log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
 	elif file_or_folder == FOLDER:
 		job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
+		job_config.schema = [
+			bigquery.SchemaField(CITY, GCP_STRING),
+			bigquery.SchemaField(IGNORE_ZERO, GCP_BOOLEAN),
+			bigquery.SchemaField(KEYWORD, GCP_STRING),
+			bigquery.SchemaField(KW_NONZERO_COUNT, GCP_INTEGER),
+			bigquery.SchemaField(KW_NONZERO_PROPORTION, GCP_FLOAT),
+			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_COUNT, GCP_INTEGER),
+			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION, GCP_FLOAT),
+			bigquery.SchemaField(KW_THRESHOLD_SITE_COUNT_AVG, GCP_FLOAT),
+			bigquery.SchemaField(KW_THRESHOLD_SITE_COUNT_STD, GCP_FLOAT),
+			bigquery.SchemaField(PEARSON_CORRELATION, GCP_FLOAT),
+			bigquery.SchemaField(POLLUTANT, GCP_STRING),
+			bigquery.SchemaField(EPA_COLUMN_SITE_NUMBER, GCP_INTEGER),
+			bigquery.SchemaField(SPEARMAN_CORRELATION, GCP_FLOAT),
+			bigquery.SchemaField(TARGET_STATISTIC, GCP_STRING),
+			bigquery.SchemaField(THRESHOLD, GCP_INTEGER),
+			bigquery.SchemaField(THRESHOLD_EPA_DAYS_COUNT, GCP_INTEGER),
+			bigquery.SchemaField(THRESHOLD_EPA_DAYS_PROPORTION, GCP_FLOAT),
+			bigquery.SchemaField(THRESHOLD_SIDE, GCP_STRING),
+			bigquery.SchemaField(THRESHOLD_SITE_COUNT_AVG, GCP_FLOAT),
+			bigquery.SchemaField(THRESHOLD_SITE_COUNT_STD, GCP_FLOAT),
+			bigquery.SchemaField(THRESHOLD_SOURCE, GCP_STRING),
+			bigquery.SchemaField(TIME_SHIFT, GCP_INTEGER),
+			bigquery.SchemaField(TOTAL_EPA_DAYS_COUNT, GCP_INTEGER),
+		]
 		first: bool = True
 		file: str
 		for file in import_paths_from_folder(
