@@ -605,35 +605,36 @@ def upload_to_bigquery(
 	elif file_or_folder == FOLDER:
 		job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
 		job_config.schema = [
-			bigquery.SchemaField(CITY, GCP_STRING),
-			bigquery.SchemaField(IGNORE_ZERO, GCP_BOOLEAN),
-			bigquery.SchemaField(KEYWORD, GCP_STRING),
-			bigquery.SchemaField(KW_NONZERO_COUNT, GCP_INTEGER),
-			bigquery.SchemaField(KW_NONZERO_PROPORTION, GCP_FLOAT),
 			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_COUNT, GCP_INTEGER),
-			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION, GCP_FLOAT),
 			bigquery.SchemaField(KW_SITE_COUNT_AVG, GCP_FLOAT),
 			bigquery.SchemaField(KW_SITE_COUNT_STD, GCP_FLOAT),
+			bigquery.SchemaField(KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION, GCP_FLOAT),
 			bigquery.SchemaField(PEARSON_CORRELATION, GCP_FLOAT),
+			bigquery.SchemaField(SPEARMAN_CORRELATION, GCP_FLOAT),
+			bigquery.SchemaField(CITY, GCP_STRING),
+			bigquery.SchemaField(KEYWORD, GCP_STRING),
 			bigquery.SchemaField(POLLUTANT, GCP_STRING),
 			bigquery.SchemaField(EPA_COLUMN_SITE_NUMBER, GCP_INTEGER),
-			bigquery.SchemaField(SPEARMAN_CORRELATION, GCP_FLOAT),
 			bigquery.SchemaField(TARGET_STATISTIC, GCP_STRING),
 			bigquery.SchemaField(THRESHOLD, GCP_INTEGER),
-			bigquery.SchemaField(THRESHOLD_EPA_DAYS_COUNT, GCP_INTEGER),
-			bigquery.SchemaField(THRESHOLD_EPA_DAYS_PROPORTION, GCP_FLOAT),
 			bigquery.SchemaField(THRESHOLD_SIDE, GCP_STRING),
-			bigquery.SchemaField(THRESHOLD_SITE_COUNT_AVG, GCP_FLOAT),
-			bigquery.SchemaField(THRESHOLD_SITE_COUNT_STD, GCP_FLOAT),
 			bigquery.SchemaField(THRESHOLD_SOURCE, GCP_STRING),
 			bigquery.SchemaField(TIME_SHIFT, GCP_INTEGER),
+			bigquery.SchemaField(IGNORE_ZERO, GCP_BOOLEAN),
 			bigquery.SchemaField(TOTAL_EPA_DAYS_COUNT, GCP_INTEGER),
+			bigquery.SchemaField(THRESHOLD_EPA_DAYS_COUNT, GCP_INTEGER),
+			bigquery.SchemaField(THRESHOLD_EPA_DAYS_PROPORTION, GCP_FLOAT),
+			bigquery.SchemaField(THRESHOLD_SITE_COUNT_AVG, GCP_FLOAT),
+			bigquery.SchemaField(THRESHOLD_SITE_COUNT_STD, GCP_FLOAT),
+			bigquery.SchemaField(KW_NONZERO_COUNT, GCP_INTEGER),
+			bigquery.SchemaField(KW_NONZERO_PROPORTION, GCP_FLOAT),
 		]
+
 		first: bool = True
 		file: str
 		for file in import_paths_from_folder(
-			folder=path,
-			check_paths=True,
+				folder=path,
+				check_paths=True,
 		):
 			if first:
 				job_config.skip_leading_rows = 0
@@ -646,7 +647,6 @@ def upload_to_bigquery(
 			job.result()
 	else:
 		log_error(f"invalid_file_or_folder_parameter{HYPHEN}{file_or_folder}")
-
 
 
 def flatten_list(
