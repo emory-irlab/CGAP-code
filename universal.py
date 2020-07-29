@@ -597,7 +597,7 @@ def upload_to_bigquery(
 			else:
 				job_config.skip_leading_rows = 1
 
-			with open(file, "rb") as source_file:
+			with open(f"{path}{file}", "rb") as source_file:
 				job = client.load_table_from_file(source_file, table_id, job_config=job_config)
 			job.result()
 	else:
