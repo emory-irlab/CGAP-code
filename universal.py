@@ -573,22 +573,38 @@ def upload_to_bigquery(
 	# WRITE_EMPTY    : Writes the data only if the table is empty.
 	# WRITE_APPEND   : Appends the data to the end of the table.
 	# WRITE_TRUNCATE : Erases all existing data in a table before writing the new data.
-	job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
 
 	job_config.source_format = bigquery.SourceFormat.CSV
-	# job_config.skip_leading_rows = 1
 	job_config.autodetect = True
 
 	if file_or_folder == FILE:
+		job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
 		with open(path, "rb") as source_file:
 			job = client.load_table_from_file(source_file, table_id, job_config=job_config)
+		job.result()
+		log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
 	elif file_or_folder == FOLDER:
-		pass
+		job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
+		first: bool = True
+		file: str
+		for file in import_paths_from_folder(
+			folder=path,
+			check_paths=False,
+			include_files=True,
+			include_folders=False,
+			ignore_hidden=True,
+		):
+			if first:
+				job_config.skip_leading_rows = 0
+				first = False
+			else:
+				job_config.skip_leading_rows = 1
+
+			job = client.load_table_from_file(file, table_id, job_config=job_config)
+			job.result()
 	else:
 		log_error(f"invalid_file_or_folder_parameter{HYPHEN}{file_or_folder}")
 
-	job.result()
-	log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
 
 
 def flatten_list(
