@@ -41,7 +41,6 @@ KW_NONZERO_COUNT: str = "kw_nonzero_count"
 KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
 KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
 KW_NON_ZERO_THRESHOLD_DAYS_PROPORTION: str = "kw_nonzero_threshold_days_proportion"
-# todo - rename site_count
 KW_SITE_COUNT_AVG: str = "kw_site_count_avg"
 KW_SITE_COUNT_STD: str = "kw_site_count_std"
 PEARSON_CORRELATION: str = "pearson_correlation"
