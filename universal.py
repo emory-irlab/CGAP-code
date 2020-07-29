@@ -37,6 +37,10 @@ THRESHOLD_SOURCE: str = "threshold_source"
 TIME_SHIFT: str = "time_shift"
 TRENDS: str = "trends"
 
+GCP_BOOLEAN: str = "BOOLEAN"
+GCP_FLOAT: str = "FLOAT"
+GCP_INTEGER: str = "INTEGER"
+GCP_STRING: str = "STRING"
 KW_NONZERO_COUNT: str = "kw_nonzero_count"
 KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
 KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
@@ -577,11 +581,6 @@ def upload_to_bigquery(
 	log_error(f"Attempting upload to bigquery", log=True)
 	from google.cloud import bigquery
 
-	GCP_BOOLEAN: str = "BOOLEAN"
-	GCP_FLOAT: str = "FLOAT"
-	GCP_INTEGER: str = "INTEGER"
-	GCP_STRING: str = "STRING"
-
 	client = bigquery.Client.from_service_account_json(CREDENTIALS_BIGQUERY)
 
 	cleaned_table_name: str = UNDERSCORE.join(table_name.split(UNDERSCORE)[1:])
@@ -642,6 +641,8 @@ def upload_to_bigquery(
 			job.result()
 	else:
 		log_error(f"invalid_file_or_folder_parameter{HYPHEN}{file_or_folder}")
+
+	log_error(f"Finished loading folder: {path}", log=True)
 
 
 def flatten_list(
