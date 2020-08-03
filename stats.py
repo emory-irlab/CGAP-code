@@ -186,6 +186,7 @@ def main(
 	)
 
 	def mean_max_correlation():
+		print("starting mean max")
 		# running correlations for mean to max per site
 		list_dict_mean_max_correlations = []
 		for m_city in list_input_cities:
