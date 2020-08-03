@@ -217,12 +217,28 @@ def main(
 							continue
 
 						list_site_numbers_per_city.append(nt_filename_epa_stitch.site_number)
-						other_target_statistic_file: str = import_single_file(
+						list_other_matches = import_paths_from_folder(
 							folder=FOLDER_EPA_STITCH,
-							list_filename_filter_conditions=(
-								m_city, nt_filename_epa_stitch.pollutant, other_target_statistic,
-								nt_filename_epa_stitch.site_number),
+							list_paths_filter_conditions=(
+								m_city,
+								nt_filename_epa_stitch.pollutant,
+								other_target_statistic,
+								nt_filename_epa_stitch.site_number,
+							),
 						)
+						other_target_statistic_file = ""
+						for match in list_other_matches:
+							nt_filename_epa_match = parse_filename(
+								filename=match,
+								delimiter=HYPHEN,
+								named_tuple=epa.NT_filename_epa_stitch,
+								extension=CSV,
+							)
+							if nt_filename_epa_match.site_number == nt_filename_epa_stitch.site_number:
+								if other_target_statistic_file:
+									log_error(f"multiple_matches{HYPHEN}{other_target_statistic_file}")
+								other_target_statistic_file = match
+
 						df_one: pd.DataFrame = pd.read_csv(
 							f"{FOLDER_EPA_STITCH}{epa_filename}",
 							index_col=DATE,
