@@ -202,7 +202,7 @@ def main(
 					extension=CSV,
 				)
 				if nt_filename_epa_stitch.target_statistic in [MEAN, MAX, ]:
-					if nt_filename_epa_stitch.site_number == -1 or nt_filename_epa_stitch.site_number in list_site_numbers_per_city:
+					if nt_filename_epa_stitch.site_number == "~1" or nt_filename_epa_stitch.site_number in list_site_numbers_per_city:
 						continue
 					else:
 						other_target_statistic: str
@@ -225,9 +225,13 @@ def main(
 						)
 						df_one: pd.DataFrame = pd.read_csv(
 							f"{FOLDER_EPA_STITCH}{epa_filename}",
+							index_col=DATE,
+							parse_dates=[DATE],
 						)
 						df_two: pd.DataFrame = pd.read_csv(
 							f"{FOLDER_EPA_STITCH}{other_target_statistic_file}",
+							index_col=DATE,
+							parse_dates=[DATE],
 						)
 						pearson_correlation: float = df_one[target_variable_column_name_epa].corr(
 							df_two[target_variable_column_name_epa],
