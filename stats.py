@@ -225,11 +225,9 @@ def main(
 						)
 						df_one: pd.DataFrame = pd.read_csv(
 							f"{FOLDER_EPA_STITCH}{epa_filename}",
-							index_col=DATE,
 						)
 						df_two: pd.DataFrame = pd.read_csv(
 							f"{FOLDER_EPA_STITCH}{other_target_statistic_file}",
-							index_col=DATE,
 						)
 						pearson_correlation: float = df_one[target_variable_column_name_epa].corr(
 							df_two[target_variable_column_name_epa],
