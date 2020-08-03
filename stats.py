@@ -255,7 +255,7 @@ def main(
 				)
 				df.to_csv(f"../CGAP-data/CGAP-epa/correlations/{output_filename}")
 
-		mean_max_correlation()
+	mean_max_correlation()
 
 		if bool_stitch_epa:
 			print("Calling stitch epa from stats.")
