@@ -274,7 +274,11 @@ def main(
 					extension=CSV,
 					delimiter=HYPHEN,
 				)
+				generate_sub_paths_for_folder("../CGAP-data/CGAP-epa/correlations/{output_filename}")
 				df.to_csv(f"../CGAP-data/CGAP-epa/correlations/{output_filename}")
+		df_aggregate = pd.DataFrame(list_dict_mean_max_correlations)
+		print(df_aggregate)
+		df_aggregate.to_csv(f"../CGAP-data/CGAP-epa/aggregate-correlations-site-number.csv")
 
 	mean_max_correlation()
 
