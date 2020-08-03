@@ -264,8 +264,13 @@ def main(
 
 				df = pd.DataFrame(list_dict_mean_max_correlations)
 				print(df)
+				nt_filename_mean_max_epa = NT_filename_mean_max_epa(
+					city=m_city,
+					pollutant=nt_filename_epa_stitch.pollutant,
+					site_number=nt_filename_epa_stitch.site_number,
+				)
 				output_filename: str = generate_filename(
-					nt_filename=NT_filename_mean_max_epa,
+					nt_filename=nt_filename_mean_max_epa,
 					extension=CSV,
 					delimiter=HYPHEN,
 				)
