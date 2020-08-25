@@ -211,7 +211,6 @@ def main(
 						elif nt_filename_epa_stitch.target_statistic == MAX:
 							other_target_statistic = MEAN
 						else:
-							other_target_statistic = ""
 							log_error(
 								error=f"invalid_target_statistic{HYPHEN}{nt_filename_epa_stitch.target_statistic}")
 							continue
@@ -258,7 +257,7 @@ def main(
 							CITY:                   m_city,
 							EPA_COLUMN_SITE_NUMBER: nt_filename_epa_stitch.site_number,
 							POLLUTANT:              nt_filename_epa_stitch.pollutant,
-							PEARSON_CORRELATION: pearson_correlation,
+							PEARSON_CORRELATION:    pearson_correlation,
 						})
 						list_dict_mean_max_correlations.append(dict_data)
 
@@ -453,6 +452,7 @@ def main(
 			folder=universal_parameters[str_upload_folder],
 		)
 
+
 def upload_folder(
 		filename_label: str,
 		folder: str,
@@ -465,6 +465,7 @@ def upload_folder(
 			file_or_folder=FOLDER,
 		)
 	write_errors_to_disk(overwrite=False)
+
 
 def upload_aggregate_from_folder(
 		filename_label: str,
@@ -482,6 +483,7 @@ def upload_aggregate_from_folder(
 			file_or_folder=FILE,
 		)
 	write_errors_to_disk(overwrite=False)
+
 
 def run_metrics(
 		city: str,
@@ -548,7 +550,7 @@ def run_metrics(
 				df_description.insert(0, POLLUTANT, nt_filename_epa_or_trends_parsed.pollutant)
 				df_description.insert(1, TARGET_STATISTIC, nt_filename_epa_or_trends_parsed.target_statistic)
 				site_number: int = parse_filename_numeric(numeric=nt_filename_epa_or_trends_parsed.site_number,
-														  cast_type="int")
+				                                          cast_type="int")
 				df_description.insert(
 					2,
 					EPA_COLUMN_SITE_NUMBER,
@@ -607,6 +609,7 @@ def run_metrics(
 				index=False,
 			)
 
+
 def generate_correlations_comparison_folder_name(
 		folder_correlations_comparison: str,
 		dict_correlations_comparison_pivot_values: Dict[str, Any],
@@ -622,6 +625,7 @@ def generate_correlations_comparison_folder_name(
 	subfolder: str = HYPHEN.join(list_correlations_comparison_folder_name_components)
 
 	return f"{folder_correlations_comparison}{subfolder}/"
+
 
 def run_correlations(
 		city: str,
@@ -893,6 +897,7 @@ def run_correlations(
 				correlate_trends()
 			write_errors_to_disk(bool_suppress_print=True, overwrite=False)
 
+
 # dynamic programming
 def dp_epa_variations_dict(
 		df_epa: pd.DataFrame,
@@ -935,6 +940,7 @@ def dp_epa_variations_dict(
 
 	return dict_epa_stats_helper
 
+
 def correlate_for_keyword(
 		df_trends: pd.DataFrame,
 		df_epa_above_or_below_threshold: pd.DataFrame,
@@ -948,7 +954,7 @@ def correlate_for_keyword(
 
 	# noinspection PyTypeChecker
 	df_kw_nonzero_threshold_days: pd.DataFrame = (df_trends[trends_column_name_ignore_zero] > 0) & \
-												 df_epa_above_or_below_threshold[target_variable_column_name_epa]
+	                                             df_epa_above_or_below_threshold[target_variable_column_name_epa]
 	kw_nonzero_threshold_days_count: int = df_kw_nonzero_threshold_days.count()
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_COUNT: kw_nonzero_threshold_days_count})
 
@@ -985,6 +991,7 @@ def correlate_for_keyword(
 	dict_cor_row.update({SPEARMAN_CORRELATION: spearman_correlation})
 
 	return dict_cor_row
+
 
 def run_intercity(
 		common_city: str = DEFAULT_COMMON_CITY,
@@ -1074,13 +1081,13 @@ def run_intercity(
 				df_intercity: pd.DataFrame = pd.DataFrame(index=df_common_city_keyword.index)
 
 				df_common_word_cross_city_scalar: pd.DataFrame = df_common_city_keyword[COMMON_WORD_FREQUENCY] / \
-																 df_city_to_be_scaled[COMMON_WORD_FREQUENCY]
+				                                                 df_city_to_be_scaled[COMMON_WORD_FREQUENCY]
 				df_keyword_frequency_scaled_within_city: pd.DataFrame = df_city_to_be_scaled[
-																			COMMON_WORD_FREQUENCY] / \
-																		df_city_to_be_scaled[
-																			COMMON_WORD_FREQUENCY_RELATIVE] * \
-																		df_city_to_be_scaled[
-																			KEYWORD_FREQUENCY_RELATIVE]
+					                                                        COMMON_WORD_FREQUENCY] / \
+				                                                        df_city_to_be_scaled[
+					                                                        COMMON_WORD_FREQUENCY_RELATIVE] * \
+				                                                        df_city_to_be_scaled[
+					                                                        KEYWORD_FREQUENCY_RELATIVE]
 				df_keyword_frequency_scaled_cross_city: pd.DataFrame = df_common_word_cross_city_scalar * df_keyword_frequency_scaled_within_city
 
 				df_intercity[KEYWORD_FREQUENCY_RELATIVE] = df_keyword_frequency_scaled_cross_city
@@ -1113,6 +1120,7 @@ def run_intercity(
 				)
 			else:
 				log_error(error=f"missing_common_word_file{HYPHEN}{filename_trends_stitch}")
+
 
 if __name__ == "__main__":
 	called_from_main = True
