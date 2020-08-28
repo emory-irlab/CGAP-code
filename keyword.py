@@ -2,7 +2,9 @@ import csv
 import sys
 import time
 
+# noinspection PyPackageRequirements
 from google.ads.google_ads.client import GoogleAdsClient
+# noinspection PyPackageRequirements
 from google.ads.google_ads.errors import GoogleAdsException
 
 import trends
@@ -130,7 +132,7 @@ def main(
 			)
 		)
 
-		list_parent_file_names: List[str] = import_paths_from_folder(
+		list_parent_file_names: Generator[str, None, List[str]] = import_paths_from_folder(
 			folder=FOLDER_EXPANSION_PARENTS,
 		)
 		dict_expansion_frequency: dict = {}
@@ -234,7 +236,7 @@ def download_expansion(
 			folder=folder_expansion_raw,
 		)
 		list_source_keywords: List[str] = dict_keywords[source]
-		list_already_expanded_filenames_in_raw_source: List[str] = import_paths_from_folder(
+		list_already_expanded_filenames_in_raw_source: Generator[str, None, List[str]] = import_paths_from_folder(
 			folder=folder_expansion_raw_source,
 			list_paths_filter_conditions=(city,),
 		)
@@ -392,7 +394,10 @@ def map_language_to_string_value(
 def log_exception(
 		exception: GoogleAdsException,
 ) -> None:
-	log_error(error=f"Request with ID {exception.request_id} failed with status {exception.error.code().name} and includes the following errors:")
+	log_error(
+		error=f"Request with ID {exception.request_id} failed with status {exception.error.code().name} and "
+		f"includes the following errors:",
+	)
 	for error in exception.failure.errors:
 		log_error(error=f"Error with message {error.message}.")
 		if error.location:

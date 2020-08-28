@@ -115,8 +115,8 @@ NT_filename_correlation = namedtuple(
 )
 DT_filename_correlation = {
 	IGNORE_ZERO: "bool",
-	THRESHOLD:   (lambda x: parse_filename_numeric(numeric=x, cast_type="float")),
-	TIME_SHIFT:  "int",
+	THRESHOLD: (lambda x: parse_filename_numeric(numeric=x, cast_type="float")),
+	TIME_SHIFT: "int",
 }
 
 
@@ -254,10 +254,10 @@ def main(
 						)
 						dict_data = {}
 						dict_data.update({
-							CITY:                   m_city,
+							CITY: m_city,
 							EPA_COLUMN_SITE_NUMBER: nt_filename_epa_stitch.site_number,
-							POLLUTANT:              nt_filename_epa_stitch.pollutant,
-							PEARSON_CORRELATION:    pearson_correlation,
+							POLLUTANT: nt_filename_epa_stitch.pollutant,
+							PEARSON_CORRELATION: pearson_correlation,
 						})
 						list_dict_mean_max_correlations.append(dict_data)
 
@@ -549,8 +549,10 @@ def run_metrics(
 				)
 				df_description.insert(0, POLLUTANT, nt_filename_epa_or_trends_parsed.pollutant)
 				df_description.insert(1, TARGET_STATISTIC, nt_filename_epa_or_trends_parsed.target_statistic)
-				site_number: int = parse_filename_numeric(numeric=nt_filename_epa_or_trends_parsed.site_number,
-				                                          cast_type="int")
+				site_number: int = parse_filename_numeric(
+					numeric=nt_filename_epa_or_trends_parsed.site_number,
+					cast_type="int",
+				)
 				df_description.insert(
 					2,
 					EPA_COLUMN_SITE_NUMBER,
@@ -647,19 +649,18 @@ def run_correlations(
 		folder=folder_stats_correlations,
 	)
 
-	list_filenames_epa: List[str] = import_paths_from_folder(
+	list_filenames_epa: Generator[str, None, List[str]] = import_paths_from_folder(
 		folder=folder_epa_stitch,
 		list_paths_filter_conditions=(CSV,),
 	)
 
-	list_filenames_trends: List[str] = import_paths_from_folder(
+	list_filenames_trends: Generator[str, None, List[str]] = import_paths_from_folder(
 		folder=folder_trends_stitch,
 		list_paths_filter_conditions=(city, CSV),
 	)
 
-	list_filenames_correlations: List[str] = []
 	if only_correlate_missing:
-		list_filenames_correlations = import_paths_from_folder(
+		list_filenames_correlations: Generator[str, None, List[str]] = import_paths_from_folder(
 			folder=folder_stats_correlations,
 			list_paths_filter_conditions=(city, CSV),
 		)
@@ -710,7 +711,11 @@ def run_correlations(
 					continue
 				if nt_filename_epa_stitch_parsed.target_statistic != target_statistic:
 					log_error(
-						error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{TARGET_STATISTIC}{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}")
+						error=f"attribute_mismatch"
+						f"{HYPHEN}{EPA}"
+						f"{HYPHEN}{TARGET_STATISTIC}"
+						f"{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}"
+					)
 					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
 
@@ -863,24 +868,24 @@ def run_correlations(
 
 												dict_cor_row.update(
 													{
-														CITY:                          city,
-														KEYWORD:                       nt_filename_trends_stitch_parsed.keyword,
-														POLLUTANT:                     pollutant,
-														EPA_COLUMN_SITE_NUMBER:        site_number,
-														TARGET_STATISTIC:              target_statistic,
-														THRESHOLD:                     threshold,
-														THRESHOLD_SIDE:                above_or_below_threshold,
-														THRESHOLD_SOURCE:              dict_thresholds.get(
+														CITY: city,
+														KEYWORD: nt_filename_trends_stitch_parsed.keyword,
+														POLLUTANT: pollutant,
+														EPA_COLUMN_SITE_NUMBER: site_number,
+														TARGET_STATISTIC: target_statistic,
+														THRESHOLD: threshold,
+														THRESHOLD_SIDE: above_or_below_threshold,
+														THRESHOLD_SOURCE: dict_thresholds.get(
 															threshold, ""),
-														TIME_SHIFT:                    time_shift,
-														IGNORE_ZERO:                   bool_ignore_zero,
-														TOTAL_EPA_DAYS_COUNT:          total_epa_days_count,
-														THRESHOLD_EPA_DAYS_COUNT:      threshold_epa_days_count,
+														TIME_SHIFT: time_shift,
+														IGNORE_ZERO: bool_ignore_zero,
+														TOTAL_EPA_DAYS_COUNT: total_epa_days_count,
+														THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count,
 														THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
-														THRESHOLD_SITE_COUNT_AVG:      threshold_site_count_avg,
-														THRESHOLD_SITE_COUNT_STD:      threshold_site_count_std,
-														KW_NONZERO_COUNT:              kw_nonzero_count,
-														KW_NONZERO_PROPORTION:         kw_proportion,
+														THRESHOLD_SITE_COUNT_AVG: threshold_site_count_avg,
+														THRESHOLD_SITE_COUNT_STD: threshold_site_count_std,
+														KW_NONZERO_COUNT: kw_nonzero_count,
+														KW_NONZERO_PROPORTION: kw_proportion,
 													},
 												)
 
@@ -931,11 +936,11 @@ def dp_epa_variations_dict(
 				threshold_epa_days_proportion = -1
 
 			dict_epa_stats_helper[threshold][threshold_side].update({
-				DATA_FRAME:                    df_epa_above_or_below_threshold,
-				THRESHOLD_EPA_DAYS_COUNT:      threshold_epa_days_count,
+				DATA_FRAME: df_epa_above_or_below_threshold,
+				THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count,
 				THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
-				THRESHOLD_SITE_COUNT_AVG:      threshold_site_count_avg,
-				THRESHOLD_SITE_COUNT_STD:      threshold_site_count_std,
+				THRESHOLD_SITE_COUNT_AVG: threshold_site_count_avg,
+				THRESHOLD_SITE_COUNT_STD: threshold_site_count_std,
 			})
 
 	return dict_epa_stats_helper
@@ -953,8 +958,10 @@ def correlate_for_keyword(
 	dict_cor_row: dict = {}
 
 	# noinspection PyTypeChecker
-	df_kw_nonzero_threshold_days: pd.DataFrame = (df_trends[trends_column_name_ignore_zero] > 0) & \
-	                                             df_epa_above_or_below_threshold[target_variable_column_name_epa]
+	df_kw_nonzero_threshold_days: pd.DataFrame = (
+			(df_trends[trends_column_name_ignore_zero] > 0)
+			& df_epa_above_or_below_threshold[target_variable_column_name_epa]
+	)
 	kw_nonzero_threshold_days_count: int = df_kw_nonzero_threshold_days.count()
 	dict_cor_row.update({KW_NON_ZERO_THRESHOLD_DAYS_COUNT: kw_nonzero_threshold_days_count})
 
@@ -1012,9 +1019,11 @@ def run_intercity(
 	]
 
 	# todo - why is this partitioned based on words and not the city
-	list_common_city_filenames: List[str] = import_paths_from_folder(
-		folder=folder_trends_stitch,
-		list_paths_filter_conditions=(common_city, common_word, CSV),
+	list_common_city_filenames: List[str] = list(
+		import_paths_from_folder(
+			folder=folder_trends_stitch,
+			list_paths_filter_conditions=(common_city, common_word, CSV),
+		)
 	)
 	list_common_city_filenames = partition_list(
 		list_partition_candidates=list_common_city_filenames,
@@ -1038,7 +1047,11 @@ def run_intercity(
 			continue
 		if nt_filename_trends_stitch_parsed.common_word != common_word:
 			log_error(
-				error=f"attribute_mismatch{HYPHEN}{COMMON_WORD}{HYPHEN}{common_word}{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}")
+				error=f"attribute_mismatch"
+				f"{HYPHEN}{COMMON_WORD}"
+				f"{HYPHEN}{common_word}"
+				f"{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}"
+			)
 			continue
 
 		print(f"{INTERCITY} : {nt_filename_trends_stitch_parsed.keyword}")
@@ -1080,15 +1093,17 @@ def run_intercity(
 
 				df_intercity: pd.DataFrame = pd.DataFrame(index=df_common_city_keyword.index)
 
-				df_common_word_cross_city_scalar: pd.DataFrame = df_common_city_keyword[COMMON_WORD_FREQUENCY] / \
-				                                                 df_city_to_be_scaled[COMMON_WORD_FREQUENCY]
-				df_keyword_frequency_scaled_within_city: pd.DataFrame = df_city_to_be_scaled[
-					                                                        COMMON_WORD_FREQUENCY] / \
-				                                                        df_city_to_be_scaled[
-					                                                        COMMON_WORD_FREQUENCY_RELATIVE] * \
-				                                                        df_city_to_be_scaled[
-					                                                        KEYWORD_FREQUENCY_RELATIVE]
-				df_keyword_frequency_scaled_cross_city: pd.DataFrame = df_common_word_cross_city_scalar * df_keyword_frequency_scaled_within_city
+				df_common_word_cross_city_scalar: pd.DataFrame = (
+						df_common_city_keyword[COMMON_WORD_FREQUENCY] / df_city_to_be_scaled[COMMON_WORD_FREQUENCY]
+				)
+				df_keyword_frequency_scaled_within_city: pd.DataFrame = (
+						df_city_to_be_scaled[COMMON_WORD_FREQUENCY] /
+						df_city_to_be_scaled[COMMON_WORD_FREQUENCY_RELATIVE] *
+						df_city_to_be_scaled[KEYWORD_FREQUENCY_RELATIVE]
+				)
+				df_keyword_frequency_scaled_cross_city: pd.DataFrame = (
+						df_common_word_cross_city_scalar * df_keyword_frequency_scaled_within_city
+				)
 
 				df_intercity[KEYWORD_FREQUENCY_RELATIVE] = df_keyword_frequency_scaled_cross_city
 				df_intercity.insert(0, COMMON_WORD_FREQUENCY, df_common_city_keyword[COMMON_WORD_FREQUENCY])

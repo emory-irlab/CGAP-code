@@ -9,6 +9,7 @@ from typing import Callable
 from typing import Dict
 from typing import Generator
 from typing import Iterator
+from typing import Iterable
 from typing import List
 from typing import NamedTuple
 from typing import Pattern
@@ -164,77 +165,77 @@ DEFAULT_TARGET_STATISTICS: Tuple[str, ...] = (
 )
 
 DEFAULT_CITIES: Dict[str, dict] = {
-	ATLANTA:      {
-		CBSA:            12060,
-		CITY_AB:         "ATL",
-		DMA:             524,
-		STATE_NAME:      "GA",
+	ATLANTA: {
+		CBSA: 12060,
+		CITY_AB: "ATL",
+		DMA: 524,
+		STATE_NAME: "GA",
 		GOOGLE_GEO_CODE: "1015254",
 	},
-	BOSTON:       {
-		CBSA:            14460,
-		CITY_AB:         "BOS",
-		DMA:             506,
-		STATE_NAME:      "MA",
+	BOSTON: {
+		CBSA: 14460,
+		CITY_AB: "BOS",
+		DMA: 506,
+		STATE_NAME: "MA",
 		GOOGLE_GEO_CODE: "1018127"
 	},
-	CHICAGO:      {
-		CBSA:            16980,
-		CITY_AB:         "ORD",
-		DMA:             602,
-		STATE_NAME:      "IL",
+	CHICAGO: {
+		CBSA: 16980,
+		CITY_AB: "ORD",
+		DMA: 602,
+		STATE_NAME: "IL",
 		GOOGLE_GEO_CODE: "1016367",
 	},
-	DALLAS:       {
-		CBSA:            19100,
-		CITY_AB:         "DFW",
-		DMA:             623,
-		STATE_NAME:      "TX",
+	DALLAS: {
+		CBSA: 19100,
+		CITY_AB: "DFW",
+		DMA: 623,
+		STATE_NAME: "TX",
 		GOOGLE_GEO_CODE: "1026339",
 	},
-	HOUSTON:      {
-		CBSA:            26420,
-		CITY_AB:         "IAH",
-		DMA:             618,
-		STATE_NAME:      "TX",
+	HOUSTON: {
+		CBSA: 26420,
+		CITY_AB: "IAH",
+		DMA: 618,
+		STATE_NAME: "TX",
 		GOOGLE_GEO_CODE: "1026481",
 	},
-	LOS_ANGELES:  {
-		CBSA:            31080,
-		CITY_AB:         "LAX",
-		DMA:             803,
-		STATE_NAME:      "CA",
+	LOS_ANGELES: {
+		CBSA: 31080,
+		CITY_AB: "LAX",
+		DMA: 803,
+		STATE_NAME: "CA",
 		GOOGLE_GEO_CODE: "1013962",
 	},
-	MIAMI:        {
-		CBSA:            33100,
-		CITY_AB:         "MIA",
-		DMA:             528,
-		STATE_NAME:      "FL",
+	MIAMI: {
+		CBSA: 33100,
+		CITY_AB: "MIA",
+		DMA: 528,
+		STATE_NAME: "FL",
 		GOOGLE_GEO_CODE: "1015116",
 	},
-	NEW_YORK:     {
-		CBSA:            35620,
-		CITY_AB:         "NYC",
-		DMA:             501,
-		STATE_NAME:      "NY",
+	NEW_YORK: {
+		CBSA: 35620,
+		CITY_AB: "NYC",
+		DMA: 501,
+		STATE_NAME: "NY",
 		GOOGLE_GEO_CODE: "1023191",
 	},
 	PHILADELPHIA: {
-		CBSA:            37980,
-		CITY_AB:         "PHL",
-		DMA:             504,
-		STATE_NAME:      "PA",
+		CBSA: 37980,
+		CITY_AB: "PHL",
+		DMA: 504,
+		STATE_NAME: "PA",
 		GOOGLE_GEO_CODE: "1025197",
 	},
-	WASHINGTON:   {  # DC
-		CBSA:            47900,
-		CITY_AB:         "IAD",
-		DMA:             511,
-		STATE_NAME:      "DC",
+	WASHINGTON: {  # DC
+		CBSA: 47900,
+		CITY_AB: "IAD",
+		DMA: 511,
+		STATE_NAME: "DC",
 		GOOGLE_GEO_CODE: "1014895",
 	},
-	USA:          {
+	USA: {
 		GOOGLE_GEO_CODE: "2840",
 	},
 }
@@ -256,31 +257,31 @@ EPA_COLUMNS: List[str] = [
 ]
 
 DEFAULT_POLLUTANTS: Dict[str, dict] = {
-	CO:   {
+	CO: {
 		EPA_API_POLLUTANT_PARAM: 42101,
-		EPA_FILTER:              {
-			EPA_COLUMN_PARAMETER_CODE:  42101,
+		EPA_FILTER: {
+			EPA_COLUMN_PARAMETER_CODE: 42101,
 			EPA_COLUMN_SAMPLE_DURATION: "8-HR RUN AVG END HOUR",
 		},
 	},
-	NO2:  {
+	NO2: {
 		EPA_API_POLLUTANT_PARAM: 42602,
-		EPA_FILTER:              {
-			EPA_COLUMN_PARAMETER_CODE:  42602,
+		EPA_FILTER: {
+			EPA_COLUMN_PARAMETER_CODE: 42602,
 			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
 		},
 	},
-	O3:   {
+	O3: {
 		EPA_API_POLLUTANT_PARAM: 44201,
-		EPA_FILTER:              {
-			EPA_COLUMN_PARAMETER_CODE:  44201,
+		EPA_FILTER: {
+			EPA_COLUMN_PARAMETER_CODE: 44201,
 			EPA_COLUMN_SAMPLE_DURATION: "8-HR RUN AVG BEGIN HOUR",
 		},
 	},
 	PM25: {
 		EPA_API_POLLUTANT_PARAM: 88101,
-		EPA_FILTER:              {
-			EPA_COLUMN_PARAMETER_CODE:  88101,
+		EPA_FILTER: {
+			EPA_COLUMN_PARAMETER_CODE: 88101,
 			EPA_COLUMN_SAMPLE_DURATION: [
 				"24-HR BLK AVG",
 				"24 HOUR",
@@ -289,15 +290,15 @@ DEFAULT_POLLUTANTS: Dict[str, dict] = {
 	},
 	PM10: {
 		EPA_API_POLLUTANT_PARAM: 81102,
-		EPA_FILTER:              {
-			EPA_COLUMN_PARAMETER_CODE:  81102,
+		EPA_FILTER: {
+			EPA_COLUMN_PARAMETER_CODE: 81102,
 			EPA_COLUMN_SAMPLE_DURATION: "24 HOUR",
 		},
 	},
-	SO2:  {
+	SO2: {
 		EPA_API_POLLUTANT_PARAM: 42401,
-		EPA_FILTER:              {
-			EPA_COLUMN_PARAMETER_CODE:  42401,
+		EPA_FILTER: {
+			EPA_COLUMN_PARAMETER_CODE: 42401,
 			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
 		},
 	}
@@ -473,6 +474,7 @@ def parse_filename(
 		parsed_filename = NT_error(error)
 		log_error(error=error)
 	if dt_dict:
+		# noinspection PyProtectedMember
 		parsed_filename_dict: Dict[str, Any] = parsed_filename._asdict()
 		list_casted_data: List[Any] = []
 		for key, value in parsed_filename_dict.items():
@@ -522,7 +524,10 @@ def aggregate_data_in_folder(
 				)
 				list_parsed_dfs_per_city.append(df)
 			except pd.io.common.EmptyDataError:
-				log_error(error=f"{ERROR_EMPTY}{HYPHEN}{AGGREGATE}{city}{HYPHEN}{filename}", bool_suppress_print=bool_suppress_print)
+				log_error(
+					error=f"{ERROR_EMPTY}{HYPHEN}{AGGREGATE}{city}{HYPHEN}{filename}",
+					bool_suppress_print=bool_suppress_print,
+				)
 		if len(list_parsed_dfs_per_city) > 0:
 			log_error(error=f"{AGGREGATE} : {city}", log=True)
 			concatenated_data_per_city: pd.DataFrame = pd.concat(
@@ -580,6 +585,7 @@ def upload_to_bigquery(
 		file_or_folder: str = FILE,
 ) -> None:
 	log_error(f"Attempting upload to bigquery", log=True)
+	# noinspection PyPackageRequirements
 	from google.cloud import bigquery
 
 	client = bigquery.Client.from_service_account_json(CREDENTIALS_BIGQUERY)
@@ -671,7 +677,9 @@ def partition_list(
 		partition_total: int,
 ) -> List[Any]:
 	assert (partition_group > 0), f"The partition group must equal 1 or more"
-	assert partition_group <= partition_total, f"Partition group: {partition_group} exceeds partition total {partition_total}."
+	assert partition_group <= partition_total, (
+		f"Partition group: {partition_group} exceeds partition total " f"{partition_total}."
+	)
 	if partition_total == 1:
 
 		return list_partition_candidates
@@ -805,7 +813,7 @@ def generate_sub_paths_for_folder(
 
 
 def filter_list_strings(
-		list_strings: List[str],
+		list_strings: Iterable[str],
 		list_string_filter_conditions: Tuple[str, ...] = (),
 ) -> List[str]:
 	if len(list_string_filter_conditions) > 0:
@@ -853,7 +861,11 @@ def check_partition_valid_for_aggregation(
 ) -> bool:
 	if get_partition_group() > 1 or get_partition_total() > 1:
 		log_error(error=f"{ERROR_PARTITION}{HYPHEN}{error_label}")
-		print(f"Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE total partition due to race conditions. Not guaranteed that the other partitions have finished running; please check and rerun. Current partition group: {partition_group}. Current partition total: {partition_total}.")
+		print(
+			f"Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE total partition due "
+			f"to race conditions. Not guaranteed that the other partitions have finished running; please check and "
+			f"rerun. Current partition group: {partition_group}. Current partition total: {partition_total}."
+		)
 		return False
 	else:
 		return True
