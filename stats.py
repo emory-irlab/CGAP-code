@@ -875,8 +875,7 @@ def run_correlations(
 														TARGET_STATISTIC: target_statistic,
 														THRESHOLD: threshold,
 														THRESHOLD_SIDE: above_or_below_threshold,
-														THRESHOLD_SOURCE: dict_thresholds.get(
-															threshold, ""),
+														THRESHOLD_SOURCE: dict_thresholds.get(threshold, ""),
 														TIME_SHIFT: time_shift,
 														IGNORE_ZERO: bool_ignore_zero,
 														TOTAL_EPA_DAYS_COUNT: total_epa_days_count,
