@@ -373,7 +373,7 @@ def stitch_epa(
 		df_grouped: pd.DataFrameGroupBy = df_stitched.groupby([DATE])
 		df_site_count: pd.Series = df_grouped.size()
 		df_city_wide: pd.DataFrame
-		for df_city_wide, target_statistic in citywide_epa(
+		for df_city_wide, target_statistic in aggregate_across_citywide_epa_sites_citywide(
 				df_grouped=df_grouped,
 		):
 			log_error(f"{STITCH} : {city} : {pollutant} : all : {target_statistic}", log=True)
@@ -456,7 +456,7 @@ def clean_epa_df(
 	)
 
 
-def citywide_epa(
+def aggregate_across_citywide_epa_sites_citywide(
 		df_grouped,
 ) -> Generator[Tuple[pd.DataFrame, str], None, None]:
 	df_grouped_daily_mean: pd.DataFrame = df_grouped[EPA_COLUMN_ARITHMETIC_MEAN]
