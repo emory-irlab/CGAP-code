@@ -39,10 +39,6 @@ THRESHOLD_SOURCE: str = "threshold_source"
 TIME_SHIFT: str = "time_shift"
 TRENDS: str = "trends"
 
-GCP_BOOLEAN: str = "BOOLEAN"
-GCP_FLOAT: str = "FLOAT"
-GCP_INTEGER: str = "INTEGER"
-GCP_STRING: str = "STRING"
 KW_NONZERO_COUNT: str = "kw_nonzero_count"
 KW_NONZERO_PROPORTION: str = "kw_nonzero_proportion"
 KW_NON_ZERO_THRESHOLD_DAYS_COUNT: str = "kw_nonzero_threshold_days_count"
@@ -56,6 +52,11 @@ THRESHOLD_SITE_COUNT_STD: str = "threshold_site_count_std"
 THRESHOLD_EPA_DAYS_COUNT: str = "threshold_epa_days_count"
 THRESHOLD_EPA_DAYS_PROPORTION: str = "threshold_epa_days_proportion"
 TOTAL_EPA_DAYS_COUNT: str = "total_epa_days_count"
+
+GCP_BOOLEAN: str = "BOOLEAN"
+GCP_FLOAT: str = "FLOAT"
+GCP_INTEGER: str = "INTEGER"
+GCP_STRING: str = "STRING"
 
 # STATIC VARIABLES
 AGGREGATE: str = "aggregate"
