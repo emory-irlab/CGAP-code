@@ -270,7 +270,7 @@ def download_epa(
 						index=False,
 					)
 				else:
-					log_error(error=f"{filename_epa_raw}{HYPHEN}missing_data")
+					log_error(error=f"missing_data{HYPHEN}{filename_epa_raw}")
 
 
 def stitch_epa(

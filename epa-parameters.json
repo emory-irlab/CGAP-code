@@ -1,11 +1,11 @@
 {
-    "download": false,
+    "download": true,
     "download_data_type": "CBSA",
     "only_download_missing": true,
     "stitch": false,
     "aggregate": false,
     "aggregate_and_upload": false,
-    "upload": true,
+    "upload": false,
     "epa": {
         "city": [
             "atlanta",
@@ -20,12 +20,15 @@
             "washington"
         ],
         "pollutant": [
-            "PM2.5",
             "CO",
+            "DEPT",
             "NO2",
             "O3",
+            "PM2.5",
             "PM10",
-            "SO2"
+            "RHUM",
+            "SO2",
+            "TEMPO"
         ],
         "year": [
             2007,
