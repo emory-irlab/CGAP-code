@@ -315,79 +315,80 @@ def stitch_epa(
 		df_empty_full_timeline = df_empty_full_timeline[EPA_COLUMNS]
 		list_dfs.append(df_empty_full_timeline)
 
-	list_dates.sort()
-	first_date: str = list_dates[0]
-	end_date: str = list_dates[-1]
+	if list_dates:
+		list_dates.sort()
+		first_date: str = list_dates[0]
+		end_date: str = list_dates[-1]
 
-	df_stitched: pd.DataFrame = pd.concat(
-		list_dfs,
-		ignore_index=True,
-	)
-	df_stitched.rename(
-		columns={
-			EPA_API_DATE: DATE,
-		},
-		inplace=True,
-	)
-	df_stitched = df_stitched.groupby([DATE, EPA_COLUMN_SITE_NUMBER]).agg('mean')
-	df_stitched.reset_index(
-		inplace=True,
-		drop=False,
-	)
+		df_stitched: pd.DataFrame = pd.concat(
+			list_dfs,
+			ignore_index=True,
+		)
+		df_stitched.rename(
+			columns={
+				EPA_API_DATE: DATE,
+			},
+			inplace=True,
+		)
+		df_stitched = df_stitched.groupby([DATE, EPA_COLUMN_SITE_NUMBER]).agg('mean')
+		df_stitched.reset_index(
+			inplace=True,
+			drop=False,
+		)
 
-	df_empty_full_timeline: pd.DataFrame = generate_empty_time_series_df(
-		start_date=first_date.replace(UNDERSCORE, HYPHEN),
-		end_date=end_date.replace(UNDERSCORE, HYPHEN),
-	)
-	df_empty_full_timeline: pd.DataFrame = pd.DataFrame({
-		DATE: pd.to_datetime(df_empty_full_timeline[DATE]),
-	})
-	df_empty_full_timeline.set_index(
-		DATE,
-		inplace=True,
-		drop=True,
-	)
+		df_empty_full_timeline: pd.DataFrame = generate_empty_time_series_df(
+			start_date=first_date.replace(UNDERSCORE, HYPHEN),
+			end_date=end_date.replace(UNDERSCORE, HYPHEN),
+		)
+		df_empty_full_timeline: pd.DataFrame = pd.DataFrame({
+			DATE: pd.to_datetime(df_empty_full_timeline[DATE]),
+		})
+		df_empty_full_timeline.set_index(
+			DATE,
+			inplace=True,
+			drop=True,
+		)
 
-	for site_number, group in df_stitched.groupby([EPA_COLUMN_SITE_NUMBER]):
-		target_statistic: str
-		for target_statistic in list_target_statistics:
-			log_error(f"{STITCH} : {city} : {pollutant} : {site_number} : {target_statistic}", log=True)
+		for site_number, group in df_stitched.groupby([EPA_COLUMN_SITE_NUMBER]):
+			target_statistic: str
+			for target_statistic in list_target_statistics:
+				log_error(f"{STITCH} : {city} : {pollutant} : {site_number} : {target_statistic}", log=True)
+				clean_epa_df(
+					df_to_clean=group.set_index(
+						DATE,
+						drop=True,
+					),
+					df_empty_full_timeline=df_empty_full_timeline,
+					df_site_count=pd.Series(),
+					city=city,
+					pollutant=pollutant,
+					target_statistic=target_statistic,
+					site_number=int(site_number),
+					first_date=first_date,
+					end_date=end_date,
+					folder_epa_stitch=folder_epa_stitch,
+				)
+
+		# noinspection PyUnresolvedReferences
+		df_grouped: pd.DataFrameGroupBy = df_stitched.groupby([DATE])
+		df_site_count: pd.Series = df_grouped.size()
+		df_city_wide: pd.DataFrame
+		for df_city_wide, target_statistic in citywide_epa(
+				df_grouped=df_grouped,
+		):
+			log_error(f"{STITCH} : {city} : {pollutant} : all : {target_statistic}", log=True)
 			clean_epa_df(
-				df_to_clean=group.set_index(
-					DATE,
-					drop=True,
-				),
+				df_to_clean=df_city_wide.to_frame(),
 				df_empty_full_timeline=df_empty_full_timeline,
-				df_site_count=pd.Series(),
+				df_site_count=df_site_count,
 				city=city,
 				pollutant=pollutant,
 				target_statistic=target_statistic,
-				site_number=int(site_number),
+				site_number=CITY_WIDE_AGGREGATION_SITE_NUMBER,
 				first_date=first_date,
 				end_date=end_date,
 				folder_epa_stitch=folder_epa_stitch,
 			)
-
-	# noinspection PyUnresolvedReferences
-	df_grouped: pd.DataFrameGroupBy = df_stitched.groupby([DATE])
-	df_site_count: pd.Series = df_grouped.size()
-	df_city_wide: pd.DataFrame
-	for df_city_wide, target_statistic in citywide_epa(
-			df_grouped=df_grouped,
-	):
-		log_error(f"{STITCH} : {city} : {pollutant} : all : {target_statistic}", log=True)
-		clean_epa_df(
-			df_to_clean=df_city_wide.to_frame(),
-			df_empty_full_timeline=df_empty_full_timeline,
-			df_site_count=df_site_count,
-			city=city,
-			pollutant=pollutant,
-			target_statistic=target_statistic,
-			site_number=CITY_WIDE_AGGREGATION_SITE_NUMBER,
-			first_date=first_date,
-			end_date=end_date,
-			folder_epa_stitch=folder_epa_stitch,
-		)
 
 
 def clean_epa_df(
