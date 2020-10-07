@@ -819,6 +819,7 @@ def stitch_keyword_df(
 			df_time_range.set_index(DATE, inplace=True)
 
 			if not is_first_run:
+				# noinspection PyTypeChecker
 				df_time_range = df_time_range.apply(lambda x: x * scale)
 			else:
 				is_first_run = False
