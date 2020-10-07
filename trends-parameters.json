@@ -8,11 +8,7 @@
     "aggregate_and_upload": false,
     "upload": false,
     "source_folders_to_download": [
-        "common",
-        "cgap",
-        "covid",
-        "random",
-        "glove"
+        "cgc"
     ],
     "trends": {
         "city": [
@@ -33,6 +29,7 @@
         "common",
         "cgap",
         "covid",
+        "cgc",
         "random",
         "glove",
         "google"

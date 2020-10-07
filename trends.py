@@ -466,9 +466,11 @@ def stitch_trends(
 	if error_global_common_word:
 		log_error(error=f"{city}{HYPHEN}{common_word}{HYPHEN}{error_global_common_word}")
 
-	list_already_stitched_trends_filenames: List[str] = import_paths_from_folder(
-		folder_trends_stitch,
-		(city, CSV),
+	list_already_stitched_trends_filenames: List[str] = list(
+		import_paths_from_folder(
+			folder_trends_stitch,
+			(city, CSV),
+		)
 	)
 
 	dict_keywords: dict = generate_keywords(
@@ -825,16 +827,16 @@ def stitch_keyword_df(
 			if is_last_month:
 				break
 
-			past_average: pd.DataFrame = df_keyword.iloc[
-										 duplicate_first_day_in_month_list[0]: duplicate_last_day_in_month_list[
-																				   0] + 1].replace(0, np.nan).mean(
-				axis=0)
-			future_average: pd.DataFrame = df_keyword.iloc[
-										   duplicate_first_day_in_month_list[1]: duplicate_last_day_in_month_list[
-																					 1] + 1].replace(0, np.nan).mean(
-				axis=0)
-			past: float = max(1.0, past_average.iloc[0])
-			future: float = max(1.0, future_average.iloc[0])
+			# past_average: pd.DataFrame = df_keyword.iloc[
+			# 								duplicate_first_day_in_month_list[0]:
+			# 								duplicate_last_day_in_month_list[0] + 1
+			# 							].replace(0, np.nan).mean(axis=0)
+			# future_average: pd.DataFrame = df_keyword.iloc[
+			# 								duplicate_first_day_in_month_list[1]:
+			# 								duplicate_last_day_in_month_list[1] + 1
+			# 							].replace(0, np.nan).mean(axis=0)
+			# past: float = max(1.0, past_average.iloc[0])
+			# future: float = max(1.0, future_average.iloc[0])
 			scale = 1.0  # future_avg / past_avg
 			first_slice_index = duplicate_last_day_in_month_list[1] + 1
 
