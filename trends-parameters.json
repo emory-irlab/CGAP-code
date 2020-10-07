@@ -8,7 +8,13 @@
     "aggregate_and_upload": false,
     "upload": false,
     "source_folders_to_download": [
-        "cgc"
+        "common",
+        "cgc",
+        "cgap",
+        "covid",
+        "random",
+        "glove",
+        "google"
     ],
     "trends": {
         "city": [
@@ -27,9 +33,9 @@
     },
     "source_folders": [
         "common",
+        "cgc",
         "cgap",
         "covid",
-        "cgc",
         "random",
         "glove",
         "google"
