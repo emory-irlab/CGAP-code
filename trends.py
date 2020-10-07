@@ -210,9 +210,11 @@ def generate_keywords_to_download_dict(
 			list_all_keywords.extend(source_keywords.keys())
 
 	list_all_keywords = list(set(list_all_keywords))
-	list_already_downloaded_filenames: List[str] = import_paths_from_folder(
-		folder=folder_trends_raw,
-		list_paths_filter_conditions=(city,),
+	list_already_downloaded_filenames: List[str] = list(
+		import_paths_from_folder(
+			folder=folder_trends_raw,
+			list_paths_filter_conditions=(city,),
+		)
 	)
 
 	dict_keyword_sets: dict = {}
@@ -787,8 +789,11 @@ def stitch_keyword_df(
 
 	last_datetime_in_month: datetime
 	for last_datetime_in_month in months_in_table:
-		first_day_in_month: str = datetime.datetime(last_datetime_in_month.year, last_datetime_in_month.month, 1).strftime(
-			date_format)
+		first_day_in_month: str = datetime.datetime(
+			last_datetime_in_month.year,
+			last_datetime_in_month.month,
+			1
+		).strftime(date_format)
 		last_day_in_month: str = last_datetime_in_month.strftime(date_format)
 		duplicate_first_day_in_month_list = np.where(df_keyword[DATE] == first_day_in_month)[0]
 		duplicate_last_day_in_month_list = np.where(df_keyword[DATE] == last_day_in_month)[0]
@@ -820,8 +825,14 @@ def stitch_keyword_df(
 			if is_last_month:
 				break
 
-			past_average: pd.DataFrame = df_keyword.iloc[duplicate_first_day_in_month_list[0]: duplicate_last_day_in_month_list[0] + 1].replace(0, np.nan).mean(axis=0)
-			future_average: pd.DataFrame = df_keyword.iloc[duplicate_first_day_in_month_list[1]: duplicate_last_day_in_month_list[1] + 1].replace(0, np.nan).mean(axis=0)
+			past_average: pd.DataFrame = df_keyword.iloc[
+										 duplicate_first_day_in_month_list[0]: duplicate_last_day_in_month_list[
+																				   0] + 1].replace(0, np.nan).mean(
+				axis=0)
+			future_average: pd.DataFrame = df_keyword.iloc[
+										   duplicate_first_day_in_month_list[1]: duplicate_last_day_in_month_list[
+																					 1] + 1].replace(0, np.nan).mean(
+				axis=0)
 			past: float = max(1.0, past_average.iloc[0])
 			future: float = max(1.0, future_average.iloc[0])
 			scale = 1.0  # future_avg / past_avg
