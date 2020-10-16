@@ -263,6 +263,7 @@ def main(
 
 				df = pd.DataFrame(list_dict_mean_max_correlations)
 				print(df)
+				# noinspection PyArgumentList
 				nt_filename_mean_max_epa = NT_filename_mean_max_epa(
 					city=m_city,
 					pollutant=nt_filename_epa_stitch.pollutant,
@@ -559,6 +560,7 @@ def run_metrics(
 					site_number,
 				)
 
+				# noinspection PyArgumentList
 				nt_output_filename = NT_filename_metrics_epa(
 					city=city,
 					pollutant=nt_filename_epa_or_trends_parsed.pollutant,
@@ -577,6 +579,7 @@ def run_metrics(
 				)
 				df_description.insert(0, KEYWORD, nt_filename_epa_or_trends_parsed.keyword)
 				df_description.insert(1, COMMON_WORD, nt_filename_epa_or_trends_parsed.common_word)
+				# noinspection PyArgumentList
 				nt_output_filename = NT_filename_metrics_trends(
 					city=city,
 					common_word=nt_filename_epa_or_trends_parsed.common_word,
@@ -789,6 +792,7 @@ def run_correlations(
 									for bool_ignore_zero in list_bool_ignore_zero:
 										time_shift: int
 										for time_shift in list_time_shifts:
+											# noinspection PyArgumentList
 											nt_filename_correlation = NT_filename_correlation(
 												city=city,
 												keyword=nt_filename_trends_stitch_parsed.keyword,
@@ -1017,7 +1021,6 @@ def run_intercity(
 		if city != common_city
 	]
 
-	# todo - why is this partitioned based on words and not the city
 	list_common_city_filenames: List[str] = list(
 		import_paths_from_folder(
 			folder=folder_trends_stitch,
@@ -1116,6 +1119,7 @@ def run_intercity(
 				df_intercity.insert(2, KEYWORD, nt_filename_trends_stitch_parsed.keyword)
 				df_intercity.insert(3, CITY, city)
 
+				# noinspection PyArgumentList
 				nt_filename_intercity: tuple = NT_filename_intercity(
 					common_city=common_city,
 					common_word=common_word,

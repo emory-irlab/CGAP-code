@@ -2,9 +2,9 @@ import csv
 import sys
 import time
 
-# noinspection PyPackageRequirements
+# noinspection PyPackageRequirements,PyUnresolvedReferences
 from google.ads.google_ads.client import GoogleAdsClient
-# noinspection PyPackageRequirements
+# noinspection PyPackageRequirements,PyUnresolvedReferences
 from google.ads.google_ads.errors import GoogleAdsException
 
 import trends
@@ -243,6 +243,7 @@ def download_expansion(
 
 		seed_keyword: str
 		for seed_keyword in list_source_keywords:
+			# noinspection PyArgumentList
 			nt_filename_expansion_raw: tuple = NT_filename_expansion_raw(
 				city=city,
 				keyword=seed_keyword,
@@ -301,6 +302,7 @@ def download_expansion(
 					)
 				)
 
+				# noinspection PyArgumentList
 				filename_expansion_parent: str = generate_filename(
 					nt_filename=NT_filename_expansion_parents(
 						expanded_keyword=expanded_keyword,
@@ -313,6 +315,7 @@ def download_expansion(
 					list_strings=[f"{city}{HYPHEN}{seed_keyword}"],
 				)
 
+			# noinspection PyArgumentList
 			output_keywords_google_filename: str = generate_filename(
 				nt_filename=NT_filename_keywords_google(
 					seed_keyword=seed_keyword,

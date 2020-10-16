@@ -400,6 +400,7 @@ def generate_date_pair_for_full_series(
 	first_start_date, first_end_date = list_date_pairs[0]
 	last_start_date, last_end_date = list_date_pairs[-1]
 
+	# noinspection PyArgumentList
 	return NT_date_pair(start_date=first_start_date, end_date=last_end_date)
 
 
@@ -560,6 +561,7 @@ def aggregate_data_in_folder(
 				sort=True,
 			)
 			del list_parsed_dfs_per_city
+			# noinspection PyArgumentList
 			nt_filename_city_aggregate: tuple = NT_filename_city_aggregate(
 				city=city,
 			)
@@ -583,6 +585,7 @@ def aggregate_data_in_folder(
 		sort=True,
 	)
 	del list_data_dfs_for_all_cities
+	# noinspection PyArgumentList
 	nt_filename_aggregate: tuple = NT_filename_aggregate(
 		aggregate=AGGREGATE,
 		filename_label=filename_label,
@@ -610,7 +613,7 @@ def upload_to_bigquery(
 		file_or_folder: str = FILE,
 ) -> None:
 	log_error(f"Attempting upload to bigquery", log=True)
-	# noinspection PyPackageRequirements
+	# noinspection PyPackageRequirements,PyUnresolvedReferences
 	from google.cloud import bigquery
 
 	client = bigquery.Client.from_service_account_json(CREDENTIALS_BIGQUERY)
