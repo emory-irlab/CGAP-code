@@ -234,6 +234,7 @@ def download_epa(
 		for year in list_years:
 			first_day_in_year: datetime = datetime.datetime(year, 1, 1)
 			last_day_in_year: datetime = datetime.datetime(year, 12, 31)
+			# noinspection PyArgumentList
 			nt_filename_epa_raw: tuple = NT_filename_epa_raw(
 				city=city,
 				pollutant=pollutant,
@@ -437,6 +438,7 @@ def clean_epa_df(
 	df.insert(1, POLLUTANT, pollutant)
 	df.insert(1, CITY, city)
 
+	# noinspection PyArgumentList
 	nt_filename_epa_stitch: tuple = NT_filename_epa_stitch(
 		city=city,
 		pollutant=pollutant,

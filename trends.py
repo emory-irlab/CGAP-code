@@ -232,6 +232,7 @@ def generate_keywords_to_download_dict(
 	end_date: str
 	for keyword in list_all_keywords:
 		for start_date, end_date in list_date_pairs:
+			# noinspection PyArgumentList
 			nt_filename_trends_raw: tuple = NT_filename_trends_raw(
 				city=city,
 				keyword=keyword,
@@ -379,6 +380,7 @@ def download_trends(
 			start_date, end_date = pair_of_dates
 			start_date = generate_date_for_filename_output(date=start_date)
 			end_date = generate_date_for_filename_output(date=end_date)
+			# noinspection PyArgumentList
 			nt_filename_trends_raw: tuple = NT_filename_trends_raw(
 				city=city,
 				keyword=keyword,
@@ -486,6 +488,7 @@ def stitch_trends(
 	keyword: str
 	for keyword, dict_file_paths_for_keyword in dict_keywords_file_paths.items():
 		parsed_common_word: str
+		# noinspection PyArgumentList
 		nt_filename_trends_stitch = NT_filename_trends_stitch(
 			city=city,
 			keyword=keyword,
