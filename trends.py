@@ -115,7 +115,7 @@ def main(
 				city=city,
 				list_date_pairs=LIST_DATE_PAIRS,
 				list_source_folders_to_download=tuple(list_source_folders_to_download),
-				folder_keywords=FOLDER_KEYWORDS,
+				folder_keywords=FOLDER_SEEDWORDS,
 				folder_trends_raw=FOLDER_TRENDS_RAW,
 				common_word=COMMON_WORD_UNIVERSAL,
 				bool_download_with_common_word=bool_download_with_common_word,
@@ -141,7 +141,7 @@ def main(
 				list_date_pairs=LIST_DATE_PAIRS,
 				list_source_folders_to_download=tuple(list_source_folders),
 				common_word=COMMON_WORD_UNIVERSAL,
-				folder_keywords=FOLDER_KEYWORDS,
+				folder_keywords=FOLDER_SEEDWORDS,
 				folder_trends_raw=FOLDER_TRENDS_RAW,
 				folder_trends_stitch=FOLDER_TRENDS_STITCH,
 				max_volume=MAX_SEARCH_VOLUME,
@@ -191,7 +191,7 @@ def main(
 def generate_keywords_to_download_dict(
 		city: str,
 		list_date_pairs: List[Tuple[str, str]],
-		folder_keywords: str = FOLDER_KEYWORDS,
+		folder_keywords: str = FOLDER_SEEDWORDS,
 		folder_trends_raw: str = FOLDER_TRENDS_RAW,
 		common_word: str = DEFAULT_COMMON_WORD,
 		list_source_folders_to_download: Tuple[str, ...] = DEFAULT_SOURCE_FOLDERS,
@@ -291,7 +291,7 @@ def generate_common_word_filename_output(
 
 
 def generate_keywords(
-		folder_keywords: str = FOLDER_KEYWORDS,
+		folder_keywords: str = FOLDER_SEEDWORDS,
 ) -> dict:
 	sub_folder: str
 	keyword: str
@@ -427,7 +427,7 @@ def stitch_trends(
 		list_date_pairs: List[Tuple[str, str]],
 		list_source_folders_to_download: Tuple[str, ...] = (),
 		common_word: str = DEFAULT_COMMON_WORD,
-		folder_keywords: str = FOLDER_KEYWORDS,
+		folder_keywords: str = FOLDER_SEEDWORDS,
 		folder_trends_raw: str = FOLDER_TRENDS_RAW,
 		folder_trends_stitch: str = FOLDER_TRENDS_STITCH,
 		max_volume: float = MAX_SEARCH_VOLUME,

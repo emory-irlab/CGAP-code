@@ -112,7 +112,7 @@ def main(
 				only_expand_missing=only_download_missing,
 				folder_expansion_raw=FOLDER_EXPANSION_RAW,
 				folder_expansion_parents=FOLDER_EXPANSION_PARENTS,
-				folder_keywords_google=FOLDER_KEYWORDS_GOOGLE,
+				folder_keywords_google=FOLDER_SEEDWORDS_GOOGLE,
 				list_source_priority_order=tuple(list_source_priority_order),
 			)
 			write_errors_to_disk(overwrite=False)
@@ -120,7 +120,7 @@ def main(
 	if count_expansion_parents:
 		set_error_task_origin(task_origin=FREQUENCY)
 		dict_keywords: dict = trends.generate_keywords(
-			folder_keywords=FOLDER_KEYWORDS,
+			folder_keywords=FOLDER_SEEDWORDS,
 		)
 		already_downloaded_keywords: List[str] = list(
 			set(
@@ -149,7 +149,7 @@ def main(
 
 		dict_expansion_frequency = dict(sorted(dict_expansion_frequency.items(), key=lambda x: x[1], reverse=True))
 		try:
-			with open(f"{FOLDER_KEYWORDS}parent_frequency.csv", 'w') as parent_frequency_file:
+			with open(f"{FOLDER_SEEDWORDS}parent_frequency.csv", 'w') as parent_frequency_file:
 				writer = csv.writer(parent_frequency_file)
 				writer.writerow(["expanded_keyword", "frequency", "already_downloaded"])
 				for key, value in dict_expansion_frequency.items():
@@ -200,7 +200,7 @@ def download_expansion(
 		folder_expansion_parents: str,
 		folder_keywords_google: str,
 		list_source_priority_order: Tuple[str] = DEFAULT_SOURCE_PRIORITY_ORDER,
-		folder_keywords: str = FOLDER_KEYWORDS,
+		folder_keywords: str = FOLDER_SEEDWORDS,
 		language_id: str = DEFAULT_LANGUAGE_ID_ENGLISH,
 ) -> None:
 	location_id: str = DEFAULT_CITIES.get(city, {}).get(GOOGLE_GEO_CODE, "")
