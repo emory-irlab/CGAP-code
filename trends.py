@@ -220,13 +220,13 @@ def generate_keywords_to_download_dict(
 	dict_keyword_sets: dict = {}
 
 	def add_keyword_to_keyword_sets(
-			keyword: str,
-			start_date: str,
-			end_date: str,
+			keyword_to_add: str,
+			start_date_to_add: str,
+			end_date_to_add: str,
 	):
-		if not dict_keyword_sets.get(keyword, []):
-			dict_keyword_sets.update({keyword: []})
-		dict_keyword_sets[keyword].append((start_date, end_date))
+		if not dict_keyword_sets.get(keyword_to_add, []):
+			dict_keyword_sets.update({keyword_to_add: []})
+		dict_keyword_sets[keyword_to_add].append((start_date_to_add, end_date_to_add))
 
 	start_date: str
 	end_date: str
@@ -264,17 +264,17 @@ def generate_keywords_to_download_dict(
 					)
 			if download_is_missing_dates:
 				add_keyword_to_keyword_sets(
-					keyword=keyword,
-					start_date=start_date,
-					end_date=end_date,
+					keyword_to_add=keyword,
+					start_date_to_add=start_date,
+					end_date_to_add=end_date,
 				)
 				log_error(error=f"VALIDATE{HYPHEN}{filename_trends_raw}")
 			else:
 				if filename_trends_raw not in list_already_downloaded_filenames:
 					add_keyword_to_keyword_sets(
-						keyword=keyword,
-						start_date=start_date,
-						end_date=end_date,
+						keyword_to_add=keyword,
+						start_date_to_add=start_date,
+						end_date_to_add=end_date,
 					)
 
 	return dict_keyword_sets
