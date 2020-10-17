@@ -1046,8 +1046,8 @@ def set_up_main(
 		argument_number: int
 		argument: str
 		for argument_number, argument in enumerate(
-			iterable=number_of_input_arguments[possible_number_of_input_arguments:],
-			start=possible_number_of_input_arguments,
+				iterable=number_of_input_arguments[possible_number_of_input_arguments:],
+				start=possible_number_of_input_arguments,
 		):
 			log_error(
 				error=f"Unknown input argument {argument_number}: {argument}",
