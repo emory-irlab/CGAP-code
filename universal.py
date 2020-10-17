@@ -786,41 +786,47 @@ def import_paths_from_folder(
 		ignore_hidden: bool = True,
 ) -> Generator[str, None, List[str]]:
 	if os.path.exists(folder):
+		list_function_checks_all_true: List[Callable] = []
+		list_function_checks_any_true: List[Callable] = []
+
+		if check_paths:
+			if ignore_hidden:
+				pattern_to_ignore: Pattern[str] = re.compile(r"^\.[A-Za-z]")
+				is_not_hidden_file_function: Callable[[str], bool] = lambda x: not bool(re.match(pattern_to_ignore, x))
+				list_function_checks_all_true.append(is_not_hidden_file_function)
+			if include_files:
+				is_file_function: Callable[[str], bool] = lambda x: os.path.isfile(f"{folder}{x}")
+				list_function_checks_any_true.append(is_file_function)
+			if include_folders:
+				is_folder_function: Callable[[str], bool] = lambda x: os.path.isdir(f"{folder}{x}")
+				list_function_checks_any_true.append(is_folder_function)
 		if len(list_paths_filter_conditions) > 0:
 			filter_all_conditions_function: Callable[[str], bool] = lambda x: all(
-				str(condition.lower()) in x
+				condition.lower() in str(x).lower()
 				for condition in list_paths_filter_conditions
 			)
-			is_file_function: Callable[[str], bool] = lambda x: os.path.isfile(f"{folder}{x}")
-			is_folder_function: Callable[[str], bool] = lambda x: os.path.isdir(f"{folder}{x}")
-			pattern_to_ignore: Pattern[str] = re.compile(r"\.[A-Za-z]")
-			is_hidden_file_function: Callable[[str], bool] = lambda x: bool(re.match(pattern_to_ignore, x))
+			list_function_checks_all_true.append(filter_all_conditions_function)
 
-			path: str
-			for path in os.listdir(folder):
-				if filter_all_conditions_function(path.lower()):
-					if check_paths:
-						if ignore_hidden:
-							if is_hidden_file_function(path):
-								continue
-
-						if include_files:
-							if not is_file_function(path) and not include_folders:
-								continue
-
-						if include_folders:
-							is_folder = is_folder_function(path)
-							if not is_folder and not include_files:
-								log_error(error=f"neither_folder_nor_file{HYPHEN}{path}")
-								continue
-							elif not is_folder:
-								continue
-
-						yield path
-					else:
-						yield path
-		else:
-			return os.listdir(folder)
+		path: str
+		for path in os.listdir(folder):
+			bool_all_true_check: bool = True
+			if len(list_function_checks_all_true) > 0:
+				bool_all_true_check = all(
+					[
+						function_check(path)
+						for function_check in list_function_checks_all_true
+					]
+				)
+			bool_any_true_check: bool = True
+			if len(list_function_checks_any_true) > 0:
+				bool_any_true_check = any(
+					[
+						function_check(path)
+						for function_check in list_function_checks_any_true
+					]
+				)
+			if bool_all_true_check and bool_any_true_check:
+				yield path
 
 	else:
 		generate_sub_paths_for_folder(
