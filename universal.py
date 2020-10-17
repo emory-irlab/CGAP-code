@@ -826,7 +826,6 @@ def import_paths_from_folder(
 		generate_sub_paths_for_folder(
 			folder=folder,
 		)
-		yield
 		return []
 
 
