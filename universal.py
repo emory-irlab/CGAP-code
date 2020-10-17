@@ -3,6 +3,7 @@ import itertools
 import json
 import os
 import re
+import sys
 from collections import namedtuple
 from typing import Any
 from typing import Callable
@@ -169,77 +170,77 @@ DEFAULT_TARGET_STATISTICS: Tuple[str, ...] = (
 )
 
 DEFAULT_CITIES: Dict[str, dict] = {
-	ATLANTA: {
-		CBSA: 12060,
-		CITY_AB: "ATL",
-		DMA: 524,
-		STATE_NAME: "GA",
+	ATLANTA:      {
+		CBSA:            12060,
+		CITY_AB:         "ATL",
+		DMA:             524,
+		STATE_NAME:      "GA",
 		GOOGLE_GEO_CODE: "1015254",
 	},
-	BOSTON: {
-		CBSA: 14460,
-		CITY_AB: "BOS",
-		DMA: 506,
-		STATE_NAME: "MA",
+	BOSTON:       {
+		CBSA:            14460,
+		CITY_AB:         "BOS",
+		DMA:             506,
+		STATE_NAME:      "MA",
 		GOOGLE_GEO_CODE: "1018127"
 	},
-	CHICAGO: {
-		CBSA: 16980,
-		CITY_AB: "ORD",
-		DMA: 602,
-		STATE_NAME: "IL",
+	CHICAGO:      {
+		CBSA:            16980,
+		CITY_AB:         "ORD",
+		DMA:             602,
+		STATE_NAME:      "IL",
 		GOOGLE_GEO_CODE: "1016367",
 	},
-	DALLAS: {
-		CBSA: 19100,
-		CITY_AB: "DFW",
-		DMA: 623,
-		STATE_NAME: "TX",
+	DALLAS:       {
+		CBSA:            19100,
+		CITY_AB:         "DFW",
+		DMA:             623,
+		STATE_NAME:      "TX",
 		GOOGLE_GEO_CODE: "1026339",
 	},
-	HOUSTON: {
-		CBSA: 26420,
-		CITY_AB: "IAH",
-		DMA: 618,
-		STATE_NAME: "TX",
+	HOUSTON:      {
+		CBSA:            26420,
+		CITY_AB:         "IAH",
+		DMA:             618,
+		STATE_NAME:      "TX",
 		GOOGLE_GEO_CODE: "1026481",
 	},
-	LOS_ANGELES: {
-		CBSA: 31080,
-		CITY_AB: "LAX",
-		DMA: 803,
-		STATE_NAME: "CA",
+	LOS_ANGELES:  {
+		CBSA:            31080,
+		CITY_AB:         "LAX",
+		DMA:             803,
+		STATE_NAME:      "CA",
 		GOOGLE_GEO_CODE: "1013962",
 	},
-	MIAMI: {
-		CBSA: 33100,
-		CITY_AB: "MIA",
-		DMA: 528,
-		STATE_NAME: "FL",
+	MIAMI:        {
+		CBSA:            33100,
+		CITY_AB:         "MIA",
+		DMA:             528,
+		STATE_NAME:      "FL",
 		GOOGLE_GEO_CODE: "1015116",
 	},
-	NEW_YORK: {
-		CBSA: 35620,
-		CITY_AB: "NYC",
-		DMA: 501,
-		STATE_NAME: "NY",
+	NEW_YORK:     {
+		CBSA:            35620,
+		CITY_AB:         "NYC",
+		DMA:             501,
+		STATE_NAME:      "NY",
 		GOOGLE_GEO_CODE: "1023191",
 	},
 	PHILADELPHIA: {
-		CBSA: 37980,
-		CITY_AB: "PHL",
-		DMA: 504,
-		STATE_NAME: "PA",
+		CBSA:            37980,
+		CITY_AB:         "PHL",
+		DMA:             504,
+		STATE_NAME:      "PA",
 		GOOGLE_GEO_CODE: "1025197",
 	},
-	WASHINGTON: {  # DC
-		CBSA: 47900,
-		CITY_AB: "IAD",
-		DMA: 511,
-		STATE_NAME: "DC",
+	WASHINGTON:   {  # DC
+		CBSA:            47900,
+		CITY_AB:         "IAD",
+		DMA:             511,
+		STATE_NAME:      "DC",
 		GOOGLE_GEO_CODE: "1014895",
 	},
-	USA: {
+	USA:          {
 		GOOGLE_GEO_CODE: "2840",
 	},
 }
@@ -261,69 +262,69 @@ EPA_COLUMNS: List[str] = [
 ]
 
 DEFAULT_POLLUTANTS: Dict[str, dict] = {
-	CO: {
+	CO:    {
 		EPA_API_POLLUTANT_PARAM: 42101,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 42101,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  42101,
 			EPA_COLUMN_SAMPLE_DURATION: "8-HR RUN AVG END HOUR",
 		},
 	},
-	DEPT: {
+	DEPT:  {
 		EPA_API_POLLUTANT_PARAM: 62103,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 62103,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  62103,
 			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
 		},
 	},
-	NO2: {
+	NO2:   {
 		EPA_API_POLLUTANT_PARAM: 42602,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 42602,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  42602,
 			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
 		},
 	},
-	O3: {
+	O3:    {
 		EPA_API_POLLUTANT_PARAM: 44201,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 44201,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  44201,
 			EPA_COLUMN_SAMPLE_DURATION: "8-HR RUN AVG BEGIN HOUR",
 		},
 	},
-	PM25: {
+	PM25:  {
 		EPA_API_POLLUTANT_PARAM: 88101,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 88101,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  88101,
 			EPA_COLUMN_SAMPLE_DURATION: [
 				"24-HR BLK AVG",
 				"24 HOUR",
 			],
 		},
 	},
-	PM10: {
+	PM10:  {
 		EPA_API_POLLUTANT_PARAM: 81102,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 81102,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  81102,
 			EPA_COLUMN_SAMPLE_DURATION: "24 HOUR",
 		},
 	},
-	RHUM: {
+	RHUM:  {
 		EPA_API_POLLUTANT_PARAM: 62201,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 62201,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  62201,
 			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
 		},
 	},
-	SO2: {
+	SO2:   {
 		EPA_API_POLLUTANT_PARAM: 42401,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 42401,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  42401,
 			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
 		},
 	},
 	TEMPO: {
 		EPA_API_POLLUTANT_PARAM: 62101,
-		EPA_FILTER: {
-			EPA_COLUMN_PARAMETER_CODE: 62101,
+		EPA_FILTER:              {
+			EPA_COLUMN_PARAMETER_CODE:  62101,
 			EPA_COLUMN_SAMPLE_DURATION: "1 HOUR",
 		},
 	},
@@ -1020,6 +1021,39 @@ def write_errors_to_disk(
 		set_error_task_origin("")
 	if not bool_suppress_print:
 		print(f"Error log outputted to: {output_filename}")
+
+
+def set_up_main(
+		name: str,
+		possible_number_of_input_arguments: int = 1,
+) -> Tuple[bool, Any]:
+	"""
+
+	:param name: __name__ from python namespace
+	:param possible_number_of_input_arguments: includes the default argument which is the script name
+	:return: tuple of arguments passed up to possible number of input arguments
+	"""
+	called_from_main: bool = False
+	if name == "__main__":
+		called_from_main = True
+	number_of_input_arguments: int = len(sys.argv)
+	if number_of_input_arguments <= possible_number_of_input_arguments:
+		input_arguments: list = [
+			sys.argv[i]
+			for i in range(1, number_of_input_arguments)
+		]
+		return (called_from_main, *input_arguments)
+	else:
+		argument_number: int
+		argument: str
+		for argument_number, argument in enumerate(
+			iterable=number_of_input_arguments[possible_number_of_input_arguments:],
+			start=possible_number_of_input_arguments,
+		):
+			log_error(
+				error=f"Unknown input argument {argument_number}: {argument}",
+			)
+		assert False, f"Remove the unknown input arguments to continue"
 
 
 if __name__ == "__main__":

@@ -398,7 +398,8 @@ def log_exception(
 		exception: GoogleAdsException,
 ) -> None:
 	log_error(
-		error=f"Request with ID {exception.request_id} failed with status {exception.error.code().name} and "
+		error=
+		f"Request with ID {exception.request_id} failed with status {exception.error.code().name} and "
 		f"includes the following errors:",
 	)
 	for error in exception.failure.errors:
@@ -408,15 +409,9 @@ def log_exception(
 				log_error(error=f"On field: {field_path_element.field_name}")
 
 
-if __name__ == "__main__":
-	called_from_main = True
-	if len(sys.argv) == 3:
-		partition_group: int = int(sys.argv[1])
-		partition_total: int = int(sys.argv[2])
-		main(
-			called_from_main=called_from_main,
-			partition_group=partition_group,
-			partition_total=partition_total,
-		)
-	else:
-		main(called_from_main=called_from_main)
+main(
+	*set_up_main(
+		name=__name__,
+		possible_number_of_input_arguments=3,
+	),
+)

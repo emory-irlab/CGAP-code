@@ -1,5 +1,4 @@
 import functools
-import sys
 
 from universal import *
 
@@ -145,10 +144,9 @@ def parse_data(
 	return list_df
 
 
-if __name__ == "__main__":
-	called_from_main = True
-	if len(sys.argv) > 1:
-		print(f"Not sure what to do with these input arguments: {sys.argv[1:]}")
-		main(called_from_main=called_from_main)
-	else:
-		main(called_from_main=called_from_main)
+main(
+	*set_up_main(
+		name=__name__,
+		possible_number_of_input_arguments=1,
+	),
+)

@@ -1,5 +1,4 @@
 import random
-import sys
 import time
 
 import numpy as np
@@ -877,15 +876,9 @@ def generate_source_dict_from_keywords_dict(
 		return dict_source, UNKNOWN
 
 
-if __name__ == "__main__":
-	called_from_main = True
-	if len(sys.argv) == 3:
-		partition_group: int = int(sys.argv[1])
-		partition_total: int = int(sys.argv[2])
-		main(
-			called_from_main=called_from_main,
-			partition_group=partition_group,
-			partition_total=partition_total,
-		)
-	else:
-		main(called_from_main=called_from_main)
+main(
+	*set_up_main(
+		name=__name__,
+		possible_number_of_input_arguments=3,
+	),
+)

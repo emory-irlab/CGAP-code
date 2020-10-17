@@ -1,5 +1,4 @@
 import requests
-import sys
 
 from universal import *
 
@@ -350,12 +349,12 @@ def stitch_epa(
 			drop=True,
 		)
 
-		for site_number, group in df_stitched.groupby([EPA_COLUMN_SITE_NUMBER]):
+		for site_number, df_group in df_stitched.groupby([EPA_COLUMN_SITE_NUMBER]):
 			target_statistic: str
 			for target_statistic in list_target_statistics:
 				log_error(f"{STITCH} : {city} : {pollutant} : {site_number} : {target_statistic}", log=True)
 				clean_epa_df(
-					df_to_clean=group.set_index(
+					df_to_clean=df_group.set_index(
 						DATE,
 						drop=True,
 					),
@@ -489,15 +488,9 @@ def filter_epa(
 		return df
 
 
-if __name__ == "__main__":
-	called_from_main = True
-	if len(sys.argv) == 3:
-		partition_group: int = int(sys.argv[1])
-		partition_total: int = int(sys.argv[2])
-		main(
-			called_from_main=called_from_main,
-			partition_group=partition_group,
-			partition_total=partition_total,
-		)
-	else:
-		main(called_from_main=called_from_main)
+main(
+	*set_up_main(
+		name=__name__,
+		possible_number_of_input_arguments=3,
+	),
+)

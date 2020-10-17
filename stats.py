@@ -1,5 +1,3 @@
-import sys
-
 import numpy as np
 
 import epa
@@ -115,8 +113,8 @@ NT_filename_correlation = namedtuple(
 )
 DT_filename_correlation = {
 	IGNORE_ZERO: "bool",
-	THRESHOLD: (lambda x: parse_filename_numeric(numeric=x, cast_type="float")),
-	TIME_SHIFT: "int",
+	THRESHOLD:   (lambda x: parse_filename_numeric(numeric=x, cast_type="float")),
+	TIME_SHIFT:  "int",
 }
 
 
@@ -254,10 +252,10 @@ def main(
 						)
 						dict_data = {}
 						dict_data.update({
-							CITY: m_city,
+							CITY:                   m_city,
 							EPA_COLUMN_SITE_NUMBER: nt_filename_epa_stitch.site_number,
-							POLLUTANT: nt_filename_epa_stitch.pollutant,
-							PEARSON_CORRELATION: pearson_correlation,
+							POLLUTANT:              nt_filename_epa_stitch.pollutant,
+							PEARSON_CORRELATION:    pearson_correlation,
 						})
 						list_dict_mean_max_correlations.append(dict_data)
 
@@ -715,9 +713,9 @@ def run_correlations(
 				if nt_filename_epa_stitch_parsed.target_statistic != target_statistic:
 					log_error(
 						error=f"attribute_mismatch"
-						f"{HYPHEN}{EPA}"
-						f"{HYPHEN}{TARGET_STATISTIC}"
-						f"{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}"
+						      f"{HYPHEN}{EPA}"
+						      f"{HYPHEN}{TARGET_STATISTIC}"
+						      f"{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}"
 					)
 					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
@@ -872,23 +870,24 @@ def run_correlations(
 
 												dict_cor_row.update(
 													{
-														CITY: city,
-														KEYWORD: nt_filename_trends_stitch_parsed.keyword,
-														POLLUTANT: pollutant,
-														EPA_COLUMN_SITE_NUMBER: site_number,
-														TARGET_STATISTIC: target_statistic,
-														THRESHOLD: threshold,
-														THRESHOLD_SIDE: above_or_below_threshold,
-														THRESHOLD_SOURCE: dict_thresholds.get(threshold, ""),
-														TIME_SHIFT: time_shift,
-														IGNORE_ZERO: bool_ignore_zero,
-														TOTAL_EPA_DAYS_COUNT: total_epa_days_count,
-														THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count,
+														CITY:                          city,
+														KEYWORD:                       nt_filename_trends_stitch_parsed.keyword,
+														POLLUTANT:                     pollutant,
+														EPA_COLUMN_SITE_NUMBER:        site_number,
+														TARGET_STATISTIC:              target_statistic,
+														THRESHOLD:                     threshold,
+														THRESHOLD_SIDE:                above_or_below_threshold,
+														THRESHOLD_SOURCE:              dict_thresholds.get(threshold,
+														                                                   ""),
+														TIME_SHIFT:                    time_shift,
+														IGNORE_ZERO:                   bool_ignore_zero,
+														TOTAL_EPA_DAYS_COUNT:          total_epa_days_count,
+														THRESHOLD_EPA_DAYS_COUNT:      threshold_epa_days_count,
 														THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
-														THRESHOLD_SITE_COUNT_AVG: threshold_site_count_avg,
-														THRESHOLD_SITE_COUNT_STD: threshold_site_count_std,
-														KW_NONZERO_COUNT: kw_nonzero_count,
-														KW_NONZERO_PROPORTION: kw_proportion,
+														THRESHOLD_SITE_COUNT_AVG:      threshold_site_count_avg,
+														THRESHOLD_SITE_COUNT_STD:      threshold_site_count_std,
+														KW_NONZERO_COUNT:              kw_nonzero_count,
+														KW_NONZERO_PROPORTION:         kw_proportion,
 													},
 												)
 
@@ -939,11 +938,11 @@ def dp_epa_variations_dict(
 				threshold_epa_days_proportion = -1
 
 			dict_epa_stats_helper[threshold][threshold_side].update({
-				DATA_FRAME: df_epa_above_or_below_threshold,
-				THRESHOLD_EPA_DAYS_COUNT: threshold_epa_days_count,
+				DATA_FRAME:                    df_epa_above_or_below_threshold,
+				THRESHOLD_EPA_DAYS_COUNT:      threshold_epa_days_count,
 				THRESHOLD_EPA_DAYS_PROPORTION: threshold_epa_days_proportion,
-				THRESHOLD_SITE_COUNT_AVG: threshold_site_count_avg,
-				THRESHOLD_SITE_COUNT_STD: threshold_site_count_std,
+				THRESHOLD_SITE_COUNT_AVG:      threshold_site_count_avg,
+				THRESHOLD_SITE_COUNT_STD:      threshold_site_count_std,
 			})
 
 	return dict_epa_stats_helper
@@ -1050,9 +1049,9 @@ def run_intercity(
 		if nt_filename_trends_stitch_parsed.common_word != common_word:
 			log_error(
 				error=f"attribute_mismatch"
-				f"{HYPHEN}{COMMON_WORD}"
-				f"{HYPHEN}{common_word}"
-				f"{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}"
+				      f"{HYPHEN}{COMMON_WORD}"
+				      f"{HYPHEN}{common_word}"
+				      f"{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}"
 			)
 			continue
 
@@ -1140,15 +1139,9 @@ def run_intercity(
 				log_error(error=f"missing_common_word_file{HYPHEN}{filename_trends_stitch}")
 
 
-if __name__ == "__main__":
-	called_from_main = True
-	if len(sys.argv) == 3:
-		partition_group: int = int(sys.argv[1])
-		partition_total: int = int(sys.argv[2])
-		main(
-			called_from_main=called_from_main,
-			partition_group=partition_group,
-			partition_total=partition_total,
-		)
-	else:
-		main(called_from_main=called_from_main)
+main(
+	*set_up_main(
+		name=__name__,
+		possible_number_of_input_arguments=3,
+	),
+)
