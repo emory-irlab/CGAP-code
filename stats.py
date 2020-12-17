@@ -712,10 +712,11 @@ def run_correlations(
 					continue
 				if nt_filename_epa_stitch_parsed.target_statistic != target_statistic:
 					log_error(
-						error=f"attribute_mismatch"
-						      f"{HYPHEN}{EPA}"
-						      f"{HYPHEN}{TARGET_STATISTIC}"
-						      f"{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}"
+						error=
+						f"attribute_mismatch"
+						f"{HYPHEN}{EPA}"
+						f"{HYPHEN}{TARGET_STATISTIC}"
+						f"{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}"
 					)
 					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
@@ -1048,10 +1049,11 @@ def run_intercity(
 			continue
 		if nt_filename_trends_stitch_parsed.common_word != common_word:
 			log_error(
-				error=f"attribute_mismatch"
-				      f"{HYPHEN}{COMMON_WORD}"
-				      f"{HYPHEN}{common_word}"
-				      f"{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}"
+				error=
+				f"attribute_mismatch"
+				f"{HYPHEN}{COMMON_WORD}"
+				f"{HYPHEN}{common_word}"
+				f"{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}"
 			)
 			continue
 
