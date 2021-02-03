@@ -1047,7 +1047,7 @@ def set_up_main(
 			sys.argv[i]
 			for i in range(1, number_of_input_arguments)
 		]
-		return (called_from_main, *input_arguments)
+		return called_from_main, *input_arguments
 	else:
 		argument_number: int
 		argument: str
