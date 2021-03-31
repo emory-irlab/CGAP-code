@@ -7,7 +7,7 @@ google-cloud-bigquery[pandas]==1.25.0
 google-cloud-bigquery==1.25.0
 idna==2.8
 ipython==7.16.1
-lxml==4.3.4
+lxml==4.6.3
 matplotlib==3.2.2
 numpy==1.16.4
 pandas==0.24.2
