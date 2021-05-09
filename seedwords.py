@@ -1,5 +1,4 @@
 import csv
-import sys
 import time
 
 # noinspection PyPackageRequirements,PyUnresolvedReferences
@@ -99,7 +98,9 @@ def main(
 			list_partitioned_cities = list_cities
 	json_file.close()
 
-	google_ads_client: GoogleAdsClient = GoogleAdsClient.load_from_storage(credentials)
+	google_ads_client: GoogleAdsClient = GoogleAdsClient.load_from_storage(
+		credentials
+	)
 
 	if download:
 		set_error_task_origin(task_origin=DOWNLOAD)
@@ -147,9 +148,16 @@ def main(
 				log_error(error=f"duplicate_expansion_word{HYPHEN}{expansion_word}")
 			dict_expansion_frequency.update({expansion_word: frequency})
 
-		dict_expansion_frequency = dict(sorted(dict_expansion_frequency.items(), key=lambda x: x[1], reverse=True))
+		dict_expansion_frequency = dict(
+			sorted(
+				dict_expansion_frequency.items(), key=lambda x: x[1], reverse=True
+			)
+		)
 		try:
-			with open(f"{FOLDER_SEEDWORDS}parent_frequency.csv", 'w') as parent_frequency_file:
+			with open(
+					f"{FOLDER_SEEDWORDS}parent_frequency.csv",
+					'w'
+			) as parent_frequency_file:
 				writer = csv.writer(parent_frequency_file)
 				writer.writerow(["expanded_keyword", "frequency", "already_downloaded"])
 				for key, value in dict_expansion_frequency.items():
@@ -179,7 +187,11 @@ def main(
 					list_cities=list_partitioned_cities,
 					bool_suppress_print=True,
 				)
-				write_errors_to_disk(clear_task_origin=False, bool_suppress_print=True, overwrite=False)
+				write_errors_to_disk(
+					clear_task_origin=False,
+					bool_suppress_print=True,
+					overwrite=False
+				)
 
 			log_error(f"{AGGREGATE} : {EXPANSION}", log=True)
 			aggregate_data_in_folder(
@@ -206,9 +218,15 @@ def download_expansion(
 	location_id: str = DEFAULT_CITIES.get(city, {}).get(GOOGLE_GEO_CODE, "")
 	list_location_ids: List[str] = [location_id]
 
-	keyword_plan_idea_service = client.get_service("KeywordPlanIdeaService", version="v3")
+	keyword_plan_idea_service = client.get_service(
+		"KeywordPlanIdeaService",
+		version="v3"
+	)
 	keyword_competition_level_enum = (
-		client.get_type("KeywordPlanCompetitionLevelEnum", version="v3").KeywordPlanCompetitionLevel
+		client.get_type(
+			"KeywordPlanCompetitionLevelEnum",
+			version="v3"
+		).KeywordPlanCompetitionLevel
 	)
 	keyword_plan_network = client.get_type(
 		"KeywordPlanNetworkEnum", version="v3"
@@ -390,7 +408,10 @@ def map_language_to_string_value(
 ) -> Any:
 	# google.protobuf.StringValue
 	language = client.get_type("StringValue")
-	language.value = client.get_service("LanguageConstantService", version="v3").language_constant_path(language_id)
+	language.value = client.get_service(
+		"LanguageConstantService",
+		version="v3"
+	).language_constant_path(language_id)
 	return language
 
 
@@ -398,9 +419,11 @@ def log_exception(
 		exception: GoogleAdsException,
 ) -> None:
 	log_error(
-		error=
-		f"Request with ID {exception.request_id} failed with status {exception.error.code().name} and "
-		f"includes the following errors:",
+		error=(
+			f"Request with ID {exception.request_id} "
+			f"failed with status {exception.error.code().name}"
+			f" and includes the following errors:"
+		)
 	)
 	for error in exception.failure.errors:
 		log_error(error=f"Error with message {error.message}.")
