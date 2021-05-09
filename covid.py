@@ -94,7 +94,13 @@ def parse_data(
 				list_filename_filter_conditions=tuple(filepath),
 			)
 		else:
-			log_error(error=f"{source}{HYPHEN}{FILE_PATH_OR_FILTER_NAME_CONDITIONS}{HYPHEN}neither_a_list_or_string")
+			log_error(
+				error=(
+					f"{source}{HYPHEN}"
+					f"{FILE_PATH_OR_FILTER_NAME_CONDITIONS}{HYPHEN}"
+					f"neither_a_list_or_string"
+				)
+			)
 			continue
 
 		df: pd.DataFrame
