@@ -187,7 +187,10 @@ def main(
 	)
 
 	def mean_max_correlation():
-		print("starting mean max")
+		log_error(
+			error=f"Starting: mean max",
+			log=True,
+		)
 		# running correlations for mean to max per site
 		list_dict_mean_max_correlations = []
 		for m_city in list_input_cities:
@@ -267,7 +270,6 @@ def main(
 						list_dict_mean_max_correlations.append(dict_data)
 
 				df = pd.DataFrame(list_dict_mean_max_correlations)
-				print(df)
 				# noinspection PyArgumentList
 				nt_filename_mean_max_epa = NT_filename_mean_max_epa(
 					city=m_city,
@@ -284,7 +286,6 @@ def main(
 				)
 				df.to_csv(f"../CGAP-data/CGAP-epa/correlations/{output_filename}")
 		df_aggregate = pd.DataFrame(list_dict_mean_max_correlations)
-		print(df_aggregate)
 		df_aggregate.to_csv(
 			f"../CGAP-data/CGAP-epa/aggregate-correlations-site-number.csv",
 		)
@@ -292,7 +293,10 @@ def main(
 	mean_max_correlation()
 
 	if bool_stitch_epa:
-		print("Calling stitch epa from stats.")
+		log_error(
+			error=f"Calling stitch epa from stats.",
+			log=True,
+		)
 		epa.main(
 			called_from_main=False,
 			list_cities=list_partitioned_cities,
@@ -301,7 +305,10 @@ def main(
 		)
 
 	if bool_stitch_trends:
-		print("Calling stitch trends from stats.")
+		log_error(
+			error="Calling stitch trends from stats.",
+			log=True,
+		)
 		trends.main(
 			called_from_main=False,
 			list_cities=list_partitioned_cities,
@@ -1120,7 +1127,10 @@ def run_intercity(
 			)
 			continue
 
-		print(f"{INTERCITY} : {nt_filename_trends_stitch_parsed.keyword}")
+		log_error(
+			error=f"{INTERCITY} : {nt_filename_trends_stitch_parsed.keyword}",
+			log=True,
+		)
 
 		df_common_city_keyword: pd.DataFrame = pd.read_csv(
 			f"{folder_trends_stitch}{common_city_filename}",
