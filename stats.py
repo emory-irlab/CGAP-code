@@ -128,7 +128,10 @@ def main(
 	set_partition_group(partition_group)
 	set_partition_total(partition_total)
 	if not called_from_main:
-		assert False, f"stats was called from another module. This functionality is not yet supported."
+		assert False, (
+			f"stats was called from another module. "
+			f"This functionality is not yet ""supported."
+		)
 	else:
 		with open(f"{STATS}{HYPHEN}{PARAMETERS}{JSON}") as json_file:
 			json_data = json.load(json_file)
@@ -210,7 +213,11 @@ def main(
 							other_target_statistic = MEAN
 						else:
 							log_error(
-								error=f"invalid_target_statistic{HYPHEN}{nt_filename_epa_stitch.target_statistic}")
+								error=(
+									f"invalid_target_statistic{HYPHEN}"
+									f"{nt_filename_epa_stitch.target_statistic}"
+								)
+							)
 							continue
 
 						list_site_numbers_per_city.append(nt_filename_epa_stitch.site_number)
@@ -272,11 +279,15 @@ def main(
 					extension=CSV,
 					delimiter=HYPHEN,
 				)
-				generate_sub_paths_for_folder("../CGAP-data/CGAP-epa/correlations/{output_filename}")
+				generate_sub_paths_for_folder(
+					"../CGAP-data/CGAP-epa/correlations/{output_filename}",
+				)
 				df.to_csv(f"../CGAP-data/CGAP-epa/correlations/{output_filename}")
 		df_aggregate = pd.DataFrame(list_dict_mean_max_correlations)
 		print(df_aggregate)
-		df_aggregate.to_csv(f"../CGAP-data/CGAP-epa/aggregate-correlations-site-number.csv")
+		df_aggregate.to_csv(
+			f"../CGAP-data/CGAP-epa/aggregate-correlations-site-number.csv",
+		)
 
 	mean_max_correlation()
 
@@ -441,7 +452,10 @@ def main(
 
 	if str_upload_aggregate_from_folder:
 		upload_aggregate_from_folder(
-			filename_label=str_upload_aggregate_from_folder.replace(f"{UNDERSCORE}{AGGREGATE}", ""),
+			filename_label=str_upload_aggregate_from_folder.replace(
+				f"{UNDERSCORE}{AGGREGATE}",
+				""
+			),
 			folder=universal_parameters[str_upload_aggregate_from_folder],
 		)
 
@@ -492,7 +506,14 @@ def run_metrics(
 		folder_metrics_input: str,
 		folder_metrics_output: str,
 ) -> None:
-	log_error(f"{METRICS} : {epa_or_trends} : {IGNORE_ZERO} {HYPHEN} {ignore_zero} : {city}", log=True)
+	log_error(
+		(
+			f"{METRICS} : "
+			f"{epa_or_trends} : "
+			f"{IGNORE_ZERO} {HYPHEN} "
+			f"{ignore_zero} : {city}"
+		),
+		log=True)
 	generate_sub_paths_for_folder(
 		folder=folder_metrics_output,
 	)
@@ -677,7 +698,12 @@ def run_correlations(
 		target_statistic: str
 		for target_statistic in list_target_statistics:
 			set_error_task_origin(task_origin=PARAM_CORRELATE)
-			log_error(f"{CORRELATIONS} : {city} : {pollutant} : {target_statistic}", log=True)
+			log_error(
+				(
+					f"{CORRELATIONS} : {city} : {pollutant} : {target_statistic}"
+				),
+				log=True
+			)
 
 			total_epa_days_count: int = -1
 
@@ -689,7 +715,14 @@ def run_correlations(
 			for filename_epa in list_potential_filename_epa:
 				if not filename_epa:
 					log_error(
-						error=f"file_missing{HYPHEN}{EPA}{HYPHEN}{city}{HYPHEN}{pollutant}{HYPHEN}{target_statistic}")
+						error=(
+							f"file_missing{HYPHEN}"
+							f"{EPA}{HYPHEN}"
+							f"{city}{HYPHEN}"
+							f"{pollutant}{HYPHEN}"
+							f"{target_statistic}"
+						)
+					)
 					continue
 
 				# noinspection PyTypeChecker
@@ -702,21 +735,34 @@ def run_correlations(
 
 				if nt_filename_epa_stitch_parsed.city != city:
 					log_error(
-						error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{CITY}{HYPHEN}{nt_filename_epa_stitch_parsed.city}")
+						error=(
+							f"attribute_mismatch{HYPHEN}"
+							f"{EPA}{HYPHEN}"
+							f"{CITY}{HYPHEN}"
+							f"{nt_filename_epa_stitch_parsed.city}"
+						)
+					)
 					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
 				if nt_filename_epa_stitch_parsed.pollutant != pollutant:
 					log_error(
-						error=f"attribute_mismatch{HYPHEN}{EPA}{HYPHEN}{POLLUTANT}{HYPHEN}{nt_filename_epa_stitch_parsed.pollutant}")
+						error=(
+							f"attribute_mismatch{HYPHEN}"
+							f"{EPA}{HYPHEN}"
+							f"{POLLUTANT}{HYPHEN}"
+							f"{nt_filename_epa_stitch_parsed.pollutant}"
+						)
+					)
 					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
 				if nt_filename_epa_stitch_parsed.target_statistic != target_statistic:
 					log_error(
-						error=
-						f"attribute_mismatch"
-						f"{HYPHEN}{EPA}"
-						f"{HYPHEN}{TARGET_STATISTIC}"
-						f"{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}"
+						error=(
+							f"attribute_mismatch"
+							f"{HYPHEN}{EPA}"
+							f"{HYPHEN}{TARGET_STATISTIC}"
+							f"{HYPHEN}{nt_filename_epa_stitch_parsed.target_statistic}"
+						)
 					)
 					log_error(error=f"{nt_filename_epa_stitch_parsed}")
 					continue
@@ -772,7 +818,13 @@ def run_correlations(
 						)
 
 						if nt_filename_trends_stitch_parsed.city != city:
-							log_error(error=f"attribute_mismatch{HYPHEN}{TRENDS}{HYPHEN}{CITY}{HYPHEN}{city}")
+							log_error(
+								error=(
+									f"attribute_mismatch{HYPHEN}"
+									f"{TRENDS}{HYPHEN}"
+									f"{CITY}{HYPHEN}"
+									f"{city}"),
+							)
 							continue
 
 						def correlate_single_trend():
@@ -878,8 +930,10 @@ def run_correlations(
 														TARGET_STATISTIC:              target_statistic,
 														THRESHOLD:                     threshold,
 														THRESHOLD_SIDE:                above_or_below_threshold,
-														THRESHOLD_SOURCE:              dict_thresholds.get(threshold,
-														                                                   ""),
+														THRESHOLD_SOURCE:              dict_thresholds.get(
+															threshold,
+															""
+														),
 														TIME_SHIFT:                    time_shift,
 														IGNORE_ZERO:                   bool_ignore_zero,
 														TOTAL_EPA_DAYS_COUNT:          total_epa_days_count,
@@ -982,7 +1036,9 @@ def correlate_for_keyword(
 
 	# need to multiply time shift by -1 to keep intuitive logic
 	# shift of 1 is tomorrow's search correlating with today's pollution
-	df_trends_with_time_shift: pd.DataFrame = df_trends[trends_column].shift(periods=(-1 * time_shift))
+	df_trends_with_time_shift: pd.DataFrame = df_trends[trends_column].shift(
+		periods=(-1 * time_shift),
+	)
 
 	# noinspection PyArgumentList
 	# noinspection PyTypeChecker
@@ -1045,15 +1101,22 @@ def run_intercity(
 
 		if nt_filename_trends_stitch_parsed.city != common_city:
 			log_error(
-				error=f"attribute_mismatch{HYPHEN}{CITY}{HYPHEN}{common_city}{HYPHEN}{nt_filename_trends_stitch_parsed.city}")
+				error=(
+					f"attribute_mismatch{HYPHEN}"
+					f"{CITY}{HYPHEN}"
+					f"{common_city}{HYPHEN}"
+					f"{nt_filename_trends_stitch_parsed.city}"
+				)
+			)
 			continue
 		if nt_filename_trends_stitch_parsed.common_word != common_word:
 			log_error(
-				error=
-				f"attribute_mismatch"
-				f"{HYPHEN}{COMMON_WORD}"
-				f"{HYPHEN}{common_word}"
-				f"{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}"
+				error=(
+					f"attribute_mismatch"
+					f"{HYPHEN}{COMMON_WORD}"
+					f"{HYPHEN}{common_word}"
+					f"{HYPHEN}{nt_filename_trends_stitch_parsed.common_word}"
+				)
 			)
 			continue
 
