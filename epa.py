@@ -106,7 +106,9 @@ def main(
 		set_error_task_origin(task_origin=DOWNLOAD)
 		api_url: str = api.get(download_data_type, "")
 		if api_url:
-			api_starter_params: dict = parse_api_credentials(filename=credentials)
+			api_starter_params: dict = parse_api_credentials(
+				filename=credentials
+			)
 			city: str
 			for city in list_partitioned_cities:
 				pollutant: str
@@ -227,8 +229,8 @@ def download_epa(
 			return
 
 		list_already_downloaded_files: Generator[str, None, List[str]] = import_paths_from_folder(
-			folder=folder_epa_raw,
-			list_paths_filter_conditions=(city, pollutant,),
+				folder=folder_epa_raw,
+				list_paths_filter_conditions=(city, pollutant,),
 		)
 		for year in list_years:
 			first_day_in_year: datetime = datetime.datetime(year, 1, 1)
@@ -237,8 +239,12 @@ def download_epa(
 			nt_filename_epa_raw: tuple = NT_filename_epa_raw(
 				city=city,
 				pollutant=pollutant,
-				start_date=generate_date_for_filename_output(first_day_in_year.strftime(DATE_FORMAT)),
-				end_date=generate_date_for_filename_output(last_day_in_year.strftime(DATE_FORMAT)),
+				start_date=generate_date_for_filename_output(
+					first_day_in_year.strftime(DATE_FORMAT)
+				),
+				end_date=generate_date_for_filename_output(
+					last_day_in_year.strftime(DATE_FORMAT)
+				),
 			)
 			filename_epa_raw: str = generate_filename(
 				nt_filename=nt_filename_epa_raw,
@@ -246,17 +252,32 @@ def download_epa(
 				extension=CSV,
 			)
 			if not only_download_missing or filename_epa_raw not in list_already_downloaded_files:
-				log_error(f"{DOWNLOAD} : {city} : {pollutant} : {year}", log=True)
-				api_params.update({EPA_API_START_DATE: first_day_in_year.strftime(EPA_API_DATE_FORMAT)})
-				api_params.update({EPA_API_END_DATE: last_day_in_year.strftime(EPA_API_DATE_FORMAT)})
+				log_error(
+					f"{DOWNLOAD} : {city} : {pollutant} : {year}",
+					log=True
+				)
+				api_params.update(
+					{
+						EPA_API_START_DATE:
+							first_day_in_year.strftime(EPA_API_DATE_FORMAT)
+					}
+				)
+				api_params.update(
+					{
+						EPA_API_END_DATE:
+							last_day_in_year.strftime(EPA_API_DATE_FORMAT)
+					}
+				)
 				response: requests.Response = requests.get(
 					url=api_url,
 					params=api_params,
 				)
 
 				if response.status_code != 200:
-					log_error(error=f"{filename_epa_raw}{HYPHEN}{response.status_code}")
-					log_error(error=f"{filename_epa_raw}{HYPHEN}{response.headers}")
+					log_error(
+						error=f"{filename_epa_raw}{HYPHEN}{response.status_code}")
+					log_error(
+						error=f"{filename_epa_raw}{HYPHEN}{response.headers}")
 					continue
 
 				response_dict: dict = json.loads(response.text)
@@ -307,7 +328,11 @@ def stitch_epa(
 			parse_dates=[EPA_COLUMN_DATE_LOCAL],
 			infer_datetime_format=True,
 		)
-		filter_conditions: dict = DEFAULT_POLLUTANTS.get(pollutant, {}).get(EPA_FILTER, {})
+		filter_conditions: dict = DEFAULT_POLLUTANTS.get(
+			pollutant, {}
+		).get(
+			EPA_FILTER, {}
+		)
 		df_empty_full_timeline = filter_epa(
 			df=df_empty_full_timeline,
 			filter_conditions=filter_conditions,
@@ -330,7 +355,8 @@ def stitch_epa(
 			},
 			inplace=True,
 		)
-		df_stitched = df_stitched.groupby([DATE, EPA_COLUMN_SITE_NUMBER]).agg('mean')
+		df_stitched = df_stitched.groupby([DATE, EPA_COLUMN_SITE_NUMBER]).agg(
+			'mean')
 		df_stitched.reset_index(
 			inplace=True,
 			drop=False,
@@ -349,10 +375,13 @@ def stitch_epa(
 			drop=True,
 		)
 
-		for site_number, df_group in df_stitched.groupby([EPA_COLUMN_SITE_NUMBER]):
+		for site_number, df_group in df_stitched.groupby(
+				[EPA_COLUMN_SITE_NUMBER]):
 			target_statistic: str
 			for target_statistic in list_target_statistics:
-				log_error(f"{STITCH} : {city} : {pollutant} : {site_number} : {target_statistic}", log=True)
+				log_error(
+					f"{STITCH} : {city} : {pollutant} : {site_number} : {target_statistic}",
+					log=True)
 				clean_epa_df(
 					df_to_clean=df_group.set_index(
 						DATE,
@@ -376,7 +405,9 @@ def stitch_epa(
 		for df_city_wide, target_statistic in aggregate_across_citywide_epa_sites_citywide(
 				df_grouped=df_grouped,
 		):
-			log_error(f"{STITCH} : {city} : {pollutant} : all : {target_statistic}", log=True)
+			log_error(
+				f"{STITCH} : {city} : {pollutant} : all : {target_statistic}",
+				log=True)
 			clean_epa_df(
 				df_to_clean=df_city_wide.to_frame(),
 				df_empty_full_timeline=df_empty_full_timeline,
@@ -407,11 +438,14 @@ def clean_epa_df(
 		df_target_statistic = df_to_clean
 	else:
 		if target_statistic == MAX:
-			df_target_statistic = pd.DataFrame(df_to_clean[EPA_COLUMN_FIRST_MAX_VALUE])
+			df_target_statistic = pd.DataFrame(
+				df_to_clean[EPA_COLUMN_FIRST_MAX_VALUE])
 		elif target_statistic == MEAN:
-			df_target_statistic = pd.DataFrame(df_to_clean[EPA_COLUMN_ARITHMETIC_MEAN])
+			df_target_statistic = pd.DataFrame(
+				df_to_clean[EPA_COLUMN_ARITHMETIC_MEAN])
 		else:
-			log_error(error=f"unrecognized_{TARGET_STATISTIC}{HYPHEN}{target_statistic}")
+			log_error(
+				error=f"unrecognized_{TARGET_STATISTIC}{HYPHEN}{target_statistic}")
 			return
 
 	df_target_statistic.rename(
