@@ -679,8 +679,9 @@ def upload_to_bigquery(
 		]
 		table = bigquery.Table(table_id, schema=schema)
 		table = client.create_table(table)  # Make an API request.
-		print(
-			"Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id)
+		log_error(
+			error=f"Created table {table.project}.{table.dataset_id}.{table.table_id}",
+			log=True,
 		)
 		file: str
 		for file in import_paths_from_folder(
@@ -688,11 +689,12 @@ def upload_to_bigquery(
 				check_paths=True,
 		):
 			df = pd.read_csv(f"{path}{file}").to_dict(orient="records")
-			print(df)
-			exit()
 			errors = client.insert_rows(table_id, df)  # Make an API request.
 			if not errors:
-				print("New rows have been added.")
+				log_error(
+					error=f"New rows have been added.",
+					log=True,
+				)
 	else:
 		log_error(f"invalid_file_or_folder_parameter{HYPHEN}{file_or_folder}")
 
@@ -760,7 +762,9 @@ def is_single_item(
 			)
 			extra_candidate: str
 			for extra_candidate in list_rest:
-				log_error(error=f"filter_single_item{HYPHEN}extra_candidate{HYPHEN}{extra_candidate}")
+				log_error(
+					error=f"filter_single_item{HYPHEN}extra_candidate{HYPHEN}{extra_candidate}",
+				)
 			return False
 		else:
 			return True
