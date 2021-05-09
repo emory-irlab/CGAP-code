@@ -146,7 +146,10 @@ def main(
 				max_volume=MAX_SEARCH_VOLUME,
 				only_stitch_missing=only_stitch_missing,
 			)
-			write_errors_to_disk(clear_task_origin=False, overwrite=(not only_stitch_missing))
+			write_errors_to_disk(
+				clear_task_origin=False,
+				overwrite=(not only_stitch_missing)
+			)
 
 	if upload or aggregate:
 		filename_label: str = TRENDS
@@ -309,7 +312,10 @@ def generate_keywords(
 				folder=f"{folder_keywords}{sub_folder}",
 				list_paths_filter_conditions=(TXT,),
 		):
-			keyword_file = open(f"{folder_keywords}{sub_folder}{FORWARD_SLASH}{filename}", "r")
+			keyword_file = open(
+				f"{folder_keywords}{sub_folder}{FORWARD_SLASH}{filename}",
+				"r"
+			)
 			list_keywords.extend(
 				[
 					keyword.lower().strip()
@@ -338,7 +344,10 @@ def is_download_missing_dates(
 	else:
 		parsed_start_date: str = df[DATE].iloc[0]
 		parsed_end_date: str = df[DATE].iloc[-1]
-		return not ((parsed_start_date == start_date) and (parsed_end_date == end_date))
+		return not (
+				(parsed_start_date == start_date) and
+				(parsed_end_date == end_date)
+		)
 
 
 def download_trends(
@@ -356,7 +365,11 @@ def download_trends(
 	if city == USA:
 		geo_code = US
 	else:
-		geo_code = f"{US}{HYPHEN}{str(DEFAULT_CITIES[city][STATE_NAME])}{HYPHEN}{str(DEFAULT_CITIES[city][DMA])}"
+		geo_code = (
+			f"{US}{HYPHEN}"
+			f"{str(DEFAULT_CITIES[city][STATE_NAME])}{HYPHEN}"
+			f"{str(DEFAULT_CITIES[city][DMA])}"
+		)
 	print(f"GEO Code : {geo_code}")
 
 	keyword: str
@@ -465,7 +478,13 @@ def stitch_trends(
 	)
 
 	if error_global_common_word:
-		log_error(error=f"{city}{HYPHEN}{common_word}{HYPHEN}{error_global_common_word}")
+		log_error(
+			error=(
+				f"{city}{HYPHEN}"
+				f"{common_word}{HYPHEN}"
+				f"{error_global_common_word}"
+			),
+		)
 
 	list_already_stitched_trends_filenames: List[str] = list(
 		import_paths_from_folder(
@@ -607,23 +626,35 @@ def generate_trends_raw_file_paths_dict(
 		except AttributeError:
 			pass
 		else:
-			log_error(error=f"critical_error{HYPHEN}parse_trends_raw_filename{HYPHEN}{filename}")
+			log_error(
+				error=(
+					f"critical_error{HYPHEN}"
+					f"parse_trends_raw_filename{HYPHEN}{filename}"
+				),
+			)
 			continue
 
 		if nt_filename_trends_raw_parsed.city != city:
 			log_error(error=f"city_mismatch{HYPHEN}{nt_filename_trends_raw_parsed.city}")
 			continue
 
-		keyword_dict: Dict[str, List[str]] = dict_filenames.get(nt_filename_trends_raw_parsed.keyword, {})
+		keyword_dict: Dict[str, List[str]] = dict_filenames.get(
+			nt_filename_trends_raw_parsed.keyword,
+			{}
+		)
 		if not keyword_dict:
 			dict_filenames.update({nt_filename_trends_raw_parsed.keyword: {}})
 
-		list_file_paths: List[str] = keyword_dict.get(nt_filename_trends_raw_parsed.common_word, [])
+		list_file_paths: List[str] = keyword_dict.get(
+			nt_filename_trends_raw_parsed.common_word,
+			[]
+		)
 		if not list_file_paths:
 			dict_filenames[nt_filename_trends_raw_parsed.keyword].update(
 				{nt_filename_trends_raw_parsed.common_word: []})
 		dict_filenames[nt_filename_trends_raw_parsed.keyword][nt_filename_trends_raw_parsed.common_word].append(
-			filename)
+			filename
+		)
 
 	return dict_filenames
 
@@ -636,8 +667,14 @@ def generate_df_from_trends_raw_file_paths(
 		folder_trends_raw: str,
 		list_date_pairs: List[Tuple[str, str]],
 ) -> pd.DataFrame:
-	dict_file_paths_for_keyword: Dict[str, List[str]] = dict_keywords_file_paths.get(keyword, {})
-	list_common_word_filenames: List[str] = dict_file_paths_for_keyword.get(common_word, [])
+	dict_file_paths_for_keyword: Dict[str, List[str]] = dict_keywords_file_paths.get(
+		keyword,
+		{}
+	)
+	list_common_word_filenames: List[str] = dict_file_paths_for_keyword.get(
+		common_word,
+		[]
+	)
 	if not list_common_word_filenames:
 		return pd.DataFrame()
 
@@ -679,7 +716,15 @@ def generate_df_from_trends_raw_file_paths(
 	]
 
 	for date_pair in list_missing_date_pairs:
-		log_error(error=f"missing_date_pair{HYPHEN}{city}{HYPHEN}{keyword}{HYPHEN}{common_word}{HYPHEN}{date_pair}")
+		log_error(
+			error=(
+				f"missing_date_pair{HYPHEN}"
+				f"{city}{HYPHEN}"
+				f"{keyword}{HYPHEN}"
+				f"{common_word}{HYPHEN}"
+				f"{date_pair}"
+			),
+		)
 
 	return pd.concat(
 		objs=list_common_word_dfs,
@@ -817,8 +862,15 @@ def stitch_keyword_df(
 			elif is_last_month:
 				df_time_range = df_keyword.iloc[first_slice_index:]
 			else:
-				return pd.DataFrame(), f"stitch_keyword{HYPHEN}both_stitching_month_and_last_month_are_false"
-			df_time_range.set_index(DATE, inplace=True)
+				return (
+					pd.DataFrame(),
+					f"stitch_keyword{HYPHEN}"
+					f"both_stitching_month_and_last_month_are_false"
+				)
+			df_time_range.set_index(
+				DATE,
+				inplace=True,
+			)
 
 			if not is_first_run:
 				# noinspection PyTypeChecker
