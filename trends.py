@@ -370,7 +370,10 @@ def download_trends(
 			f"{str(DEFAULT_CITIES[city][STATE_NAME])}{HYPHEN}"
 			f"{str(DEFAULT_CITIES[city][DMA])}"
 		)
-	print(f"GEO Code : {geo_code}")
+	log_error(
+		error=f"GEO Code : {geo_code}",
+		log=True,
+	)
 
 	keyword: str
 	list_of_date_pairs: List[Tuple[str, str]]
@@ -380,10 +383,16 @@ def download_trends(
 				continue
 			else:
 				kw_set = [common_word, keyword]
-				print(f"{city} : {keyword} : {common_word}")
+				log_error(
+					error=f"{city} : {keyword} : {common_word}",
+					log=True,
+				)
 		else:
 			kw_set = [keyword]
-			print(f"{city} : {keyword}")
+			log_error(
+				error=f"{city} : {keyword}",
+				log=True,
+			)
 
 		start_date: str
 		end_date: str
@@ -525,7 +534,10 @@ def stitch_trends(
 		)
 
 		if not only_stitch_missing or filename_trends_stitch not in list_already_stitched_trends_filenames:
-			print(f"{STITCH} : {city} : {keyword}")
+			log_error(
+				error=f"{STITCH} : {city} : {keyword}",
+				log=True,
+			)
 
 			error_keyword: str
 			df_keyword: pd.DataFrame = generate_df_from_trends_raw_file_paths(
@@ -913,7 +925,10 @@ def generate_source_dict_from_keywords_dict(
 ) -> (Dict[str, str], str):
 	keyword_error: str
 	if len(dict_keywords) == 0:
-		log_error(error=f"{MISSING}{HYPHEN}dict_keywords", bool_suppress_print=True)
+		log_error(
+			error=f"{MISSING}{HYPHEN}dict_keywords",
+			bool_suppress_print=True,
+		)
 		return {}, MISSING
 	else:
 		dict_source: Dict[str, str] = {}
