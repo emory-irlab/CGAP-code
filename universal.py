@@ -497,7 +497,11 @@ def parse_filename(
 	try:
 		parsed_filename = named_tuple(*split_filename)
 	except TypeError:
-		error: str = f"parse_filename{HYPHEN}named_tuple_size_mismatch{HYPHEN}filename"
+		error: str = (
+			f"parse_filename{HYPHEN}"
+			f"named_tuple_size_mismatch{HYPHEN}"
+			f"filename"
+		)
 		parsed_filename = NT_error(error)
 		log_error(error=error)
 	if dt_dict:
@@ -579,7 +583,11 @@ def aggregate_data_in_folder(
 			list_data_dfs_for_all_cities.append(concatenated_data_per_city)
 		else:
 			log_error(error=f"{city}{HYPHEN}{ERROR_EMPTY}")
-		write_errors_to_disk(clear_task_origin=False, bool_suppress_print=True, overwrite=False)
+		write_errors_to_disk(
+			clear_task_origin=False,
+			bool_suppress_print=True,
+			overwrite=False,
+		)
 
 	df_aggregate: pd.DataFrame = pd.concat(
 		list_data_dfs_for_all_cities,
@@ -634,7 +642,11 @@ def upload_to_bigquery(
 		job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
 		job_config.autodetect = True
 		with open(path, "rb") as source_file:
-			job = client.load_table_from_file(source_file, table_id, job_config=job_config)
+			job = client.load_table_from_file(
+				source_file,
+				table_id,
+				job_config=job_config,
+			)
 		job.result()
 		log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
 	elif file_or_folder == FOLDER:
@@ -707,7 +719,7 @@ def partition_list(
 ) -> List[Any]:
 	assert (partition_group > 0), f"The partition group must equal 1 or more"
 	assert partition_group <= partition_total, (
-		f"Partition group: {partition_group} exceeds partition total " f"{partition_total}."
+		f"Partition group: {partition_group} exceeds partition total {partition_total}."
 	)
 	if partition_total == 1:
 
@@ -743,7 +755,8 @@ def is_single_item(
 		item, *list_rest = list_items
 		if len(list_rest) != 0:
 			print(
-				f"Multiple item candidates; using the first candidate: {item}. These are the rest: {list_rest}."
+				f"Multiple item candidates; using the first candidate: {item}."
+				f" These are the rest: {list_rest}."
 			)
 			extra_candidate: str
 			for extra_candidate in list_rest:
@@ -768,7 +781,12 @@ def import_single_file(
 	))
 	single_file: bool = is_single_item(list_filenames)
 	if not single_file:
-		log_error(error=f"parse_filename{HYPHEN}{'_'.join(list_filename_filter_conditions)}")
+		log_error(
+			error=(
+				f"parse_filename{HYPHEN}"
+				f"{'_'.join(list_filename_filter_conditions)}"
+			),
+		)
 		return ""
 	else:
 		first_file: str
@@ -839,7 +857,10 @@ def generate_sub_paths_for_folder(
 		folder: str,
 ) -> None:
 	directories: List[str] = folder.split("/")
-	recursive_sub_directories: Iterator[str] = itertools.accumulate(directories, lambda x, y: "/".join([x, y]))
+	recursive_sub_directories: Iterator[str] = itertools.accumulate(
+		directories,
+		lambda x, y: "/".join([x, y])
+	)
 	sub_directory: str
 	for sub_directory in recursive_sub_directories:
 		if not os.path.isdir(sub_directory):
@@ -896,9 +917,11 @@ def check_partition_valid_for_aggregation(
 	if get_partition_group() > 1 or get_partition_total() > 1:
 		log_error(error=f"{ERROR_PARTITION}{HYPHEN}{error_label}")
 		print(
-			f"Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE total partition due "
-			f"to race conditions. Not guaranteed that the other partitions have finished running; please check and "
-			f"rerun. Current partition group: {partition_group}. Current partition total: {partition_total}."
+			f"Can only aggregate {error_label} when run as a SINGLE partition group AND with ONE total partition due to race conditions."
+			f" Not guaranteed that the other partitions have finished running. "
+			f"Check and rerun. "
+			f" Current partition group: {partition_group}. "
+			f"Current partition total: {partition_total}."
 		)
 		return False
 	else:
@@ -1101,4 +1124,6 @@ universal_json_file.close()
 FULL_START_DATE: str
 FULL_END_DATE: str
 LIST_DATE_PAIRS: List[Tuple[str, str]] = list(zip(START_DATES, END_DATES))
-FULL_START_DATE, FULL_END_DATE = generate_date_pair_for_full_series(list_date_pairs=LIST_DATE_PAIRS)
+FULL_START_DATE, FULL_END_DATE = generate_date_pair_for_full_series(
+	list_date_pairs=LIST_DATE_PAIRS,
+)
