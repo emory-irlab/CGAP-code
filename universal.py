@@ -768,7 +768,10 @@ def parse_api_credentials(
 def is_single_item(
 		list_items: List[Any],
 ) -> bool:
-	if len(list_items) > 0:
+	if len(list_items) == 0:
+		log_error(error=f"filter_single_item{HYPHEN}list_empty")
+		return False
+	else:
 		item, *list_rest = list_items
 		if len(list_rest) == 0:
 			return True
@@ -783,9 +786,6 @@ def is_single_item(
 					error=f"filter_single_item{HYPHEN}extra_candidate{HYPHEN}{extra_candidate}",
 				)
 			return False
-	else:
-		log_error(error=f"filter_single_item{HYPHEN}list_empty")
-		return False
 
 
 def import_single_file(
