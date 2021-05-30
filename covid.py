@@ -85,7 +85,7 @@ def parse_data(
 	source: str
 	data_scheme: dict
 	for source, data_scheme in data_schema.items():
-		filepath: Any = data_scheme.get(FILE_PATH_OR_FILTER_NAME_CONDITIONS, None)
+		filepath: Any = data_scheme.get(FILE_PATH_OR_FILTER_NAME_CONDITIONS, "")
 		if isinstance(filepath, str):
 			pass
 		elif isinstance(filepath, list):

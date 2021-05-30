@@ -913,7 +913,7 @@ def stitch_keyword_df(
 				list_of_stitch_time_ranges,
 				sort=True,
 			),
-			EMPTY_STRING,
+			"",
 		)
 	else:
 		return pd.DataFrame(), ERROR_EMPTY
