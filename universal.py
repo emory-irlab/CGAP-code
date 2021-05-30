@@ -560,7 +560,10 @@ def aggregate_data_in_folder(
 					bool_suppress_print=bool_suppress_print,
 				)
 		if len(list_parsed_dfs_per_city) > 0:
-			log_error(error=f"{AGGREGATE} : {city}", log=True)
+			log_error(
+				error=f"{AGGREGATE} : {city}",
+				log=True,
+			)
 			concatenated_data_per_city: pd.DataFrame = pd.concat(
 				list_parsed_dfs_per_city,
 				sort=True,
@@ -621,7 +624,10 @@ def upload_to_bigquery(
 		table_name: str,
 		file_or_folder: str = FILE,
 ) -> None:
-	log_error(f"Attempting upload to bigquery", log=True)
+	log_error(
+		f"Attempting upload to bigquery",
+		log=True,
+	)
 	# noinspection PyPackageRequirements,PyUnresolvedReferences
 	from google.cloud import bigquery
 
@@ -629,7 +635,10 @@ def upload_to_bigquery(
 
 	cleaned_table_name: str = UNDERSCORE.join(table_name.split(UNDERSCORE)[1:])
 	table_id = '.'.join([BIGQUERY_PROJECT, BIGQUERY_DATASET, cleaned_table_name])
-	log_error(f"bigquery : {table_id}", log=True)
+	log_error(
+		f"bigquery : {table_id}",
+		log=True,
+	)
 	job_config = bigquery.LoadJobConfig()
 
 	# WRITE_EMPTY    : Writes the data only if the table is empty.
@@ -648,7 +657,10 @@ def upload_to_bigquery(
 				job_config=job_config,
 			)
 		job.result()
-		log_error(f"Loaded {job.output_rows} rows into {table_id}", log=True)
+		log_error(
+			f"Loaded {job.output_rows} rows into {table_id}",
+			log=True,
+		)
 	elif file_or_folder == FOLDER:
 		# job_config.write_disposition = bigquery.WriteDisposition.WRITE_APPEND
 		# job_config.skip_leading_rows = 1
@@ -698,7 +710,10 @@ def upload_to_bigquery(
 	else:
 		log_error(f"invalid_file_or_folder_parameter{HYPHEN}{file_or_folder}")
 
-	log_error(f"Finished loading folder: {path}", log=True)
+	log_error(
+		f"Finished loading folder: {path}",
+		log=True,
+	)
 
 
 def flatten_list(

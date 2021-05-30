@@ -301,7 +301,10 @@ def stitch_epa(
 		folder_epa_raw: str = FOLDER_EPA_RAW,
 		folder_epa_stitch: str = FOLDER_EPA_STITCH,
 ) -> None:
-	log_error(f"{STITCH} : {city} : {pollutant}", log=True)
+	log_error(
+		f"{STITCH} : {city} : {pollutant}",
+		log=True,
+	)
 
 	generate_sub_paths_for_folder(
 		folder=folder_epa_stitch,
