@@ -695,12 +695,12 @@ def upload_to_bigquery(
 			error=f"Created table {table.project}.{table.dataset_id}.{table.table_id}",
 			log=True,
 		)
-		file: str
-		for file in import_paths_from_folder(
+		filename: str
+		for filename in import_paths_from_folder(
 				folder=path,
 				check_paths=True,
 		):
-			df = pd.read_csv(f"{path}{file}").to_dict(orient="records")
+			df = pd.read_csv(f"{path}{filename}").to_dict(orient="records")
 			errors = client.insert_rows(table_id, df)  # Make an API request.
 			if not errors:
 				log_error(
