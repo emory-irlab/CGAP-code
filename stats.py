@@ -641,22 +641,22 @@ def run_metrics(
 				index=False,
 			)
 
-
-def generate_correlations_comparison_folder_name(
-		folder_correlations_comparison: str,
-		dict_correlations_comparison_pivot_values: Dict[str, Any],
-) -> str:
-	generate_sub_paths_for_folder(
-		folder=folder_correlations_comparison,
-	)
-	list_correlations_comparison_folder_name_components: List[str] = [
-		str(column_name) + UNDERSCORE + str(column_value)
-		for column_name, column_value in dict_correlations_comparison_pivot_values.items()
-		if column_value
-	]
-	subfolder: str = HYPHEN.join(list_correlations_comparison_folder_name_components)
-
-	return f"{folder_correlations_comparison}{subfolder}/"
+# todo - remove?
+# def generate_correlations_comparison_folder_name(
+# 		folder_correlations_comparison: str,
+# 		dict_correlations_comparison_pivot_values: Dict[str, Any],
+# ) -> str:
+# 	generate_sub_paths_for_folder(
+# 		folder=folder_correlations_comparison,
+# 	)
+# 	list_correlations_comparison_folder_name_components: List[str] = [
+# 		str(column_name) + UNDERSCORE + str(column_value)
+# 		for column_name, column_value in dict_correlations_comparison_pivot_values.items()
+# 		if column_value
+# 	]
+# 	subfolder: str = HYPHEN.join(list_correlations_comparison_folder_name_components)
+#
+# 	return f"{folder_correlations_comparison}{subfolder}/"
 
 
 def run_correlations(
