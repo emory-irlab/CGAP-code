@@ -3,8 +3,6 @@ credentials-keyword.yaml
 credentials-universal.json 
 credentials-universal.json
 .git-credentials
-/bin
-./pyvenv.cfg
 
 ### macOS template
 # General
