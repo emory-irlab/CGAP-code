@@ -387,6 +387,7 @@ def cast(
 	elif cast_type == "bool":
 		return bool(cast_object)
 	else:
+		log_error(error=f"Cast Type: {cast_type} not found. Returning original argument: {cast_object}")
 		return cast_object
 
 
