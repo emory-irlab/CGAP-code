@@ -182,15 +182,6 @@ def main(
 			write_errors_to_disk()
 
 
-def generate_api_parameters(
-		api_call_type: str,
-) -> dict:
-	if api_call_type == CBSA:
-		return {}
-	else:
-		return {}
-
-
 def download_epa(
 		city: str,
 		pollutant: str,
@@ -229,8 +220,8 @@ def download_epa(
 			return
 
 		list_already_downloaded_files: Generator[str, None, List[str]] = import_paths_from_folder(
-				folder=folder_epa_raw,
-				list_paths_filter_conditions=(city, pollutant,),
+			folder=folder_epa_raw,
+			list_paths_filter_conditions=(city, pollutant,),
 		)
 		for year in list_years:
 			first_day_in_year: datetime = datetime.datetime(year, 1, 1)
