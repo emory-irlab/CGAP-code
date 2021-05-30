@@ -87,7 +87,6 @@ def main(
 				)
 			)
 		else:
-
 			download = False
 			only_download_missing = True
 			aggregate = False
