@@ -138,7 +138,7 @@ def parse_data(
 			)
 
 		columns_to_snake_case_mapping: dict = {
-			column_name: RE_camel_to_snake_case_pattern.sub("_", column_name).lower()
+			column_name: RE_camel_to_snake_case_pattern.sub(UNDERSCORE, column_name).lower()
 			for column_name in df.columns
 		}
 		df.rename(
