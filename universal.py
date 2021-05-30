@@ -770,7 +770,9 @@ def is_single_item(
 ) -> bool:
 	if len(list_items) > 0:
 		item, *list_rest = list_items
-		if len(list_rest) != 0:
+		if len(list_rest) == 0:
+			return True
+		else:
 			print(
 				f"Multiple item candidates; using the first candidate: {item}."
 				f" These are the rest: {list_rest}."
@@ -781,8 +783,6 @@ def is_single_item(
 					error=f"filter_single_item{HYPHEN}extra_candidate{HYPHEN}{extra_candidate}",
 				)
 			return False
-		else:
-			return True
 	else:
 		log_error(error=f"filter_single_item{HYPHEN}list_empty")
 		return False
