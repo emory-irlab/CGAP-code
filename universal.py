@@ -1075,7 +1075,6 @@ def set_up_main(
 		possible_number_of_input_arguments: int = 1,
 ) -> Tuple[bool, Any]:
 	"""
-
 	:param name: __name__ from python namespace
 	:param possible_number_of_input_arguments: includes the default argument which is the script name
 	:return: tuple of arguments passed up to possible number of input arguments
