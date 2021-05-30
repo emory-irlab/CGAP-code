@@ -7,11 +7,10 @@ from universal import *
 # STATIC VARIABLES
 CGAP: str = "cgap"
 COMMON_CITY: str = "common_city"
-CORRELATIONS_COMPARISON: str = "correlations_comparison"
 CORRELATE_ABOVE_THRESHOLD: str = "above_threshold"
 CORRELATE_BELOW_THRESHOLD: str = "below_threshold"
 DATA_FRAME: str = "data_frame"
-
+MISSING_SITE_NUMBER: str = "~1"
 METRICS: str = "metrics"
 SPARSITY: str = "sparsity"
 STATS: str = "stats"
@@ -193,6 +192,7 @@ def main(
 		)
 		# running correlations for mean to max per site
 		list_dict_mean_max_correlations = []
+		m_city: str
 		for m_city in list_input_cities:
 			list_site_numbers_per_city: List[str] = []
 			for epa_filename in import_paths_from_folder(
@@ -206,7 +206,7 @@ def main(
 					extension=CSV,
 				)
 				if nt_filename_epa_stitch.target_statistic in [MEAN, MAX, ]:
-					if nt_filename_epa_stitch.site_number == "~1" or nt_filename_epa_stitch.site_number in list_site_numbers_per_city:
+					if nt_filename_epa_stitch.site_number == MISSING_SITE_NUMBER or nt_filename_epa_stitch.site_number in list_site_numbers_per_city:
 						continue
 					else:
 						other_target_statistic: str
