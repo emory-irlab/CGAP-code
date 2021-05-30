@@ -195,6 +195,7 @@ def main(
 		m_city: str
 		for m_city in list_input_cities:
 			list_site_numbers_per_city: List[str] = []
+			epa_filename: str
 			for epa_filename in import_paths_from_folder(
 					folder=FOLDER_EPA_STITCH,
 					list_paths_filter_conditions=(m_city,),
