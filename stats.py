@@ -547,7 +547,7 @@ def run_metrics(
 			)
 
 		df_full[YEAR] = pd.DatetimeIndex(df_full[DATE]).year
-		list_years: list = list(df_full[YEAR].unique())
+		list_years: List[int] = list(df_full[YEAR].unique())
 		list_years.append(0)
 		for year in list_years:
 			if year:
